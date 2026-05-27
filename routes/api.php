@@ -14,12 +14,12 @@ use App\Http\Controllers\Api\JadwalMengajarController;
 use App\Http\Controllers\Api\PresensiGuruController;
 use App\Http\Controllers\Api\StatusPresensiController;
 use App\Http\Controllers\Api\PengumumanController;
-use App\Http\Controllers\API\PresensiSiswaController;
-use App\Http\Controllers\API\KomponenPenilaianController;
-use App\Http\Controllers\API\NilaiSiswaController;
+use App\Http\Controllers\Api\PresensiSiswaController;
+use App\Http\Controllers\Api\KomponenPenilaianController;
+use App\Http\Controllers\Api\NilaiSiswaController;
 
-use App\Http\Controllers\API\TugasController;
-use App\Http\Controllers\API\NilaiTugasController;
+use App\Http\Controllers\Api\TugasController;
+use App\Http\Controllers\Api\NilaiTugasController;
 
 Route::apiResource('tugas', TugasController::class);
 
