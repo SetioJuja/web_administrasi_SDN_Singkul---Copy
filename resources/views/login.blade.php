@@ -364,7 +364,7 @@ body{
         </div>
 
         <button
-            onclick="location.href='/'"
+            onclick="location.href='/pegawai'"
             style="
                 margin-top:10px;
                 background:none;

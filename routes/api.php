@@ -19,7 +19,6 @@ use App\Http\Controllers\API\KomponenPenilaianController;
 use App\Http\Controllers\API\NilaiSiswaController;
 use App\Http\Controllers\API\TugasController;
 use App\Http\Controllers\API\NilaiTugasController;
-use Illuminate\Support\Facades\DB;
 
 Route::apiResource('tugas', TugasController::class);
 
@@ -101,20 +100,3 @@ Route::get('/tahun_ajaran/aktif1', [TahunAjaranController::class, 'aktif1']);
 Route::get('/nilai-tugas-kelas/{kelas}/{mapel}', [NilaiTugasController::class,'nilaiTugasKelas']);
 Route::get('/jadwal-guru-mapel/{id}', [JadwalMengajarController::class, 'byGuruMapel']);
 
-Route::get('/fix-password', function () {
-
-    $hash = password_hash('123456789', PASSWORD_BCRYPT);
-
-    DB::table('pegawai')
-        ->where('id_guru', 2)
-        ->update([
-            'password' => $hash
-        ]);
-
-    return [
-        'hash' => $hash,
-        'saved' => DB::table('pegawai')
-            ->where('id_guru', 2)
-            ->value('password')
-    ];
-});
