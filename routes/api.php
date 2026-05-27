@@ -2,24 +2,23 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\KontenUmumController;
-use App\Http\Controllers\Api\PegawaiController;
-use App\Http\Controllers\Api\JabatanController;
-use App\Http\Controllers\Api\MapelController;
-use App\Http\Controllers\Api\TahunAjaranController;
-use App\Http\Controllers\Api\KelasController;
-use App\Http\Controllers\Api\DokumenAdministrasiController;
-use App\Http\Controllers\Api\SiswaController;
-use App\Http\Controllers\Api\JadwalMengajarController;
-use App\Http\Controllers\Api\PresensiGuruController;
-use App\Http\Controllers\Api\StatusPresensiController;
-use App\Http\Controllers\Api\PengumumanController;
-use App\Http\Controllers\Api\PresensiSiswaController;
-use App\Http\Controllers\Api\KomponenPenilaianController;
-use App\Http\Controllers\Api\NilaiSiswaController;
-
-use App\Http\Controllers\Api\TugasController;
-use App\Http\Controllers\Api\NilaiTugasController;
+use App\Http\Controllers\API\KontenUmumController;
+use App\Http\Controllers\API\PegawaiController;
+use App\Http\Controllers\API\JabatanController;
+use App\Http\Controllers\API\MapelController;
+use App\Http\Controllers\API\TahunAjaranController;
+use App\Http\Controllers\API\KelasController;
+use App\Http\Controllers\API\DokumenAdministrasiController;
+use App\Http\Controllers\API\SiswaController;
+use App\Http\Controllers\API\JadwalMengajarController;
+use App\Http\Controllers\API\PresensiGuruController;
+use App\Http\Controllers\API\StatusPresensiController;
+use App\Http\Controllers\API\PengumumanController;
+use App\Http\Controllers\API\PresensiSiswaController;
+use App\Http\Controllers\API\KomponenPenilaianController;
+use App\Http\Controllers\API\NilaiSiswaController;
+use App\Http\Controllers\API\TugasController;
+use App\Http\Controllers\API\NilaiTugasController;
 
 Route::apiResource('tugas', TugasController::class);
 
