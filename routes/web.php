@@ -107,3 +107,7 @@ Route::get('/konten_umum', function () {
 Route::get('/rapor', function () {
     return view('raport');
 });
+
+Route::get('/aila', function () {
+    return view('aila');
+});
