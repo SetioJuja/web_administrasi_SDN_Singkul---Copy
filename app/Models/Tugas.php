@@ -13,7 +13,8 @@ class Tugas extends Model
     protected $fillable = [
         'id_komponen',
         'judul_tugas',
-        'tanggal'
+        'tanggal',
+        'id_kelas'
     ];
 
     // relasi
@@ -23,5 +24,10 @@ class Tugas extends Model
 
     public function nilai(){
         return $this->hasMany(NilaiTugas::class,'id_tugas','id_tugas');
+    }
+
+    public function kelas()
+    {
+        return $this->belongsTo(Kelas::class, 'id_kelas', 'id_kelas');
     }
 }

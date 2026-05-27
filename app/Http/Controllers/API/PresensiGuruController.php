@@ -40,7 +40,7 @@ class PresensiGuruController extends Controller
                 'id_tahun_ajaran' => 'required|exists:tahun_ajaran,id_tahun_ajaran'
             ]);
 
-            // 🔥 VALIDASI TIDAK BOLEH DOBEL
+            //  VALIDASI TIDAK BOLEH DOBEL
             $cek = PresensiGuru::where('id_guru', $validated['id_guru'])
                 ->where('tanggal', $validated['tanggal'])
                 ->exists();

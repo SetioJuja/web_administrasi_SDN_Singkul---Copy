@@ -111,7 +111,7 @@ tbody tr:hover{
 
 <div class="card">
 
-<h3>📅 Tahun Ajaran</h3>
+<h3>Tahun Ajaran</h3>
 
 <!-- FORM -->
 <div class="form-inline">

@@ -103,3 +103,7 @@ Route::get('/dsnilai', function () {
 Route::get('/konten_umum', function () {
     return view('kelola_konten_umum');
 });
+
+Route::get('/rapor', function () {
+    return view('raport');
+});

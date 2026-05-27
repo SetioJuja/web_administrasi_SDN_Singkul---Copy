@@ -13,7 +13,7 @@
 }
 
 .card{
-    max-width:900px;
+    max-width:950px;
     margin:auto;
     background:white;
     padding:25px;
@@ -29,39 +29,46 @@ h3{
 .form-grid{
     display:grid;
     grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
-    gap:12px;
+    gap:15px;
 }
 
 .full{
     grid-column: span 2;
 }
 
-input, textarea{
+input,
+textarea{
     width:100%;
     padding:10px;
     border:1px solid var(--border);
     border-radius:8px;
     outline:none;
+    font-size:14px;
+    transition:0.2s;
 }
 
 textarea{
     min-height:90px;
+    resize:none;
 }
 
-input:focus, textarea:focus{
+input:focus,
+textarea:focus{
     border-color:var(--primary);
 }
 
 button{
-    margin-top:15px;
+    margin-top:20px;
     padding:12px;
     width:100%;
     border:none;
-    border-radius:8px;
+    border-radius:10px;
     background:var(--primary);
     color:white;
     font-weight:600;
     cursor:pointer;
+    font-size:15px;
+    transition:0.2s;
 }
 
 button:hover{
@@ -69,8 +76,8 @@ button:hover{
 }
 
 .alert{
-    margin-top:10px;
-    padding:10px;
+    margin-top:15px;
+    padding:12px;
     border-radius:8px;
     display:none;
     font-size:13px;
@@ -85,45 +92,185 @@ button:hover{
     background:#fee2e2;
     color:#991b1b;
 }
+
+.preview-box{
+    margin-top:10px;
+}
+
+.preview-box img{
+    width:100%;
+    max-width:250px;
+    height:180px;
+    border-radius:12px;
+    border:1px solid #ddd;
+    object-fit:cover;
+    background:#f8fafc;
+}
+
+label{
+    font-size:14px;
+    font-weight:600;
+    color:#374151;
+}
+
+@media(max-width:768px){
+
+    .full{
+        grid-column: span 1;
+    }
+
+    .card{
+        padding:18px;
+    }
+}
 </style>
 
 <div class="card">
 
-<h3>🏫 Konten Umum Sekolah</h3>
+    <h3>Konten Umum Sekolah</h3>
 
-<form id="formKonten">
+    <form id="formKonten" enctype="multipart/form-data">
 
-    <!-- ID untuk update -->
-    <input type="hidden" id="id_konten">
+        <input type="hidden" id="id_konten">
 
-    <div class="form-grid">
+        <div class="form-grid">
 
-        <textarea id="visi" name="visi" class="full" placeholder="Visi Sekolah" required></textarea>
+            <!-- VISI -->
+            <textarea 
+                id="visi" 
+                name="visi" 
+                class="full" 
+                placeholder="Visi Sekolah" 
+                required
+            ></textarea>
 
-        <textarea id="misi" name="misi" class="full" placeholder="Misi Sekolah" required></textarea>
+            <!-- MISI -->
+            <textarea 
+                id="misi" 
+                name="misi" 
+                class="full" 
+                placeholder="Misi Sekolah" 
+                required
+            ></textarea>
 
-        <input type="text" id="akreditasi" name="akreditasi" placeholder="Akreditasi">
+            <!-- AKREDITASI -->
+            <input 
+                type="text" 
+                id="akreditasi" 
+                name="akreditasi" 
+                placeholder="Akreditasi"
+            >
 
-        <input type="text" id="telepon" name="telepon" placeholder="Telepon">
+            <!-- TELEPON -->
+            <input 
+                type="text" 
+                id="telepon" 
+                name="telepon" 
+                placeholder="Telepon"
+            >
 
-        <input type="email" id="email" name="email" placeholder="Email">
+            <!-- EMAIL -->
+            <input 
+                type="email" 
+                id="email" 
+                name="email" 
+                placeholder="Email"
+            >
 
-        <input type="text" id="jam_operasional" name="jam_operasional" placeholder="Jam Operasional">
+            <!-- JAM -->
+            <input 
+                type="text" 
+                id="jam_operasional" 
+                name="jam_operasional" 
+                placeholder="Jam Operasional"
+            >
 
-        <input type="number" id="total_guru" name="total_guru" placeholder="Total Guru">
+            <!-- TOTAL GURU -->
+            <input 
+                type="number" 
+                id="total_guru" 
+                name="total_guru" 
+                placeholder="Total Guru"
+            >
 
-        <input type="number" id="total_siswa" name="total_siswa" placeholder="Total Siswa">
+            <!-- TOTAL SISWA -->
+            <input 
+                type="number" 
+                id="total_siswa" 
+                name="total_siswa" 
+                placeholder="Total Siswa"
+            >
 
-        <textarea id="alamat" name="alamat" class="full" placeholder="Alamat Sekolah"></textarea>
+            <!-- ALAMAT -->
+            <textarea 
+                id="alamat" 
+                name="alamat" 
+                class="full" 
+                placeholder="Alamat Sekolah"
+            ></textarea>
 
-    </div>
+            <!-- GAMBAR LOGIN -->
+            <div>
 
-    <button type="submit">💾 Simpan</button>
+                <label>
+                    Gambar Login
+                </label>
 
-</form>
+                <input
+                    type="file"
+                    id="gambar_login"
+                    name="gambar_login"
+                    accept="image/*"
+                >
 
-<div id="alertSuccess" class="alert success"></div>
-<div id="alertError" class="alert error"></div>
+                <div class="preview-box">
+
+                    <img 
+                        id="previewImage" 
+                        src="" 
+                        style="display:none;"
+                    >
+
+                </div>
+
+            </div>
+
+            <!-- GAMBAR BERANDA -->
+            <div>
+
+                <label>
+                    Gambar Beranda
+                </label>
+
+                <input
+                    type="file"
+                    id="gambar_beranda"
+                    name="gambar_beranda"
+                    accept="image/*"
+                >
+
+                <div class="preview-box">
+
+                    <img 
+                        id="previewBeranda" 
+                        src="" 
+                        style="display:none;"
+                    >
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <button type="submit">
+            Simpan Data
+        </button>
+
+    </form>
+
+    <div id="alertSuccess" class="alert success"></div>
+    <div id="alertError" class="alert error"></div>
 
 </div>
 
@@ -134,15 +281,55 @@ button:hover{
 <script>
 
 const form = document.getElementById('formKonten');
+
 const alertSuccess = document.getElementById('alertSuccess');
 const alertError = document.getElementById('alertError');
 
+const previewImage = document.getElementById('previewImage');
+const previewBeranda = document.getElementById('previewBeranda');
+
 let kontenId = null;
 
-/* ================= LOAD DATA ================= */
-async function loadData() {
-    try {
+/* =========================================
+   PREVIEW GAMBAR LOGIN
+========================================= */
+
+gambar_login.addEventListener('change', function(){
+
+    const file = this.files[0];
+
+    if(file){
+
+        previewImage.src = URL.createObjectURL(file);
+        previewImage.style.display = 'block';
+    }
+});
+
+/* =========================================
+   PREVIEW GAMBAR BERANDA
+========================================= */
+
+gambar_beranda.addEventListener('change', function(){
+
+    const file = this.files[0];
+
+    if(file){
+
+        previewBeranda.src = URL.createObjectURL(file);
+        previewBeranda.style.display = 'block';
+    }
+});
+
+/* =========================================
+   LOAD DATA
+========================================= */
+
+async function loadData(){
+
+    try{
+
         const res = await fetch('/api/konten-umum');
+
         const result = await res.json();
 
         if(result.data){
@@ -152,6 +339,7 @@ async function loadData() {
             kontenId = d.id;
 
             document.getElementById('id_konten').value = d.id;
+
             visi.value = d.visi || '';
             misi.value = d.misi || '';
             akreditasi.value = d.akreditasi || '';
@@ -161,44 +349,82 @@ async function loadData() {
             total_guru.value = d.total_guru || '';
             total_siswa.value = d.total_siswa || '';
             alamat.value = d.alamat || '';
+
+            // gambar login
+            if(d.gambar_login){
+
+                previewImage.src = d.gambar_login;
+                previewImage.style.display = 'block';
+            }
+
+            // gambar beranda
+            if(d.gambar_beranda){
+
+                previewBeranda.src = d.gambar_beranda;
+                previewBeranda.style.display = 'block';
+            }
         }
 
-    } catch (e) {
+    }catch(error){
+
         console.log('Gagal load data');
     }
 }
 
-/* ================= SUBMIT ================= */
-form.addEventListener('submit', async function(e) {
+/* =========================================
+   SUBMIT
+========================================= */
+
+form.addEventListener('submit', async function(e){
+
     e.preventDefault();
 
-    const data = {
-        visi: visi.value,
-        misi: misi.value,
-        akreditasi: akreditasi.value,
-        alamat: alamat.value,
-        telepon: telepon.value,
-        email: email.value,
-        jam_operasional: jam_operasional.value,
-        total_guru: total_guru.value,
-        total_siswa: total_siswa.value
-    };
+    const formData = new FormData();
 
-    try {
+    formData.append('visi', visi.value);
+    formData.append('misi', misi.value);
+    formData.append('akreditasi', akreditasi.value);
+    formData.append('alamat', alamat.value);
+    formData.append('telepon', telepon.value);
+    formData.append('email', email.value);
+    formData.append('jam_operasional', jam_operasional.value);
+    formData.append('total_guru', total_guru.value);
+    formData.append('total_siswa', total_siswa.value);
+
+    // gambar login
+    if(gambar_login.files[0]){
+
+        formData.append(
+            'gambar_login',
+            gambar_login.files[0]
+        );
+    }
+
+    // gambar beranda
+    if(gambar_beranda.files[0]){
+
+        formData.append(
+            'gambar_beranda',
+            gambar_beranda.files[0]
+        );
+    }
+
+    try{
 
         let url = '/api/konten-umum';
+
         let method = 'POST';
 
-        // 👉 jika ada ID = UPDATE
         if(kontenId){
+
             url = `/api/konten-umum/${kontenId}`;
-            method = 'PUT';
+
+            formData.append('_method', 'PUT');
         }
 
-        const response = await fetch(url, {
+        const response = await fetch(url,{
             method: method,
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(data)
+            body: formData
         });
 
         const result = await response.json();
@@ -206,28 +432,38 @@ form.addEventListener('submit', async function(e) {
         if(response.ok){
 
             alertSuccess.style.display = 'block';
-            alertSuccess.innerText = result.message || 'Berhasil disimpan';
+            alertSuccess.innerText =
+                result.message || 'Berhasil disimpan';
 
             alertError.style.display = 'none';
 
-            loadData(); // refresh data
+            loadData();
 
-        } else {
+        }else{
 
             alertError.style.display = 'block';
-            alertError.innerText = result.message || 'Terjadi kesalahan';
+
+            alertError.innerText =
+                result.message || 'Terjadi kesalahan';
 
             alertSuccess.style.display = 'none';
         }
 
-    } catch (error) {
+    }catch(error){
 
         alertError.style.display = 'block';
-        alertError.innerText = 'Gagal terhubung ke server';
+
+        alertError.innerText =
+            'Gagal terhubung ke server';
+
+        alertSuccess.style.display = 'none';
     }
 });
 
-/* ================= INIT ================= */
+/* =========================================
+   INIT
+========================================= */
+
 loadData();
 
 </script>

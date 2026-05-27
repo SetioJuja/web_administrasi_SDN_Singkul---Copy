@@ -74,7 +74,7 @@ class MapelController extends Controller
 
         $validated = $request->validate([
             'nama_mapel' => 'required|string',
-            'kode_mapel' => 'required|string|unique:mapel,kode_mapel,' . $id
+            'kode_mapel' => 'required|unique:mapel,kode_mapel,'.$id.',id_mapel'
         ]);
 
         $data->update($validated);
@@ -105,6 +105,17 @@ class MapelController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Mapel berhasil dihapus'
+        ]);
+    }
+
+    public function byGuru($id_guru)
+    {
+        $data = \App\Models\JadwalMengajar::with(['mapel','kelas'])
+            ->where('id_guru', $id_guru)
+            ->get();
+
+        return response()->json([
+            'data'=>$data
         ]);
     }
 }

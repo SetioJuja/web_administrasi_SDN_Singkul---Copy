@@ -17,7 +17,10 @@ class NilaiSiswa extends Model
         'nilai_tugas',
         'nilai_uts',
         'nilai_uas',
-        'total'
+        'total',
+        'nilai_keterampilan',
+        'deskripsi_pengetahuan',
+        'deskripsi_keterampilan'
     ];
 
     public function siswa(){

@@ -13,7 +13,6 @@
     --bg:#f4f7fb;
 }
 
-/* ===== CARD ===== */
 .card{
     background:white;
     border-radius:16px;
@@ -21,13 +20,11 @@
     box-shadow:0 10px 25px rgba(0,0,0,0.05);
 }
 
-/* ===== TITLE ===== */
 h3{
     margin-bottom:20px;
     color:var(--primary);
 }
 
-/* ===== TAB ===== */
 .tab{
     display:flex;
     gap:10px;
@@ -54,7 +51,6 @@ h3{
     transform:translateY(-2px);
 }
 
-/* ===== INPUT ===== */
 input, select{
     padding:10px 12px;
     border:1px solid var(--border);
@@ -68,13 +64,11 @@ input:focus, select:focus{
     border-color:var(--primary);
 }
 
-/* ===== FLEX INPUT */
 .form-row{
     display:flex;
     gap:10px;
 }
 
-/* ===== BUTTON ===== */
 button{
     padding:10px 16px;
     border:none;
@@ -90,7 +84,24 @@ button:hover{
     opacity:0.9;
 }
 
-/* ===== TABLE ===== */
+.btn-danger{
+    background:var(--danger);
+}
+
+.btn-warning{
+    background:#d97706;
+}
+
+.btn-success{
+    background:var(--success);
+}
+
+.btn-sm{
+    padding:5px 10px;
+    font-size:12px;
+    border-radius:6px;
+}
+
 table{
     width:100%;
     border-collapse:collapse;
@@ -116,25 +127,21 @@ tbody tr:hover{
     background:#f9fafb;
 }
 
-/* ===== NILAI INPUT ===== */
 .nilai{
     width:70px;
     text-align:center;
     padding:6px;
 }
 
-/* ===== AVG ===== */
 .avg{
     font-weight:bold;
     color:var(--success);
 }
 
-/* ===== SCROLL ===== */
 .table-wrap{
     overflow:auto;
 }
 
-/* ===== SECTION ===== */
 .section{
     animation:fade 0.3s ease;
 }
@@ -143,20 +150,68 @@ tbody tr:hover{
     from{opacity:0; transform:translateY(5px);}
     to{opacity:1; transform:translateY(0);}
 }
+
+/* ===== MODAL ===== */
+.modal-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.4);
+    z-index:1000;
+    align-items:center;
+    justify-content:center;
+}
+
+.modal-overlay.show{
+    display:flex;
+}
+
+.modal{
+    background:white;
+    border-radius:16px;
+    padding:28px;
+    width:100%;
+    max-width:440px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.15);
+    animation:fade 0.2s ease;
+}
+
+.modal h4{
+    margin-bottom:16px;
+    color:var(--primary);
+    font-size:18px;
+}
+
+.modal input,
+.modal select{
+    margin-bottom:12px;
+}
+
+.modal-footer{
+    display:flex;
+    gap:10px;
+    justify-content:flex-end;
+    margin-top:16px;
+}
+
+.modal-footer button{
+    min-width:90px;
+}
 </style>
 
 <div class="card">
 
-<h3>📊 Tugas & Nilai</h3>
+<h3>Tugas & Nilai</h3>
 
 <div class="tab">
-<button class="tab-btn active" data-tab="tugas">📌 Kelola Tugas</button>
-<button class="tab-btn" data-tab="nilai">📝 Input Nilai</button>
+<button class="tab-btn active" data-tab="tugas">Kelola Tugas</button>
+<button class="tab-btn" data-tab="nilai">Input Nilai</button>
 </div>
 
 <!-- ===== TUGAS ===== -->
 <div id="tugas" class="section" style="display:block">
 
+<select id="kelas_tugas"></select>
 <select id="id_komponen"></select>
 
 <div class="form-row">
@@ -171,6 +226,7 @@ tbody tr:hover{
 <th>Mapel</th>
 <th>Judul</th>
 <th>Tanggal</th>
+<th>Aksi</th>
 </tr>
 </thead>
 <tbody id="tugasData"></tbody>
@@ -197,6 +253,32 @@ tbody tr:hover{
 
 </div>
 
+<!-- ===== MODAL EDIT ===== -->
+<div class="modal-overlay" id="modalEdit">
+<div class="modal">
+    <h4>Edit Tugas</h4>
+    <input id="edit_judul" placeholder="Judul Tugas">
+    <input id="edit_tanggal" type="date">
+    <select id="edit_komponen"></select>
+    <div class="modal-footer">
+        <button class="btn-danger" id="btnBatalEdit" onclick="closeModal()">Batal</button>
+        <button class="btn-success" id="btnSimpanEdit">Simpan</button>
+    </div>
+</div>
+</div>
+
+<!-- ===== MODAL HAPUS ===== -->
+<div class="modal-overlay" id="modalHapus">
+<div class="modal">
+    <h4>Hapus Tugas</h4>
+    <p id="konfirmasiHapus" style="margin-bottom:16px;color:#555;"></p>
+    <div class="modal-footer">
+        <button onclick="closeModal()">Batal</button>
+        <button class="btn-danger" id="btnKonfirmasiHapus">Hapus</button>
+    </div>
+</div>
+</div>
+
 @endsection
 
 
@@ -209,6 +291,8 @@ let tugas = [];
 let nilaiTugas = {};
 let id_kelas, id_mapel, id_komponen;
 let komponen = [];
+let editId = null;
+let hapusId = null;
 
 // ================= INIT =================
 document.addEventListener('DOMContentLoaded', init);
@@ -228,7 +312,14 @@ async function init(){
     bindTab();
     await loadKomponen();
     await loadKelas();
+    await loadKelasTugas();
     await loadTugas();
+
+    document.getElementById('kelas_tugas')
+        .addEventListener('change', function(){
+            id_kelas = this.value;
+            loadTugas();
+        });
 
     document.getElementById('id_komponen')
         .addEventListener('change', changeKomponen);
@@ -238,6 +329,12 @@ async function init(){
 
     document.getElementById('btnTambahTugas')
         .addEventListener('click', tambahTugas);
+
+    document.getElementById('btnSimpanEdit')
+        .addEventListener('click', simpanEdit);
+
+    document.getElementById('btnKonfirmasiHapus')
+        .addEventListener('click', konfirmasiHapus);
 }
 
 
@@ -245,10 +342,8 @@ async function init(){
 function bindTab(){
     document.querySelectorAll('.tab-btn').forEach(btn=>{
         btn.onclick = () => {
-
             document.querySelectorAll('.section').forEach(s=>s.style.display='none');
             document.getElementById(btn.dataset.tab).style.display='block';
-
             document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
             btn.classList.add('active');
         };
@@ -268,11 +363,12 @@ async function loadKomponen(){
 
     komponen.forEach(k=>{
         html += `<option value="${k.id_komponen}" data-mapel="${k.id_mapel}">
-            ${k.mapel?.nama_mapel}
+            ${k.nama_komponen} (${k.mapel?.nama_mapel ?? '-'})
         </option>`;
     });
 
     document.getElementById('id_komponen').innerHTML = html;
+    document.getElementById('edit_komponen').innerHTML = html;
 
     if(komponen.length){
         id_komponen = komponen[0].id_komponen;
@@ -292,13 +388,35 @@ function changeKomponen(){
     loadTugas();
 }
 
+async function loadKelasTugas(){
+
+    const res = await fetch('/api/jadwal-guru/' + id_guru);
+    const json = await res.json();
+
+    let html = '';
+
+    (json.data || []).forEach(j=>{
+        html += `<option value="${j.id_kelas}">
+            ${j.kelas.nama_kelas} - ${j.mapel.nama_mapel}
+        </option>`;
+    });
+
+    document.getElementById('kelas_tugas').innerHTML = html;
+
+    if(json.data.length){
+        id_kelas = json.data[0].id_kelas;
+    }
+}
+
 
 // ================= LOAD TUGAS =================
 async function loadTugas(){
 
     if(!id_mapel) return;
 
-    const res = await fetch(`/api/tugas-by-mapel/${id_mapel}?id_guru=${id_guru}`);
+    id_kelas = document.getElementById('kelas_tugas')?.value || id_kelas;
+
+    const res = await fetch(`/api/tugas-by-mapel/${id_mapel}?id_guru=${id_guru}&id_kelas=${id_kelas}`);
     const json = await res.json();
 
     tugas = json.data || [];
@@ -311,6 +429,10 @@ async function loadTugas(){
             <td>${t.komponen?.mapel?.nama_mapel ?? '-'}</td>
             <td>${t.judul_tugas}</td>
             <td>${t.tanggal}</td>
+            <td style="white-space:nowrap">
+                <button class="btn-warning btn-sm" onclick="bukaEdit(${t.id_tugas})">Edit</button>
+                <button class="btn-danger btn-sm" onclick="bukaHapus(${t.id_tugas}, '${t.judul_tugas.replace(/'/g,"\\'")}')">Hapus</button>
+            </td>
         </tr>`;
     });
 
@@ -347,7 +469,8 @@ async function loadSiswa(){
     let s = await fetch('/api/siswa-by-kelas/'+id_kelas).then(r=>r.json());
     siswa = s.data || [];
 
-    let t = await fetch(`/api/tugas-by-mapel/${id_mapel}?id_guru=${id_guru}`).then(r=>r.json());
+    let t = await fetch(`/api/tugas-by-mapel/${id_mapel}?id_guru=${id_guru}&id_kelas=${id_kelas}`)
+    .then(r=>r.json());
     tugas = t.data || [];
 
     await loadNilaiTugas();
@@ -481,6 +604,7 @@ async function tambahTugas(){
         headers:{'Content-Type':'application/json'},
         body: JSON.stringify({
             id_komponen,
+            id_kelas,
             judul_tugas:judul,
             tanggal,
             id_guru
@@ -492,6 +616,84 @@ async function tambahTugas(){
 
     loadTugas();
 }
+
+
+// ================= EDIT =================
+function bukaEdit(id){
+
+    const t = tugas.find(x => x.id_tugas === id);
+    if(!t) return;
+
+    editId = id;
+
+    document.getElementById('edit_judul').value = t.judul_tugas;
+    document.getElementById('edit_tanggal').value = t.tanggal;
+    document.getElementById('edit_komponen').value = t.id_komponen;
+
+    document.getElementById('modalEdit').classList.add('show');
+}
+
+async function simpanEdit(){
+
+    const judul = document.getElementById('edit_judul').value;
+    const tanggal = document.getElementById('edit_tanggal').value;
+    const id_komp = document.getElementById('edit_komponen').value;
+
+    if(!judul || !tanggal){
+        alert('Isi semua field');
+        return;
+    }
+
+    await fetch(`/api/tugas/${editId}`, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            judul_tugas: judul,
+            tanggal,
+            id_komponen: id_komp
+        })
+    });
+
+    closeModal();
+    loadTugas();
+}
+
+
+// ================= HAPUS =================
+function bukaHapus(id, judul){
+
+    hapusId = id;
+
+    document.getElementById('konfirmasiHapus').innerText =
+        `Yakin ingin menghapus tugas "${judul}"? Semua nilai terkait juga akan dihapus.`;
+
+    document.getElementById('modalHapus').classList.add('show');
+}
+
+async function konfirmasiHapus(){
+
+    await fetch(`/api/tugas/${hapusId}`, {
+        method: 'DELETE'
+    });
+
+    closeModal();
+    loadTugas();
+}
+
+
+// ================= MODAL =================
+function closeModal(){
+    document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show'));
+    editId = null;
+    hapusId = null;
+}
+
+// Tutup modal klik di luar
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', function(e){
+        if(e.target === this) closeModal();
+    });
+});
 
 </script>
 @endsection

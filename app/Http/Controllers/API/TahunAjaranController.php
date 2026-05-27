@@ -149,7 +149,7 @@ class TahunAjaranController extends Controller
 
 public function aktif1()
     {
-        $data = TahunAjaran::where('status', 'aktif')->first(); // 🔥 ganti get()
+        $data = TahunAjaran::where('status', 'aktif')->first(); 
 
         if(!$data){
             return response()->json([

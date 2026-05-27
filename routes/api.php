@@ -70,8 +70,8 @@ Route::get('/kelas-sayaP/{id}', [KelasController::class, 'kelasSayaP']);
 
 Route::apiResource('siswa', SiswaController::class);
 Route::get('/siswa-kelas-saya/{id}', [SiswaController::class, 'siswaKelasSaya']);
-Route::apiResource('jadwal', JadwalMengajarController::class);
 
+Route::apiResource('jadwal', JadwalMengajarController::class);
 
 Route::apiResource('presensi-guru', PresensiGuruController::class);
 Route::apiResource('status-presensi', StatusPresensiController::class); 
@@ -87,7 +87,7 @@ Route::get('/jadwal-guru/{id}', [JadwalMengajarController::class, 'byGuru']);
 Route::post('/nilai-siswa',[NilaiSiswaController::class,'store']);
 Route::get('/nilai-siswa/{kelas}/{mapel}',[NilaiSiswaController::class,'index']);
 
-Route::get('/tugas-by-mapel/{mapel}', [TugasController::class,'byMapel']);
+Route::get('/tugas-by-mapel/{id_mapel}', [TugasController::class, 'byMapel']);
 
 Route::get('/nilai-tugas/siswa/{siswa}/{mapel}', [NilaiTugasController::class,'bySiswa1']);
 Route::get('/nilai-siswa/{kelas}/{mapel}', [NilaiSiswaController::class,'byKelasMapel']);
@@ -99,3 +99,4 @@ Route::get('/tugas-by-mapel/{id_mapel}', [TugasController::class, 'byMapel']);
 Route::get('/tahun_ajaran/aktif1', [TahunAjaranController::class, 'aktif1']);
 
 Route::get('/nilai-tugas-kelas/{kelas}/{mapel}', [NilaiTugasController::class,'nilaiTugasKelas']);
+Route::get('/jadwal-guru-mapel/{id}', [JadwalMengajarController::class, 'byGuruMapel']);

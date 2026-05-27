@@ -6,43 +6,68 @@
 
 <style>
 :root{
-    --primary:#0a3d62;      /* biru laut */
+    --primary:#0a3d62;
     --primary-soft:#e6f2ff;
     --border:#e5e7eb;
+    --text:#0f172a;
+    --muted:#64748b;
+    --bg:#f8fafc;
+}
+
+/* PAGE */
+body{
+    background:var(--bg);
 }
 
 /* CARD */
 .card{
     background:white;
-    border-radius:14px;
-    padding:25px;
-    box-shadow:0 8px 25px rgba(0,0,0,0.05);
+    border-radius:20px;
+    padding:22px;
+    box-shadow:0 8px 30px rgba(15,23,42,0.06);
 }
 
 /* TITLE */
 .card h3{
-    margin-bottom:20px;
+    margin-bottom:18px;
     color:var(--primary);
+    font-size:24px;
+    font-weight:700;
 }
 
-/* FORM GRID */
+/* SEARCH */
+.search-box{
+    width:260px;
+    margin-bottom:16px;
+}
+
+/* FORM */
 .form-grid{
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:15px;
-    margin-bottom:20px;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:12px;
+    margin-bottom:18px;
 }
 
 /* INPUT */
-input, select{
-    padding:10px;
-    border-radius:8px;
+input,
+select{
+    width:100%;
+    padding:10px 12px;
+    border-radius:12px;
     border:1px solid var(--border);
     outline:none;
+    font-size:13px;
+    color:var(--text);
+    background:white;
+    transition:0.25s;
+    box-sizing:border-box;
 }
 
-input:focus, select:focus{
+input:focus,
+select:focus{
     border-color:var(--primary);
+    box-shadow:0 0 0 3px rgba(10,61,98,0.08);
 }
 
 /* BUTTON */
@@ -51,34 +76,53 @@ input:focus, select:focus{
     color:white;
     border:none;
     padding:10px 18px;
-    border-radius:8px;
+    border-radius:10px;
     cursor:pointer;
+    font-size:13px;
+    font-weight:600;
+    transition:0.25s;
+}
+
+.btn-primary:hover{
+    transform:translateY(-1px);
+    opacity:0.95;
 }
 
 .btn-warning{
     background:#f59e0b;
     color:white;
     border:none;
-    padding:6px 10px;
-    border-radius:6px;
+    padding:7px 12px;
+    border-radius:8px;
     cursor:pointer;
+    font-size:12px;
+    font-weight:600;
 }
 
 .btn-danger{
     background:#ef4444;
     color:white;
     border:none;
-    padding:6px 10px;
-    border-radius:6px;
+    padding:7px 12px;
+    border-radius:8px;
     cursor:pointer;
+    font-size:12px;
+    font-weight:600;
 }
 
 /* TABLE */
+.table-wrapper{
+    overflow-x:auto;
+    margin-top:18px;
+    border-radius:16px;
+}
+
 table{
     width:100%;
     border-collapse:collapse;
-    margin-top:15px;
-    font-size:13px;
+    font-size:12px;
+    background:white;
+    overflow:hidden;
 }
 
 thead{
@@ -86,121 +130,230 @@ thead{
     color:white;
 }
 
-th, td{
-    padding:10px;
-    border-bottom:1px solid var(--border);
+th{
+    padding:14px 10px;
+    text-align:left;
+    font-size:12px;
+    font-weight:600;
+    white-space:nowrap;
 }
 
-tr:hover{
-    background:#f9fafb;
+td{
+    padding:12px 10px;
+    border-bottom:1px solid #f1f5f9;
+    color:#334155;
+    white-space:nowrap;
 }
 
-/* SEARCH */
-.search-box{
-    margin-bottom:15px;
+tbody tr{
+    transition:0.2s;
+}
+
+tbody tr:hover{
+    background:#f8fafc;
 }
 
 /* MODAL */
 .modal{
     position:fixed;
-    top:0; left:0;
-    width:100%; height:100%;
-    background:rgba(0,0,0,0.4);
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(15,23,42,0.45);
     display:none;
     justify-content:center;
     align-items:center;
+    z-index:999;
+    padding:20px;
 }
 
 .modal-content{
     background:white;
-    padding:20px;
+    padding:24px;
+    border-radius:20px;
+    width:100%;
+    max-width:450px;
+    box-shadow:0 10px 40px rgba(0,0,0,0.15);
+}
+
+.modal-content h3{
+    margin-bottom:16px;
+    color:var(--primary);
+}
+
+.modal-content input,
+.modal-content select{
+    margin-bottom:12px;
+}
+
+/* NOTIF */
+.notif{
+    position:fixed;
+    top:20px;
+    right:20px;
+    background:#16a34a;
+    color:white;
+    padding:12px 18px;
     border-radius:12px;
-    width:400px;
+    font-size:13px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.12);
+    opacity:0;
+    transform:translateY(-20px);
+    transition:0.3s;
+    z-index:9999;
+}
+
+.notif.show{
+    opacity:1;
+    transform:translateY(0);
+}
+
+.notif.error{
+    background:#ef4444;
+}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+
+    .card{
+        padding:16px;
+    }
+
+    .card h3{
+        font-size:20px;
+    }
+
+    .search-box{
+        width:100%;
+    }
+
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    table{
+        font-size:11px;
+    }
+
+    th,
+    td{
+        padding:10px 8px;
+    }
 }
 </style>
 
+<!-- NOTIF -->
+<div id="notif" class="notif"></div>
+
 <div class="card">
 
-<h3>📘 Data Siswa (Kelas Saya)</h3>
+    <h3>Data Siswa (Kelas Saya)</h3>
 
-<!-- SEARCH -->
-<input id="search" class="search-box" placeholder="🔍 Cari siswa...">
+    <input id="search" class="search-box" placeholder="Cari siswa...">
 
-<!-- FORM -->
-<div class="form-grid">
-    <input id="nama_siswa" placeholder="Nama Siswa">
-    <input id="nis" placeholder="NIS">
+    <div class="form-grid">
+        <input id="nama_siswa" placeholder="Nama Siswa">
+        <input id="nis" placeholder="NIS">
 
-    <select id="jenis_kelamin">
-        <option value="">Jenis Kelamin</option>
-        <option value="L">Laki-laki</option>
-        <option value="P">Perempuan</option>
-    </select>
+        <select id="jenis_kelamin">
+            <option value="">Jenis Kelamin</option>
+            <option value="L">Laki-laki</option>
+            <option value="P">Perempuan</option>
+        </select>
 
-    <input id="tempat_lahir" placeholder="Tempat Lahir">
-    <input id="tanggal_lahir" type="date">
-    <input id="alamat" placeholder="Alamat">
-    <input id="nama_ayah" placeholder="Nama Ayah">
-    <input id="nama_ibu" placeholder="Nama Ibu">
-    <input id="no_telepon" placeholder="No Telepon">
+        <input id="tempat_lahir" placeholder="Tempat Lahir">
+        <input id="tanggal_lahir" type="date">
+        <input id="alamat" placeholder="Alamat">
+        <input id="nama_ayah" placeholder="Nama Ayah">
+        <input id="nama_ibu" placeholder="Nama Ibu">
+        <input id="no_telepon" placeholder="No Telepon">
+
+        <select id="penghasilan">
+            <option value="">Penghasilan</option>
+            <option value="< 1.000.000">< 1.000.000</option>
+            <option value="1.000.000 - 2.500.000">1.000.000 - 2.500.000</option>
+            <option value="2.500.000 - 5.000.000">2.500.000 - 5.000.000</option>
+            <option value="> 5.000.000">> 5.000.000</option>
+        </select>
+    </div>
+
+    <button id="btnTambah" class="btn-primary">
+        + Tambah Data Siswa
+    </button>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+            <tr>
+                <th>Nama</th>
+                <th>NIS</th>
+                <th>JK</th>
+                <th>Tempat</th>
+                <th>Tanggal</th>
+                <th>Alamat</th>
+                <th>Ayah</th>
+                <th>Ibu</th>
+                <th>HP</th>
+                <th>Penghasilan</th>
+                <th>Kelas</th>
+                <th>Aksi</th>
+            </tr>
+            </thead>
+
+            <tbody id="data"></tbody>
+        </table>
+    </div>
+
 </div>
 
-<button id="btnTambah" class="btn-primary">+ Tambah</button>
-
-<!-- TABLE -->
-<table>
-<thead>
-<tr>
-<th>Nama</th>
-<th>NIS</th>
-<th>JK</th>
-<th>Tempat Lahir</th>
-<th>Tanggal Lahir</th>
-<th>Alamat</th>
-<th>Nama Ayah</th>
-<th>Nama Ibu</th>
-<th>No HP</th>
-<th>Kelas</th>
-<th>Aksi</th>
-</tr>
-</thead>
-<tbody id="data"></tbody>
-</table>
-
-</div>
-
-<!-- MODAL EDIT -->
+<!-- MODAL -->
 <div id="modalEdit" class="modal">
-<div class="modal-content">
 
-<h3>Edit Siswa</h3>
+    <div class="modal-content">
 
-<input type="hidden" id="edit_id">
+        <h3>Edit Data Siswa</h3>
 
-<input id="edit_nama" placeholder="Nama">
-<input id="edit_nis" placeholder="NIS">
-<select id="edit_jk">
-<option value="L">Laki-laki</option>
-<option value="P">Perempuan</option>
-</select>
+        <input type="hidden" id="edit_id">
 
-<input id="edit_tempat" placeholder="Tempat Lahir">
-<input id="edit_tanggal" type="date">
-<input id="edit_alamat" placeholder="Alamat">
-<input id="edit_ayah" placeholder="Ayah">
-<input id="edit_ibu" placeholder="Ibu">
-<input id="edit_hp" placeholder="No HP">
+        <input id="edit_nama" placeholder="Nama">
+        <input id="edit_nis" placeholder="NIS">
 
-<br><br>
+        <select id="edit_jk">
+            <option value="L">Laki-laki</option>
+            <option value="P">Perempuan</option>
+        </select>
 
-<button onclick="updateData()" class="btn-primary">Simpan</button>
-<button onclick="tutupModal()" class="btn-danger">Batal</button>
+        <input id="edit_tempat" placeholder="Tempat Lahir">
+        <input id="edit_tanggal" type="date">
+        <input id="edit_alamat" placeholder="Alamat">
+        <input id="edit_ayah" placeholder="Nama Ayah">
+        <input id="edit_ibu" placeholder="Nama Ibu">
+        <input id="edit_hp" placeholder="No Telepon">
 
-</div>
+        <select id="edit_penghasilan">
+            <option value="">Penghasilan</option>
+            <option value="< 1.000.000">< 1.000.000</option>
+            <option value="1.000.000 - 2.500.000">1.000.000 - 2.500.000</option>
+            <option value="2.500.000 - 5.000.000">2.500.000 - 5.000.000</option>
+            <option value="> 5.000.000">> 5.000.000</option>
+        </select>
+
+        <div style="display:flex; gap:10px; margin-top:10px;">
+            <button onclick="updateData()" class="btn-primary">
+                Simpan
+            </button>
+
+            <button onclick="tutupModal()" class="btn-danger">
+                Batal
+            </button>
+        </div>
+
+    </div>
+
 </div>
 
 @endsection
-
 
 @section('script')
 <script>
@@ -208,48 +361,72 @@ tr:hover{
 let id_kelas_saya = null;
 let semuaData = [];
 
-// INIT
+/* NOTIF */
+function showNotif(text, type='success'){
+    const n = document.getElementById('notif');
+
+    n.innerText = text;
+    n.className = 'notif show';
+
+    if(type === 'error'){
+        n.classList.add('error');
+    }
+
+    setTimeout(()=>{
+        n.classList.remove('show');
+    },2500);
+}
+
+/* INIT */
 document.addEventListener('DOMContentLoaded', init);
 
 async function init(){
 
     const user = JSON.parse(localStorage.getItem('user'));
+
     if(!user){
-        location.href='/login';
-        return;
+        return location.href='/login';
     }
 
     await loadKelasSaya(user.id);
+
     loadData(user.id);
 
-    document.getElementById('btnTambah').onclick = () => tambah(user.id);
-    document.getElementById('search').addEventListener('input', filterData);
+    btnTambah.onclick = ()=> tambah(user.id);
+
+    search.addEventListener('input', filterData);
 }
 
-// LOAD KELAS
+/* LOAD KELAS */
 async function loadKelasSaya(id){
-    const res = await fetch('/api/kelas-saya/'+id);
-    const data = await res.json();
-    if(data.data.length){
-        id_kelas_saya = data.data[0].id_kelas;
+
+    const res = await fetch('/api/kelas-saya/' + id);
+
+    const d = await res.json();
+
+    if(d.data.length){
+        id_kelas_saya = d.data[0].id_kelas;
     }
 }
 
-// LOAD DATA
+/* LOAD DATA */
 async function loadData(id){
-    const res = await fetch('/api/siswa-kelas-saya/'+id);
-    const data = await res.json();
 
-    semuaData = data.data;
+    const res = await fetch('/api/siswa-kelas-saya/' + id);
+
+    const d = await res.json();
+
+    semuaData = d.data;
+
     render(semuaData, id);
 }
 
-// RENDER
+/* RENDER */
 function render(data, id){
-    let html = '';
 
-    data.forEach(s=>{
-        html += `
+    dataEl = document.getElementById('data');
+
+    dataEl.innerHTML = data.map(s => `
         <tr>
             <td>${s.nama_siswa}</td>
             <td>${s.nis}</td>
@@ -260,59 +437,82 @@ function render(data, id){
             <td>${s.nama_ayah ?? '-'}</td>
             <td>${s.nama_ibu ?? '-'}</td>
             <td>${s.no_telepon ?? '-'}</td>
+            <td>${s.penghasilan ?? '-'}</td>
             <td>${s.kelas?.nama_kelas ?? '-'}</td>
-            <td>
-                <button class="btn-warning" onclick="edit(${s.id_siswa})">Edit</button>
-                <button class="btn-danger" onclick="hapus(${s.id_siswa}, ${id})">Hapus</button>
+
+            <td style="display:flex; gap:6px;">
+                <button class="btn-warning" onclick="edit(${s.id_siswa})">
+                    Edit
+                </button>
+
+                <button class="btn-danger" onclick="hapus(${s.id_siswa},${id})">
+                    Hapus
+                </button>
             </td>
-        </tr>`;
-    });
-
-    document.getElementById('data').innerHTML = html;
+        </tr>
+    `).join('');
 }
 
-// SEARCH
+/* SEARCH */
 function filterData(){
-    const keyword = document.getElementById('search').value.toLowerCase();
 
-    const hasil = semuaData.filter(s =>
-        s.nama_siswa.toLowerCase().includes(keyword) ||
-        s.nis.toLowerCase().includes(keyword)
+    const k = search.value.toLowerCase();
+
+    render(
+        semuaData.filter(s =>
+            s.nama_siswa.toLowerCase().includes(k) ||
+            s.nis.toLowerCase().includes(k)
+        )
     );
-
-    render(hasil);
 }
 
-// TAMBAH
+/* TAMBAH */
 async function tambah(id){
+
     const res = await fetch('/api/siswa',{
+
         method:'POST',
-        headers:{'Content-Type':'application/json'},
+
+        headers:{
+            'Content-Type':'application/json'
+        },
+
         body:JSON.stringify({
-            nama_siswa: nama_siswa.value,
-            nis: nis.value,
-            jenis_kelamin: jenis_kelamin.value,
-            tempat_lahir: tempat_lahir.value,
-            tanggal_lahir: tanggal_lahir.value,
-            alamat: alamat.value,
-            nama_ayah: nama_ayah.value,
-            nama_ibu: nama_ibu.value,
-            no_telepon: no_telepon.value,
-            id_kelas: id_kelas_saya
+
+            nama_siswa:nama_siswa.value,
+            nis:nis.value,
+            jenis_kelamin:jenis_kelamin.value,
+            tempat_lahir:tempat_lahir.value,
+            tanggal_lahir:tanggal_lahir.value,
+            alamat:alamat.value,
+            nama_ayah:nama_ayah.value,
+            nama_ibu:nama_ibu.value,
+            no_telepon:no_telepon.value,
+            penghasilan:penghasilan.value,
+            id_kelas:id_kelas_saya
         })
     });
 
-    const data = await res.json();
-    if(data.success){
+    const d = await res.json();
+
+    if(d.success){
+
+        showNotif('Data berhasil ditambahkan');
+
         loadData(id);
+
+    }else{
+
+        showNotif('Gagal tambah data','error');
     }
 }
 
-// EDIT
+/* EDIT */
 function edit(id){
-    const s = semuaData.find(x=>x.id_siswa == id);
 
-    edit_id.value = s.id_siswa;
+    const s = semuaData.find(x => x.id_siswa == id);
+
+    edit_id.value = id;
     edit_nama.value = s.nama_siswa;
     edit_nis.value = s.nis;
     edit_jk.value = s.jenis_kelamin;
@@ -322,47 +522,87 @@ function edit(id){
     edit_ayah.value = s.nama_ayah;
     edit_ibu.value = s.nama_ibu;
     edit_hp.value = s.no_telepon;
+    edit_penghasilan.value = s.penghasilan;
 
-    document.getElementById('modalEdit').style.display='flex';
+    modalEdit.style.display = 'flex';
 }
 
-// UPDATE
+/* UPDATE */
 async function updateData(){
 
     const id = edit_id.value;
 
-    await fetch('/api/siswa/'+id,{
+    const res = await fetch('/api/siswa/' + id,{
+
         method:'PUT',
-        headers:{'Content-Type':'application/json'},
+
+        headers:{
+            'Content-Type':'application/json'
+        },
+
         body:JSON.stringify({
-            nama_siswa: edit_nama.value,
-            nis: edit_nis.value,
-            jenis_kelamin: edit_jk.value,
-            tempat_lahir: edit_tempat.value,
-            tanggal_lahir: edit_tanggal.value,
-            alamat: edit_alamat.value,
-            nama_ayah: edit_ayah.value,
-            nama_ibu: edit_ibu.value,
-            no_telepon: edit_hp.value,
-            id_kelas: id_kelas_saya
+
+            nama_siswa:edit_nama.value,
+            nis:edit_nis.value,
+            jenis_kelamin:edit_jk.value,
+            tempat_lahir:edit_tempat.value,
+            tanggal_lahir:edit_tanggal.value,
+            alamat:edit_alamat.value,
+            nama_ayah:edit_ayah.value,
+            nama_ibu:edit_ibu.value,
+            no_telepon:edit_hp.value,
+            penghasilan:edit_penghasilan.value,
+            id_kelas:id_kelas_saya
         })
     });
 
+    const d = await res.json();
+
+    if(d.success){
+
+        showNotif('Data berhasil diupdate');
+
+    }else{
+
+        showNotif('Gagal update data','error');
+    }
+
     tutupModal();
+
     init();
 }
 
-// HAPUS
-function hapus(id, id_guru){
-    if(confirm('Yakin?')){
-        fetch('/api/siswa/'+id,{method:'DELETE'})
-        .then(()=>loadData(id_guru));
+/* DELETE */
+function hapus(id,id_guru){
+
+    if(confirm('Yakin hapus data siswa ini?')){
+
+        fetch('/api/siswa/' + id,{
+
+            method:'DELETE'
+
+        })
+        .then(res => res.json())
+        .then(d => {
+
+            if(d.success){
+
+                showNotif('Data berhasil dihapus');
+
+                loadData(id_guru);
+
+            }else{
+
+                showNotif('Gagal hapus data','error');
+            }
+        });
     }
 }
 
-// MODAL
+/* TUTUP MODAL */
 function tutupModal(){
-    document.getElementById('modalEdit').style.display='none';
+
+    modalEdit.style.display = 'none';
 }
 
 </script>

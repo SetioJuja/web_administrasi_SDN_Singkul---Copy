@@ -37,6 +37,7 @@ class SiswaController extends Controller
                 'nama_ayah' => 'nullable',
                 'nama_ibu' => 'nullable',
                 'no_telepon' => 'nullable',
+                'penghasilan' => 'nullable',
                 'id_kelas' => 'required|exists:kelas,id_kelas'
             ]);
 
@@ -107,6 +108,7 @@ class SiswaController extends Controller
                 'nama_ayah' => 'nullable',
                 'nama_ibu' => 'nullable',
                 'no_telepon' => 'nullable',
+                'penghasilan' => 'nullable',
                 'id_kelas' => 'sometimes|required|exists:kelas,id_kelas'
             ]);
 

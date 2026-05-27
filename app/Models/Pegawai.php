@@ -20,7 +20,11 @@ class Pegawai extends Authenticatable
         'no_telepon',
         'email',
         'tanggal_masuk',
-        'password'
+        'password',
+        'username',
+        'golongan',
+        'pendidikan_tertinggi',
+        'status_kepegawaian'
     ];
 
     protected $hidden = [
@@ -51,5 +55,15 @@ class Pegawai extends Authenticatable
     public function hasRole($role)
     {
         return $this->jabatan()->where('nama_jabatan', $role)->exists();
+    }
+
+        public function presensiGuru()
+    {
+        return $this->hasMany(PresensiGuru::class, 'id_guru');
+    }
+
+    public function jadwalMengajar()
+    {
+        return $this->hasMany(JadwalMengajar::class, 'id_guru');
     }
 }

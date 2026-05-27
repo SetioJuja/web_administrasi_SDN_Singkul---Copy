@@ -39,6 +39,7 @@ input, select{
     border:1px solid var(--border);
     border-radius:8px;
     outline:none;
+    width:100%;
 }
 
 input:focus, select:focus{
@@ -52,21 +53,44 @@ button{
     border-radius:8px;
     cursor:pointer;
     color:white;
+    transition:0.2s;
 }
 
-.btn-primary{ background:var(--primary); }
-.btn-danger{ background:var(--danger); }
-.btn-edit{ background:#2563eb; }
+.btn-primary{
+    background:var(--primary);
+}
+
+.btn-danger{
+    background:var(--danger);
+}
+
+.btn-edit{
+    background:#2563eb;
+}
+.btn-secondary{ 
+    background:#6b7280; 
+}
 
 button:hover{
     opacity:0.9;
+    transform:translateY(-1px);
+}
+
+/* ===== BUTTON TAMBAH ===== */
+#btnTambah{
+    margin-bottom:20px;
 }
 
 /* ===== TABLE ===== */
+.table-wrapper{
+    overflow-x:auto;
+}
+
 table{
     width:100%;
     border-collapse:collapse;
     font-size:14px;
+    background:white;
 }
 
 thead{
@@ -75,7 +99,7 @@ thead{
 
 th, td{
     border:1px solid var(--border);
-    padding:10px;
+    padding:12px;
     text-align:center;
 }
 
@@ -87,7 +111,8 @@ tbody tr:hover{
 .modal{
     display:none;
     position:fixed;
-    top:0; left:0;
+    top:0;
+    left:0;
     width:100%;
     height:100%;
     background:rgba(0,0,0,0.4);
@@ -117,57 +142,76 @@ tbody tr:hover{
 
 /* ===== ANIMATION ===== */
 @keyframes fade{
-    from{opacity:0; transform:scale(0.95);}
-    to{opacity:1; transform:scale(1);}
+    from{
+        opacity:0;
+        transform:scale(0.95);
+    }
+    to{
+        opacity:1;
+        transform:scale(1);
+    }
 }
 </style>
 
 <div class="card">
 
-<h3>🏫 Manajemen Kelas</h3>
+    <h3>Manajemen Kelas</h3>
 
-<!-- FORM -->
-<div class="form-grid">
-    <input id="nama_kelas" type="number" placeholder="Nama Kelas">
-    <input id="total_siswa" type="number" placeholder="Total Siswa">
+    <!-- FORM -->
+    <div class="form-grid">
+        <input id="nama_kelas" type="number" placeholder="Nama Kelas">
+        <input id="total_siswa" type="number" placeholder="Total Siswa">
 
-    <select id="id_guru"></select>
-    <select id="id_tahun_ajaran"></select>
-</div>
+        <select id="id_guru"></select>
+        <select id="id_tahun_ajaran"></select>
+    </div>
 
-<button id="btnTambah" class="btn-primary">Tambah</button>
+    <!-- BUTTON -->
+    <button id="btnTambah" class="btn-primary">
+        Tambah
+    </button>
 
-<!-- TABLE -->
-<table>
-<thead>
-<tr>
-<th>Kelas</th>
-<th>Wali</th>
-<th>Tahun</th>
-<th>Total</th>
-<th>Aksi</th>
-</tr>
-</thead>
-<tbody id="data"></tbody>
-</table>
+    <!-- TABLE -->
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Kelas</th>
+                    <th>Wali</th>
+                    <th>Tahun</th>
+                    <th>Total</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+
+            <tbody id="data"></tbody>
+        </table>
+    </div>
 
 </div>
 
 <!-- MODAL EDIT -->
 <div id="modal" class="modal">
-<div class="modal-content">
 
-<h3>Edit Kelas</h3>
+    <div class="modal-content">
 
-<input id="edit_nama" type="number">
-<input id="edit_total" type="number">
-<select id="edit_guru"></select>
-<select id="edit_tahun"></select>
+        <h3>Edit Kelas</h3>
 
-<button id="btnUpdate" class="btn-primary">Update</button>
-<button id="btnTutup" class="btn-danger">Batal</button>
+        <input id="edit_nama" type="number">
+        <input id="edit_total" type="number">
 
-</div>
+        <select id="edit_guru"></select>
+        <select id="edit_tahun"></select>
+
+        <button id="btnUpdate" class="btn-primary">
+            Update
+        </button>
+
+        <button id="btnTutup" class="btn-secondary">Batal</button>
+
+
+    </div>
+
 </div>
 
 @endsection
@@ -177,6 +221,7 @@ tbody tr:hover{
 <script>
 
 let editId = null;
+
 
 // ================= INIT =================
 document.addEventListener('DOMContentLoaded', () => {
@@ -197,35 +242,64 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 // ================= LOAD GURU =================
+// Pastikan option kosong ada di dropdown edit
 function loadGuru(){
     fetch('/api/pegawai/guru-kelas')
-    .then(res=>res.json())
-    .then(res=>{
+    .then(res => res.json())
+    .then(res => {
 
-        let html = '<option value="">Pilih Wali Kelas</option>';
+        let html = '<option value="">-- Tanpa Wali Kelas --</option>';
 
-        res.data.forEach(g=>{
+        res.data.forEach(g => {
             html += `<option value="${g.id_guru}">${g.nama_guru}</option>`;
         });
 
-        id_guru.innerHTML = html;
+        id_guru.innerHTML   = html;
         edit_guru.innerHTML = html;
+    });
+}
+
+// Kirim null jika id_guru kosong
+function update(){
+
+    fetch('/api/kelas/' + editId, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            nama_kelas:       edit_nama.value,
+            total_siswa:      edit_total.value,
+            id_guru:          edit_guru.value || null,   
+            id_tahun_ajaran:  edit_tahun.value
+        })
+    })
+    .then(res => res.json())
+    .then(res => {
+        if(res.success){
+            tutup();
+            loadData();
+        } else {
+            alert(res.message);
+        }
     });
 }
 
 
 // ================= LOAD TAHUN =================
 function loadTahun(){
+
     fetch('/api/tahun-ajaran')
-    .then(res=>res.json())
-    .then(res=>{
+    .then(res => res.json())
+    .then(res => {
 
         let html = '<option value="">Pilih Tahun</option>';
 
-        res.data.forEach(t=>{
-            html += `<option value="${t.id_tahun_ajaran}">
-                ${t.periode} - ${t.semester}
-            </option>`;
+        res.data.forEach(t => {
+
+            html += `
+                <option value="${t.id_tahun_ajaran}">
+                    ${t.periode} - ${t.semester}
+                </option>
+            `;
         });
 
         id_tahun_ajaran.innerHTML = html;
@@ -236,37 +310,70 @@ function loadTahun(){
 
 // ================= LOAD DATA =================
 function loadData(){
-    fetch('/api/kelas')
-    .then(res=>res.json())
-    .then(res=>{
 
-        let html='';
+    fetch('/api/kelas')
+    .then(res => res.json())
+    .then(res => {
+
+        let html = '';
 
         if(!res.data.length){
-            html = `<tr><td colspan="5">Belum ada data</td></tr>`;
+
+            html = `
+                <tr>
+                    <td colspan="5">
+                        Belum ada data
+                    </td>
+                </tr>
+            `;
         }
 
-        res.data.forEach(k=>{
-            html+=`
-            <tr>
-                <td>${k.nama_kelas}</td>
-                <td>${k.pegawai?.nama_guru ?? '-'}</td>
-                <td>${k.tahun_ajaran?.periode ?? '-'}</td>
-                <td><b>${k.total_siswa}</b></td>
-                <td>
-                    <button class="btn-edit" data-id="${k.id_kelas}">Edit</button>
-                    <button class="btn-danger" data-id="${k.id_kelas}">Hapus</button>
-                </td>
-            </tr>`;
+        res.data.forEach(k => {
+
+            html += `
+                <tr>
+                    <td>${k.nama_kelas}</td>
+
+                    <td>
+                        ${k.pegawai?.nama_guru ?? '-'}
+                    </td>
+
+                    <td>
+                        ${k.tahun_ajaran?.periode ?? '-'}
+                    </td>
+
+                    <td>
+                        <b>${k.total_siswa}</b>
+                    </td>
+
+                    <td>
+                        <button 
+                            class="btn-edit" 
+                            data-id="${k.id_kelas}">
+                            Edit
+                        </button>
+
+                        <button 
+                            class="btn-danger" 
+                            data-id="${k.id_kelas}">
+                            Hapus
+                        </button>
+                    </td>
+                </tr>
+            `;
         });
 
         data.innerHTML = html;
 
-        document.querySelectorAll('.btn-edit').forEach(btn=>{
+        document.querySelectorAll('.btn-edit')
+        .forEach(btn => {
+
             btn.onclick = () => edit(btn.dataset.id);
         });
 
-        document.querySelectorAll('.btn-danger').forEach(btn=>{
+        document.querySelectorAll('.btn-danger')
+        .forEach(btn => {
+
             btn.onclick = () => hapus(btn.dataset.id);
         });
 
@@ -277,24 +384,36 @@ function loadData(){
 // ================= TAMBAH =================
 function tambah(){
 
-    if(!nama_kelas.value || !total_siswa.value){
+    if(
+        !nama_kelas.value ||
+        !total_siswa.value
+    ){
         alert('Isi semua data!');
         return;
     }
 
     fetch('/api/kelas',{
+
         method:'POST',
-        headers:{'Content-Type':'application/json'},
+
+        headers:{
+            'Content-Type':'application/json'
+        },
+
         body: JSON.stringify({
+
             nama_kelas: nama_kelas.value,
             total_siswa: total_siswa.value,
             id_guru: id_guru.value,
             id_tahun_ajaran: id_tahun_ajaran.value
         })
     })
-    .then(()=>{
-        nama_kelas.value='';
-        total_siswa.value='';
+
+    .then(() => {
+
+        nama_kelas.value = '';
+        total_siswa.value = '';
+
         loadData();
     });
 }
@@ -305,9 +424,11 @@ function edit(id){
 
     editId = id;
 
-    fetch('/api/kelas/'+id)
-    .then(res=>res.json())
-    .then(res=>{
+    fetch('/api/kelas/' + id)
+
+    .then(res => res.json())
+
+    .then(res => {
 
         let d = res.data;
 
@@ -316,24 +437,33 @@ function edit(id){
         edit_guru.value = d.id_guru;
         edit_tahun.value = d.id_tahun_ajaran;
 
-        modal.style.display='flex';
+        modal.style.display = 'flex';
     });
 }
 
 
 // ================= UPDATE =================
 function update(){
-    fetch('/api/kelas/'+editId,{
+
+    fetch('/api/kelas/' + editId,{
+
         method:'PUT',
-        headers:{'Content-Type':'application/json'},
+
+        headers:{
+            'Content-Type':'application/json'
+        },
+
         body: JSON.stringify({
+
             nama_kelas: edit_nama.value,
             total_siswa: edit_total.value,
             id_guru: edit_guru.value,
             id_tahun_ajaran: edit_tahun.value
         })
     })
-    .then(()=>{
+
+    .then(() => {
+
         tutup();
         loadData();
     });
@@ -342,16 +472,24 @@ function update(){
 
 // ================= HAPUS =================
 function hapus(id){
+
     if(confirm('Yakin hapus data?')){
-        fetch('/api/kelas/'+id,{method:'DELETE'})
-        .then(()=>loadData());
+
+        fetch('/api/kelas/' + id,{
+
+            method:'DELETE'
+
+        })
+
+        .then(() => loadData());
     }
 }
 
 
 // ================= TUTUP =================
 function tutup(){
-    modal.style.display='none';
+
+    modal.style.display = 'none';
 }
 
 </script>

@@ -6,11 +6,11 @@
 
 <div class="card">
 
-<h3 class="title">🏫 Data Kelas</h3>
+<h3 class="title">Data Kelas</h3>
 
 <!-- SEARCH -->
 <div class="toolbar">
-    <input id="search" placeholder="🔍 Cari kelas / wali...">
+    <input id="search" placeholder="Cari kelas / wali...">
 </div>
 
 <!-- FORM -->

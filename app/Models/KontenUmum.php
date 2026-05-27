@@ -19,7 +19,9 @@ class KontenUmum extends Model
         'email',
         'jam_operasional',
         'total_guru',
-        'total_siswa'
+        'total_siswa',
+        'gambar_login',
+        'gambar_beranda'
     ];
 
 }

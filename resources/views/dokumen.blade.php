@@ -39,6 +39,7 @@ input, select{
     border:1px solid var(--border);
     border-radius:8px;
     outline:none;
+    width:100%;
 }
 
 input:focus, select:focus{
@@ -58,21 +59,48 @@ button{
     border-radius:8px;
     cursor:pointer;
     color:white;
+    transition:0.2s;
 }
 
-.btn-primary{ background:var(--primary); }
-.btn-danger{ background:var(--danger); }
-.btn-edit{ background:#2563eb; }
+.btn-primary{
+    background:var(--primary);
+}
+
+.btn-danger{
+    background:var(--danger);
+}
+
+.btn-edit{
+    background:#2563eb;
+}
+
+.btn-secondary{
+    background:#64748b;
+}
 
 button:hover{
     opacity:0.9;
+    transform:translateY(-1px);
+}
+
+/* ===== BUTTON AREA ===== */
+.button-group{
+    display:flex;
+    gap:10px;
+    margin-bottom:20px;
+    flex-wrap:wrap;
 }
 
 /* ===== TABLE ===== */
+.table-wrapper{
+    overflow-x:auto;
+}
+
 table{
     width:100%;
     border-collapse:collapse;
     font-size:14px;
+    background:white;
 }
 
 thead{
@@ -113,33 +141,54 @@ tbody tr:hover{
     border:1px solid #fdba74;
     padding:10px;
     border-radius:10px;
-    margin-bottom:10px;
+    margin-bottom:15px;
     font-size:13px;
+    color:#9a3412;
 }
 </style>
 
 <div class="card">
 
-<h3>📂 Dokumen Administrasi</h3>
+<h3>Dokumen Administrasi</h3>
 
 <div id="editInfo" style="display:none;" class="edit-mode">
-    ✏️ Sedang edit dokumen...
+    Sedang edit dokumen...
 </div>
 
 <!-- FORM -->
 <div class="form-grid">
+
     <input id="judul" placeholder="Judul">
+
     <input type="file" id="file">
 
     <select id="tahun"></select>
 
     <input id="keterangan" placeholder="Keterangan">
+
 </div>
 
-<button id="btnSimpan" class="btn-primary">Upload</button>
+<!-- BUTTON -->
+<div class="button-group">
+
+    <button id="btnSimpan" class="btn-primary">
+        Upload
+    </button>
+
+    <button 
+        id="btnBatal" 
+        class="btn-secondary"
+        style="display:none;">
+        Batal
+    </button>
+
+</div>
 
 <!-- TABLE -->
+<div class="table-wrapper">
+
 <table>
+
 <thead>
 <tr>
 <th>Judul</th>
@@ -148,8 +197,12 @@ tbody tr:hover{
 <th>Aksi</th>
 </tr>
 </thead>
+
 <tbody id="data"></tbody>
+
 </table>
+
+</div>
 
 </div>
 
@@ -161,6 +214,7 @@ tbody tr:hover{
 
 let editId = null;
 
+
 // ================= INIT =================
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -169,21 +223,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('btnSimpan')
         .addEventListener('click', simpan);
+
+    document.getElementById('btnBatal')
+        .addEventListener('click', resetForm);
 });
 
 
 // ================= LOAD TAHUN =================
 function loadTahun(){
+
     fetch('/api/tahun-ajaran')
-    .then(res=>res.json())
-    .then(res=>{
 
-        let html='<option value="">Pilih Tahun</option>';
+    .then(res => res.json())
 
-        res.data.forEach(t=>{
-            html += `<option value="${t.id_tahun_ajaran}">
-                ${t.periode}
-            </option>`;
+    .then(res => {
+
+        let html = `
+            <option value="">
+                Pilih Tahun
+            </option>
+        `;
+
+        res.data.forEach(t => {
+
+            html += `
+                <option value="${t.id_tahun_ajaran}">
+                    ${t.periode}
+                </option>
+            `;
         });
 
         tahun.innerHTML = html;
@@ -193,48 +260,88 @@ function loadTahun(){
 
 // ================= LOAD DATA =================
 function loadData(){
-    fetch('/api/dokumen')
-    .then(res=>res.json())
-    .then(res=>{
 
-        let html='';
+    fetch('/api/dokumen')
+
+    .then(res => res.json())
+
+    .then(res => {
+
+        let html = '';
 
         if(!res.data.length){
-            html = `<tr><td colspan="4" class="empty">Belum ada dokumen</td></tr>`;
+
+            html = `
+                <tr>
+                    <td colspan="4" class="empty">
+                        Belum ada dokumen
+                    </td>
+                </tr>
+            `;
         }
 
-        res.data.forEach(d=>{
-            html+=`
+        res.data.forEach(d => {
+
+            html += `
             <tr>
-                <td>${d.judul_dokumen}</td>
+
+                <td>
+                    ${d.judul_dokumen}
+                </td>
+
                 <td>
                     ${
-                        d.gambar 
-                        ? `<a class="file-link" href="/uploads/${d.gambar}" target="_blank">📄 Lihat</a>`
+                        d.gambar
+                        ? `
+                        <a 
+                            class="file-link"
+                            href="/uploads/${d.gambar}"
+                            target="_blank">
+                            📄 Lihat
+                        </a>
+                        `
                         : '-'
                     }
                 </td>
-                <td>${d.tahun_ajaran?.periode ?? '-'}</td>
+
                 <td>
-                    <button class="btn-edit" data-id="${d.id_dokumen}">
+                    ${d.tahun_ajaran?.periode ?? '-'}
+                </td>
+
+                <td>
+
+                    <button 
+                        class="btn-edit"
+                        data-id="${d.id_dokumen}">
                         Edit
                     </button>
-                    <button class="btn-danger" data-id="${d.id_dokumen}">
+
+                    <button 
+                        class="btn-danger"
+                        data-id="${d.id_dokumen}">
                         Hapus
                     </button>
+
                 </td>
-            </tr>`;
+
+            </tr>
+            `;
         });
 
         data.innerHTML = html;
 
-        document.querySelectorAll('.btn-edit').forEach(btn=>{
+        document.querySelectorAll('.btn-edit')
+        .forEach(btn => {
+
             btn.onclick = () => edit(btn.dataset.id);
         });
 
-        document.querySelectorAll('.btn-danger').forEach(btn=>{
+        document.querySelectorAll('.btn-danger')
+        .forEach(btn => {
+
             btn.onclick = () => hapus(btn.dataset.id);
         });
+
     });
 }
 
@@ -243,6 +350,7 @@ function loadData(){
 function simpan(){
 
     if(!judul.value || !tahun.value){
+
         alert('Judul & Tahun wajib diisi');
         return;
     }
@@ -265,16 +373,23 @@ function simpan(){
 
     fetch(url,{
         method:'POST',
-        body: form
+        body:form
     })
-    .then(async res=>{
+
+    .then(async res => {
+
         const data = await res.json();
 
         if(data.success){
+
             alert('Berhasil');
+
             resetForm();
+
             loadData();
+
         }else{
+
             alert(data.message);
         }
     });
@@ -286,9 +401,11 @@ function edit(id){
 
     editId = id;
 
-    fetch('/api/dokumen/'+id)
-    .then(res=>res.json())
-    .then(res=>{
+    fetch('/api/dokumen/' + id)
+
+    .then(res => res.json())
+
+    .then(res => {
 
         let d = res.data;
 
@@ -297,7 +414,10 @@ function edit(id){
         keterangan.value = d.keterangan;
 
         btnSimpan.innerText = 'Update';
+
         editInfo.style.display = 'block';
+
+        btnBatal.style.display = 'inline-block';
     });
 }
 
@@ -310,17 +430,26 @@ function resetForm(){
     judul.value = '';
     keterangan.value = '';
     file.value = '';
+    tahun.value = '';
 
     btnSimpan.innerText = 'Upload';
+
     editInfo.style.display = 'none';
+
+    btnBatal.style.display = 'none';
 }
 
 
 // ================= HAPUS =================
 function hapus(id){
+
     if(confirm('Yakin hapus dokumen?')){
-        fetch('/api/dokumen/'+id,{method:'DELETE'})
-        .then(()=>loadData());
+
+        fetch('/api/dokumen/' + id,{
+            method:'DELETE'
+        })
+
+        .then(() => loadData());
     }
 }
 

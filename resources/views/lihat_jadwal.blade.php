@@ -93,7 +93,7 @@
 
 <div class="card">
 
-<h2>📅 Jadwal Mengajar</h2>
+<h2>Jadwal Mengajar</h2>
 
 <div id="jadwalContainer">Loading...</div>
 
@@ -146,7 +146,7 @@ function loadJadwal(){
 
             html += `
             <div class="jadwal-hari">
-                <div class="jadwal-title">📌 ${hari}</div>
+                <div class="jadwal-title"> ${hari}</div>
             `;
 
             hariMap[hari].forEach(j => {
@@ -155,17 +155,16 @@ function loadJadwal(){
                 <div class="jadwal-item">
 
                     <div class="jam">
-                        ⏰ ${j.jam_mulai} - ${j.jam_selesai}
+                        ${j.jam_mulai} - ${j.jam_selesai}
                     </div>
 
                     <div class="mapel">
-                        📘 ${j.mapel?.nama_mapel ?? '-'}
+                        ${j.mapel?.nama_mapel ?? '-'}
                     </div>
 
                     <div class="info">
-                        👨‍🏫 ${j.guru?.nama_guru ?? '-'} <br>
-                        🏫 ${j.kelas?.nama_kelas ?? '-'} <br>
-                        📅 ${j.tahun_ajaran?.periode ?? '-'}
+                        Kelas   : ${j.kelas?.nama_kelas ?? '-'} <br>
+                        Periode :${j.tahun_ajaran?.periode ?? '-'}
                     </div>
 
                 </div>

@@ -61,9 +61,24 @@ class KomponenPenilaianController extends Controller
         return response()->json(['success'=>true]);
     }
 
-    public function byGuru($id_guru)
+//     public function byGuru($id_guru)
+// {
+//     $data = \App\Models\KomponenPenilaian::with(['mapel','guru'])
+//         ->where('id_guru', $id_guru)
+//         ->get();
+
+//     return response()->json([
+//         'success'=>true,
+//         'data'=>$data
+//     ]);
+// }
+
+public function byGuru($id_guru)
 {
-    $data = \App\Models\KomponenPenilaian::with(['mapel','guru'])
+    $data = KomponenPenilaian::with([
+            'mapel',
+            'guru'
+        ])
         ->where('id_guru', $id_guru)
         ->get();
 
@@ -72,4 +87,6 @@ class KomponenPenilaianController extends Controller
         'data'=>$data
     ]);
 }
+
+
 }

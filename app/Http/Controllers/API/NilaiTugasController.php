@@ -45,7 +45,7 @@ class NilaiTugasController extends Controller
             'nilai' => 'required|numeric|min:0|max:100'
         ]);
 
-        // 🔥 update kalau sudah ada (tidak duplicate)
+        //  update kalau sudah ada (tidak duplicate)
         $data = NilaiTugas::updateOrCreate(
             [
                 'id_tugas' => $validated['id_tugas'],

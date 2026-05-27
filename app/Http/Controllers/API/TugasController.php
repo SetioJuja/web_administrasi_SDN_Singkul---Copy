@@ -12,7 +12,7 @@ class TugasController extends Controller
     // ================= GET SEMUA =================
     public function index(Request $request)
     {
-        // 🔥 ambil dari request (sementara)
+        //  ambil dari request (sementara)
         $id_guru = $request->id_guru;
 
         $data = Tugas::with('komponen.mapel')
@@ -28,44 +28,43 @@ class TugasController extends Controller
     }
 
     // ================= POST =================
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'id_komponen' => 'required',
-            'judul_tugas' => 'required|string',
-            'tanggal' => 'required|date'
-        ]);
+public function store(Request $request)
+{
+    $validated = $request->validate([
+        'id_komponen' => 'required',
+        'id_kelas' => 'required', // 
+        'judul_tugas' => 'required|string',
+        'tanggal' => 'required|date'
+    ]);
 
-        // 🔥 ambil komponen
-        $komponen = KomponenPenilaian::find($validated['id_komponen']);
+    $komponen = KomponenPenilaian::find($validated['id_komponen']);
 
-        if(!$komponen){
-            return response()->json([
-                'success'=>false,
-                'message'=>'Komponen tidak ditemukan'
-            ],404);
-        }
-
-        // 🔥 keamanan: cek guru
-        // (kalau nanti pakai auth tinggal ganti)
-        if($request->id_guru && $komponen->id_guru != $request->id_guru){
-            return response()->json([
-                'success'=>false,
-                'message'=>'Tidak boleh akses komponen ini'
-            ],403);
-        }
-
-        $data = Tugas::create([
-            'id_komponen' => $validated['id_komponen'],
-            'judul_tugas' => $validated['judul_tugas'],
-            'tanggal' => $validated['tanggal']
-        ]);
-
+    if(!$komponen){
         return response()->json([
-            'success'=>true,
-            'data'=>$data
-        ]);
+            'success'=>false,
+            'message'=>'Komponen tidak ditemukan'
+        ],404);
     }
+
+    if($request->id_guru && $komponen->id_guru != $request->id_guru){
+        return response()->json([
+            'success'=>false,
+            'message'=>'Tidak boleh akses komponen ini'
+        ],403);
+    }
+
+    $data = Tugas::create([
+        'id_komponen' => $validated['id_komponen'],
+        'id_kelas' => $validated['id_kelas'], // 
+        'judul_tugas' => $validated['judul_tugas'],
+        'tanggal' => $validated['tanggal']
+    ]);
+
+    return response()->json([
+        'success'=>true,
+        'data'=>$data
+    ]);
+}
 
     // ================= GET DETAIL =================
     public function show($id)
@@ -130,35 +129,33 @@ class TugasController extends Controller
         ]);
     }
 
-   public function byMapel($id_mapel, Request $request)
-{
-    $id_guru = $request->id_guru;
+    public function byMapel($id_mapel, Request $request)
+    {
+        $id_guru = $request->id_guru;
+        $id_kelas = $request->id_kelas; // 
 
-    \Log::info('=== BY MAPEL ===', [
-        'id_mapel'=>$id_mapel,
-        'id_guru'=>$id_guru
-    ]);
+        \Log::info('=== BY MAPEL ===', [
+            'id_mapel'=>$id_mapel,
+            'id_guru'=>$id_guru,
+            'id_kelas'=>$id_kelas
+        ]);
 
-    $query = \App\Models\Tugas::with('komponen.mapel')
-        ->whereHas('komponen', function($q) use ($id_mapel, $id_guru){
+        $query = Tugas::with('komponen.mapel')
+            ->where('id_kelas', $id_kelas) // 
+            ->whereHas('komponen', function($q) use ($id_mapel, $id_guru){
 
-            $q->where('id_mapel', $id_mapel);
+                $q->where('id_mapel', $id_mapel);
 
-            // 🔥 hanya filter guru kalau ada
-            if(!empty($id_guru)){
-                $q->where('id_guru', $id_guru);
-            }
-        });
+                if(!empty($id_guru)){
+                    $q->where('id_guru', $id_guru);
+                }
+            });
 
-    $data = $query->get();
+        $data = $query->get();
 
-    \Log::info('HASIL TUGAS', [
-        'total'=>$data->count()
-    ]);
-
-    return response()->json([
-        'success'=>true,
-        'data'=>$data
-    ]);
-}
+        return response()->json([
+            'success'=>true,
+            'data'=>$data
+        ]);
+    }
 }

@@ -19,12 +19,12 @@ class PresensiSiswaController extends Controller
             return [
                 'id_presensi_siswa' => $item->id_presensi_siswa,
 
-                // 🔥 INI YANG PALING PENTING
+                //  INI YANG PALING PENTING
                 'id_siswa' => $item->id_siswa,
 
                 'tanggal' => $item->tanggal,
 
-                // 🔥 ubah jadi ID bukan nama
+                //  ubah jadi ID 
                 'id_status' => $item->id_status,
 
                 // optional (boleh tetap ada)
@@ -51,7 +51,7 @@ class PresensiSiswaController extends Controller
             'id_status' => 'required'
         ]);
 
-        // 🔥 ambil tahun ajaran aktif
+        //  ambil tahun ajaran aktif
         $tahun = TahunAjaran::where('status', 'aktif')->first();
 
         if(!$tahun){
@@ -67,7 +67,7 @@ class PresensiSiswaController extends Controller
             'tahun' => $tahun->id_tahun_ajaran
         ]);
 
-        // 🔥 cek duplikat (lebih ketat)
+        //  cek duplikat (lebih ketat)
         $cek = PresensiSiswa::where('id_siswa', $request->id_siswa)
             ->where('tanggal', $request->tanggal)
             ->where('id_tahun_ajaran', $tahun->id_tahun_ajaran)
@@ -138,7 +138,7 @@ class PresensiSiswaController extends Controller
             'id_status' => 'required'
         ]);
 
-        // 🔥 ambil tahun ajaran aktif
+        //  ambil tahun ajaran aktif
         $tahun = TahunAjaran::where('status', 'aktif')->first();
 
         if(!$tahun){
@@ -148,7 +148,7 @@ class PresensiSiswaController extends Controller
             ],400);
         }
 
-        // 🔥 cek duplikat (kecuali dirinya sendiri)
+        //  cek duplikat (kecuali dirinya sendiri)
         $cek = PresensiSiswa::where('id_siswa', $request->id_siswa)
             ->where('tanggal', $request->tanggal)
             ->where('id_tahun_ajaran', $tahun->id_tahun_ajaran)

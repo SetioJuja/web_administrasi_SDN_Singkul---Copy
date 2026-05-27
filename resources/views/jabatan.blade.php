@@ -139,7 +139,7 @@ tbody tr:hover{
 
 <div class="card">
 
-<h3>🏷️ Manajemen Jabatan</h3>
+<h3>Manajemen Jabatan</h3>
 
 <!-- FORM -->
 <div class="form-inline">

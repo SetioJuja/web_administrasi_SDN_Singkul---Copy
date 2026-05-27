@@ -4,43 +4,289 @@
 
 @section('content')
 
+<style>
+
+:root{
+    --primary:#0a3d62;
+    --danger:#dc2626;
+    --border:#e5e7eb;
+    --bg:#f8fafc;
+}
+
+.title{
+    margin-bottom:20px;
+    color:var(--primary);
+}
+
+.toolbar{
+    margin-bottom:20px;
+}
+
+.toolbar input{
+    width:100%;
+    padding:12px 14px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    outline:none;
+    font-size:14px;
+}
+
+.toolbar input:focus{
+    border-color:var(--primary);
+}
+
+/* GRID */
+.card-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+    gap:18px;
+}
+
+/* CARD */
+.pegawai-card{
+    background:white;
+    border-radius:18px;
+    padding:20px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.05);
+    border:1px solid #f1f5f9;
+    transition:0.2s;
+}
+
+.pegawai-card:hover{
+    transform:translateY(-4px);
+}
+
+.card-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    margin-bottom:15px;
+}
+
+.nama{
+    font-size:18px;
+    font-weight:700;
+    color:#111827;
+}
+
+.nip{
+    color:#64748b;
+    font-size:13px;
+    margin-top:4px;
+}
+
+.badge-jk{
+    background:#dbeafe;
+    color:#1d4ed8;
+    padding:6px 10px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:600;
+}
+
+.role-wrap{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin-top:10px;
+}
+
+.role{
+    background:#e0f2fe;
+    color:#0369a1;
+    padding:5px 10px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:600;
+}
+
+.card-info{
+    margin-top:12px;
+    color:#475569;
+    font-size:14px;
+    line-height:1.6;
+}
+
+.action{
+    display:flex;
+    gap:10px;
+    margin-top:18px;
+}
+
+button{
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    padding:10px 14px;
+    color:white;
+    font-weight:600;
+}
+
+.btn-detail{
+    flex:1;
+    background:var(--primary);
+}
+
+.btn-edit{
+    background:#2563eb;
+}
+
+.btn-delete{
+    background:var(--danger);
+}
+
+button:hover{
+    opacity:0.9;
+}
+
+/* MODAL */
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.45);
+    justify-content:center;
+    align-items:center;
+    z-index:999;
+    padding:20px;
+}
+
+.modal-content{
+    background:white;
+    width:100%;
+    max-width:850px;
+    border-radius:20px;
+    padding:25px;
+    max-height:90vh;
+    overflow:auto;
+}
+
+.modal-title{
+    font-size:22px;
+    font-weight:700;
+    color:var(--primary);
+    margin-bottom:20px;
+}
+
+.detail-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:15px;
+}
+
+.detail-item{
+    background:var(--bg);
+    border-radius:14px;
+    padding:14px;
+}
+
+.label{
+    font-size:11px;
+    color:#64748b;
+    text-transform:uppercase;
+    margin-bottom:5px;
+}
+
+.value{
+    font-size:15px;
+    color:#111827;
+    word-break:break-word;
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+}
+
+.form-grid input,
+.form-grid select{
+    padding:10px 12px;
+    border:1px solid var(--border);
+    border-radius:10px;
+    outline:none;
+}
+
+.jabatan-box{
+    margin-top:15px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:15px;
+}
+
+.modal-action{
+    margin-top:20px;
+    display:flex;
+    gap:10px;
+}
+
+.btn-primary{
+    background:var(--primary);
+}
+
+.btn-close{
+    background:#64748b;
+}
+
+.empty{
+    text-align:center;
+    padding:50px;
+    color:#64748b;
+}
+
+</style>
+
 <div class="card">
 
-<h3 class="title">👨‍🏫 Data Pegawai</h3>
+<h3 class="title">Data Pegawai</h3>
 
-<!-- SEARCH -->
 <div class="toolbar">
-    <input type="text" id="search" placeholder="🔍 Cari nama / NIP / jabatan...">
+    <input type="text"
+           id="search"
+           placeholder="Cari nama / NIP / email / jabatan...">
 </div>
 
-<!-- TABLE -->
-<div class="table-wrap">
-<table>
-<thead>
-<tr>
-<th>Nama</th>
-<th>NIP</th>
-<th>JK</th>
-<th>TTL</th>
-<th>Kontak</th>
-<th>Jabatan</th>
-<th>Aksi</th>
-</tr>
-</thead>
-<tbody id="data"></tbody>
-</table>
-</div>
+<div id="data" class="card-grid"></div>
 
 </div>
 
-<!-- MODAL -->
-<div id="modal" class="modal">
+
+<!-- MODAL DETAIL -->
+<div id="detailModal" class="modal">
+
 <div class="modal-content">
 
-<h3>Edit Pegawai</h3>
+<div class="modal-title">
+    Detail Pegawai
+</div>
+
+<div id="detailContent"></div>
+
+<div class="modal-action">
+    <button class="btn-close"
+            onclick="tutupDetail()">
+
+        Tutup
+
+    </button>
+</div>
+
+</div>
+
+</div>
+
+
+<!-- MODAL EDIT -->
+<div id="modal" class="modal">
+
+<div class="modal-content">
+
+<h3 class="modal-title">Edit Pegawai</h3>
 
 <div class="form-grid">
+
     <input id="edit_nama" placeholder="Nama">
+
     <input id="edit_nip" placeholder="NIP">
 
     <select id="edit_jk">
@@ -49,23 +295,41 @@
     </select>
 
     <input id="edit_tempat" placeholder="Tempat Lahir">
+
     <input id="edit_tanggal" type="date">
 
     <input id="edit_alamat" placeholder="Alamat">
+
     <input id="edit_telp" placeholder="No Telepon">
 
     <input id="edit_email" placeholder="Email">
+
+    <input id="edit_golongan" placeholder="Golongan">
+
+    <input id="edit_pendidikan" placeholder="Pendidikan Tertinggi">
+
+    <input id="edit_status" placeholder="Status Kepegawaian">
+
     <input id="edit_masuk" type="date">
+
 </div>
 
 <div class="jabatan-box" id="edit_jabatan"></div>
 
 <div class="modal-action">
-    <button id="btnUpdate" class="btn-primary">Update</button>
-    <button id="btnTutup" class="btn-danger">Batal</button>
+
+    <button id="btnUpdate" class="btn-primary">
+        Update
+    </button>
+
+    <button id="btnTutup" class="btn-delete">
+        Batal
+    </button>
+
 </div>
 
 </div>
+
 </div>
 
 @endsection
@@ -73,138 +337,35 @@
 
 @section('script')
 
-<style>
-
-.title{ margin-bottom:15px; color:#0a3d62; }
-
-.toolbar{ margin-bottom:10px; }
-
-input{
-    padding:8px 10px;
-    border:1px solid #ddd;
-    border-radius:6px;
-    width:100%;
-}
-
-/* TABLE */
-.table-wrap{ overflow:auto; }
-
-table{
-    width:100%;
-    border-collapse:collapse;
-    font-size:14px;
-}
-
-th, td{
-    border:1px solid #eee;
-    padding:10px;
-    text-align:center;
-}
-
-th{
-    background:#0a3d62;
-    color:white;
-}
-
-tbody tr:hover{
-    background:#f9fafb;
-}
-
-/* ROLE */
-.role{
-    background:#dbeafe;
-    color:#1e40af;
-    padding:3px 8px;
-    border-radius:10px;
-    font-size:12px;
-    margin:2px;
-    display:inline-block;
-}
-
-/* BUTTON */
-button{
-    padding:6px 10px;
-    border:none;
-    border-radius:6px;
-    cursor:pointer;
-    color:white;
-}
-
-.btn-edit{background:#2563eb;}
-.btn-delete{background:#dc2626;}
-.btn-primary{background:#0a3d62;}
-.btn-danger{background:#dc2626;}
-
-button:hover{opacity:0.9;}
-
-/* MODAL */
-.modal{
-    display:none;
-    position:fixed;
-    top:0; left:0;
-    width:100%;
-    height:100%;
-    background:rgba(0,0,0,0.4);
-    justify-content:center;
-    align-items:center;
-}
-
-.modal-content{
-    background:white;
-    padding:20px;
-    border-radius:12px;
-    width:500px;
-}
-
-.form-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:8px;
-}
-
-.jabatan-box{
-    margin-top:10px;
-    border:1px solid #eee;
-    padding:10px;
-    border-radius:8px;
-}
-
-.modal-action{
-    margin-top:10px;
-    display:flex;
-    gap:10px;
-}
-
-</style>
-
-
 <script>
 
 let allData = [];
 let editId = null;
 let jabatanList = [];
 
-// ================= INIT =================
 document.addEventListener('DOMContentLoaded', init);
 
 async function init(){
+
     await loadJabatan();
     await loadData();
 
     search.oninput = filterData;
+
     btnUpdate.onclick = update;
+
     btnTutup.onclick = tutup;
 }
 
 
-// ================= FORMAT TANGGAL =================
+// ================= FORMAT =================
 function formatTanggal(tgl){
 
     if(!tgl) return '-';
 
     const d = new Date(tgl);
 
-    return d.toLocaleDateString('id-ID', {
+    return d.toLocaleDateString('id-ID',{
         day:'2-digit',
         month:'long',
         year:'numeric'
@@ -214,13 +375,18 @@ function formatTanggal(tgl){
 
 // ================= LOAD =================
 async function loadJabatan(){
+
     const res = await fetch('/api/jabatan');
+
     jabatanList = (await res.json()).data;
 }
 
 async function loadData(){
+
     const res = await fetch('/api/pegawai');
+
     allData = (await res.json()).data;
+
     render(allData);
 }
 
@@ -232,14 +398,19 @@ function filterData(){
 
     const filtered = allData.filter(p => {
 
-        let nama = p.nama_guru.toLowerCase();
-        let nip = p.nip.toLowerCase();
+        let nama = (p.nama_guru || '').toLowerCase();
+
+        let nip = (p.nip || '').toLowerCase();
+
+        let email = (p.email || '').toLowerCase();
+
         let jabatan = (p.jabatan || [])
             .map(j => j.nama_jabatan.toLowerCase())
             .join(' ');
 
         return nama.includes(keyword) ||
                nip.includes(keyword) ||
+               email.includes(keyword) ||
                jabatan.includes(keyword);
     });
 
@@ -251,7 +422,12 @@ function filterData(){
 function render(data){
 
     if(data.length === 0){
-        dataEl.innerHTML = `<tr><td colspan="7">Tidak ada data</td></tr>`;
+
+        dataEl.innerHTML = `
+        <div class="empty">
+            Tidak ada data pegawai
+        </div>`;
+
         return;
     }
 
@@ -259,36 +435,181 @@ function render(data){
 
     data.forEach(p => {
 
-        let roles = (p.jabatan || []).map(j =>
-            `<span class="role">${j.nama_jabatan}</span>`
-        ).join('');
+        let roles = (p.jabatan || []).map(j => `
+            <span class="role">
+                ${j.nama_jabatan}
+            </span>
+        `).join('');
 
         html += `
-        <tr>
-            <td>${p.nama_guru}</td>
-            <td>${p.nip}</td>
-            <td>${p.jenis_kelamin}</td>
 
-            <td>
-                <b>${p.tempat_lahir ?? '-'}</b><br>
-                <small>${formatTanggal(p.tanggal_lahir)}</small>
-            </td>
+        <div class="pegawai-card">
 
-            <td>
-                ${p.no_telepon ?? '-'}<br>
-                ${p.email ?? '-'}
-            </td>
+            <div class="card-top">
 
-            <td>${roles}</td>
+                <div>
 
-            <td>
-                <button class="btn-edit" onclick="edit(${p.id_guru})">Edit</button>
-                <button class="btn-delete" onclick="hapus(${p.id_guru})">Hapus</button>
-            </td>
-        </tr>`;
+                    <div class="nama">
+                        ${p.nama_guru ?? '-'}
+                    </div>
+
+                    <div class="nip">
+                        NIP : ${p.nip ?? '-'}
+                    </div>
+
+                </div>
+
+                <div class="badge-jk">
+                    ${p.jenis_kelamin ?? '-'}
+                </div>
+
+            </div>
+
+            <div class="card-info">
+
+                <div>
+                   Email : ${p.email ?? '-'}
+                </div>
+
+                <div>
+                   Telepon : ${p.no_telepon ?? '-'}
+                </div>
+
+                <div>
+                   Pendidikan : ${p.pendidikan_tertinggi ?? '-'}
+                </div>
+
+            </div>
+
+            <div class="role-wrap">
+                ${roles}
+            </div>
+
+            <div class="action">
+
+                <button class="btn-detail"
+                        onclick="showDetail(${p.id_guru})">
+
+                    Detail
+
+                </button>
+
+                <button class="btn-edit"
+                        onclick="edit(${p.id_guru})">
+
+                    Edit
+
+                </button>
+
+                <button class="btn-delete"
+                        onclick="hapus(${p.id_guru})">
+
+                    Hapus
+
+                </button>
+
+            </div>
+
+        </div>
+        `;
     });
 
     dataEl.innerHTML = html;
+}
+
+
+// ================= DETAIL =================
+function showDetail(id){
+
+    const p = allData.find(x => x.id_guru == id);
+
+    let roles = (p.jabatan || []).map(j => `
+        <span class="role">
+            ${j.nama_jabatan}
+        </span>
+    `).join('');
+
+    detailContent.innerHTML = `
+
+    <div class="detail-grid">
+
+        <div class="detail-item">
+            <div class="label">Nama</div>
+            <div class="value">${p.nama_guru ?? '-'}</div>
+        </div>
+
+        <div class="detail-item">
+            <div class="label">NIP</div>
+            <div class="value">${p.nip ?? '-'}</div>
+        </div>
+
+        <div class="detail-item">
+            <div class="label">Jenis Kelamin</div>
+            <div class="value">${p.jenis_kelamin ?? '-'}</div>
+        </div>
+
+        <div class="detail-item">
+            <div class="label">Tempat Lahir</div>
+            <div class="value">${p.tempat_lahir ?? '-'}</div>
+        </div>
+
+        <div class="detail-item">
+            <div class="label">Tanggal Lahir</div>
+            <div class="value">${formatTanggal(p.tanggal_lahir)}</div>
+        </div>
+
+        <div class="detail-item">
+            <div class="label">Alamat</div>
+            <div class="value">${p.alamat ?? '-'}</div>
+        </div>
+
+        <div class="detail-item">
+            <div class="label">No Telepon</div>
+            <div class="value">${p.no_telepon ?? '-'}</div>
+        </div>
+
+        <div class="detail-item">
+            <div class="label">Email</div>
+            <div class="value">${p.email ?? '-'}</div>
+        </div>
+
+        <div class="detail-item">
+            <div class="label">Golongan</div>
+            <div class="value">${p.golongan ?? '-'}</div>
+        </div>
+
+        <div class="detail-item">
+            <div class="label">Pendidikan Tertinggi</div>
+            <div class="value">${p.pendidikan_tertinggi ?? '-'}</div>
+        </div>
+
+        <div class="detail-item">
+            <div class="label">Status Kepegawaian</div>
+            <div class="value">${p.status_kepegawaian ?? '-'}</div>
+        </div>
+
+        <div class="detail-item">
+            <div class="label">Tanggal Masuk</div>
+            <div class="value">${formatTanggal(p.tanggal_masuk)}</div>
+        </div>
+
+        <div class="detail-item" style="grid-column:1/-1;">
+            <div class="label">Jabatan</div>
+
+            <div class="role-wrap">
+                ${roles || '-'}
+            </div>
+        </div>
+
+    </div>
+    `;
+
+    detailModal.style.display = 'flex';
+}
+
+function tutupDetail(){
+
+    detailModal.style.display = 'none';
 }
 
 
@@ -296,17 +617,21 @@ function render(data){
 function edit(id){
 
     editId = id;
+
     const p = allData.find(x => x.id_guru == id);
 
-    edit_nama.value = p.nama_guru;
-    edit_nip.value = p.nip;
-    edit_jk.value = p.jenis_kelamin;
-    edit_tempat.value = p.tempat_lahir;
-    edit_tanggal.value = p.tanggal_lahir?.split('T')[0];
+    edit_nama.value = p.nama_guru ?? '';
+    edit_nip.value = p.nip ?? '';
+    edit_jk.value = p.jenis_kelamin ?? '';
+    edit_tempat.value = p.tempat_lahir ?? '';
+    edit_tanggal.value = p.tanggal_lahir?.split('T')[0] ?? '';
     edit_alamat.value = p.alamat ?? '';
     edit_telp.value = p.no_telepon ?? '';
     edit_email.value = p.email ?? '';
-    edit_masuk.value = p.tanggal_masuk?.split('T')[0];
+    edit_golongan.value = p.golongan ?? '';
+    edit_pendidikan.value = p.pendidikan_tertinggi ?? '';
+    edit_status.value = p.status_kepegawaian ?? '';
+    edit_masuk.value = p.tanggal_masuk?.split('T')[0] ?? '';
 
     let html = '';
 
@@ -318,7 +643,10 @@ function edit(id){
 
         html += `
         <label>
-            <input type="checkbox" value="${j.id_jabatan}" ${checked}>
+            <input type="checkbox"
+                   value="${j.id_jabatan}"
+                   ${checked}>
+
             ${j.nama_jabatan}
         </label><br>`;
     });
@@ -332,13 +660,20 @@ function edit(id){
 // ================= UPDATE =================
 async function update(){
 
-    const selected = [...document.querySelectorAll('#edit_jabatan input:checked')]
+    const selected =
+        [...document.querySelectorAll('#edit_jabatan input:checked')]
         .map(el => el.value);
 
     const res = await fetch('/api/pegawai/' + editId, {
+
         method:'PUT',
-        headers:{'Content-Type':'application/json'},
+
+        headers:{
+            'Content-Type':'application/json'
+        },
+
         body: JSON.stringify({
+
             nama_guru: edit_nama.value,
             nip: edit_nip.value,
             jenis_kelamin: edit_jk.value,
@@ -347,6 +682,9 @@ async function update(){
             alamat: edit_alamat.value,
             no_telepon: edit_telp.value,
             email: edit_email.value,
+            golongan: edit_golongan.value,
+            pendidikan_tertinggi: edit_pendidikan.value,
+            status_kepegawaian: edit_status.value,
             tanggal_masuk: edit_masuk.value,
             jabatan: selected
         })
@@ -355,10 +693,15 @@ async function update(){
     const data = await res.json();
 
     if(data.success){
+
         alert('Berhasil update');
+
         tutup();
+
         loadData();
-    } else {
+
+    }else{
+
         alert(data.message);
     }
 }
@@ -366,16 +709,20 @@ async function update(){
 
 // ================= HAPUS =================
 function hapus(id){
-    if(confirm('Yakin hapus?')){
-        fetch('/api/pegawai/'+id,{method:'DELETE'})
-        .then(()=>loadData());
+
+    if(confirm('Yakin hapus data?')){
+
+        fetch('/api/pegawai/' + id,{
+            method:'DELETE'
+        }).then(()=>loadData());
     }
 }
 
 
 // ================= TUTUP =================
 function tutup(){
-    modal.style.display='none';
+
+    modal.style.display = 'none';
 }
 
 const dataEl = document.getElementById('data');

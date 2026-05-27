@@ -8,7 +8,7 @@ class TahunAjaran extends Model
 {
     protected $table = 'tahun_ajaran';
 
-    protected $primaryKey = 'id_tahun_ajaran'; // 🔥 WAJIB
+    protected $primaryKey = 'id_tahun_ajaran'; 
 
     public $incrementing = true;
     public $timestamps = false;

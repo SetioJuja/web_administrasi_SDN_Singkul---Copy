@@ -36,10 +36,17 @@ class PegawaiController extends Controller
             'alamat' => 'nullable',
             'no_telepon' => 'nullable',
             'email' => 'nullable|email',
+
+            // SESUAI MODEL
+            'golongan' => 'nullable|string',
+            'pendidikan_tertinggi' => 'required|string',
+            'status_kepegawaian' => 'required|string',
+
             'tanggal_masuk' => 'required|date',
             'password' => 'required|min:6',
+            'username' => 'required|min:6',
 
-            // 🔥 MULTI ROLE
+            // MULTI ROLE
             'jabatan' => 'required|array',
             'jabatan.*' => 'exists:jabatan,id_jabatan'
         ]);
@@ -49,7 +56,7 @@ class PegawaiController extends Controller
         // simpan pegawai
         $pegawai = Pegawai::create($validated);
 
-        // 🔥 SIMPAN ROLE
+        // SIMPAN ROLE
         $pegawai->jabatan()->sync($request->jabatan);
 
         return response()->json([
@@ -102,10 +109,17 @@ class PegawaiController extends Controller
             'alamat' => 'nullable',
             'no_telepon' => 'nullable',
             'email' => 'nullable|email',
+
+            // SESUAI MODEL
+            'golongan' => 'nullable|string',
+            'pendidikan_tertinggi' => 'required|string',
+            'status_kepegawaian' => 'required|string',
+            'username' => 'required|min:6',
+
             'tanggal_masuk' => 'required|date',
             'password' => 'nullable|min:6',
 
-            // 🔥 MULTI ROLE
+            // MULTI ROLE
             'jabatan' => 'required|array',
             'jabatan.*' => 'exists:jabatan,id_jabatan'
         ]);
@@ -119,7 +133,7 @@ class PegawaiController extends Controller
 
         $pegawai->update($validated);
 
-        // 🔥 UPDATE ROLE
+        // UPDATE ROLE
         $pegawai->jabatan()->sync($request->jabatan);
 
         return response()->json([
@@ -132,24 +146,47 @@ class PegawaiController extends Controller
     /**
      * DELETE /api/pegawai/{id}
      */
-    public function destroy($id)
-    {
-        $pegawai = Pegawai::find($id);
+public function destroy($id)
+{
+    $pegawai = Pegawai::find($id);
 
-        if (!$pegawai) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Data tidak ditemukan'
-            ], 404);
-        }
-
-        $pegawai->delete();
+    if (!$pegawai) {
 
         return response()->json([
-            'success' => true,
-            'message' => 'Data berhasil dihapus'
-        ]);
+            'success' => false,
+            'message' => 'Data tidak ditemukan'
+        ], 404);
     }
+
+    // cek presensi guru
+    if ($pegawai->presensiGuru()->exists()) {
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Pegawai tidak dapat dihapus karena memiliki data presensi'
+        ], 400);
+    }
+
+    // cek jadwal mengajar
+    if ($pegawai->jadwalMengajar()->exists()) {
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Pegawai tidak dapat dihapus karena memiliki jadwal mengajar'
+        ], 400);
+    }
+
+    // hapus relasi pivot jabatan
+    $pegawai->jabatan()->detach();
+
+    // hapus pegawai
+    $pegawai->delete();
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Data pegawai berhasil dihapus'
+    ]);
+}
 
     /**
      * LOGIN (MULTI ROLE)
@@ -157,18 +194,18 @@ class PegawaiController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'nip' => 'required',
+            'username' => 'required',
             'password' => 'required'
         ]);
 
         $pegawai = Pegawai::with('jabatan')
-            ->where('nip', $request->nip)
+            ->where('username', $request->username)
             ->first();
 
         if (!$pegawai || !Hash::check($request->password, $pegawai->password)) {
             return response()->json([
                 'success' => false,
-                'message' => 'NIP atau password salah'
+                'message' => 'username atau password salah'
             ], 401);
         }
 
@@ -178,10 +215,10 @@ class PegawaiController extends Controller
             'data' => [
                 'id' => $pegawai->id_guru,
                 'nama' => $pegawai->nama_guru,
-                'nip' => $pegawai->nip,
+                'username' => $pegawai->username,
 
-                // 🔥 INI KUNCI DASHBOARD
-                'roles' => $pegawai->jabatan->pluck('nama_jabatan')
+                // KUNCI DASHBOARD
+                'roles' => $pegawai->jabatan->pluck('nama_jabatan'),
             ]
         ]);
     }
@@ -212,6 +249,4 @@ class PegawaiController extends Controller
             'data' => $data
         ]);
     }
-
-    
 }

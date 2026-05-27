@@ -126,13 +126,17 @@ tbody tr:hover{ background:#f9fafb; }
     display:none;
 }
 
+.btn-secondary{
+    background:#6b7280;
+}
+
 </style>
 
 <div class="card">
 
-<h3>📢 Pengumuman</h3>
+<h3>Pengumuman</h3>
 
-<div id="editInfo" class="edit-info">✏️ Mode Edit</div>
+<div id="editInfo" class="edit-info">Mode Edit</div>
 
 <!-- FORM -->
 <div class="form-grid">
@@ -174,8 +178,7 @@ tbody tr:hover{ background:#f9fafb; }
 <input type="file" id="edit_gambar">
 
 <button id="btnUpdate" class="btn-primary">Update</button>
-<button id="btnTutup" class="btn-danger">Batal</button>
-
+<button id="btnTutup" class="btn-secondary">Batal</button>
 </div>
 </div>
 

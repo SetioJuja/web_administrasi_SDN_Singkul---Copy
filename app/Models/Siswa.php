@@ -20,7 +20,8 @@ class Siswa extends Model
         'nama_ayah',
         'nama_ibu',
         'no_telepon',
-        'id_kelas'
+        'id_kelas',
+        'penghasilan'
     ];
 
     // RELASI KE KELAS

@@ -107,7 +107,7 @@ class JabatanController extends Controller
             ], 404);
         }
 
-        // 🔥 CEK RELASI PIVOT
+        // CEK RELASI PIVOT
         if ($data->pegawai()->count() > 0) {
             return response()->json([
                 'success' => false,

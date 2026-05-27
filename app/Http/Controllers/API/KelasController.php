@@ -33,13 +33,13 @@ class KelasController extends Controller
             $validated = $request->validate([
                 'nama_kelas' => 'required|integer',
                 'total_siswa' => 'required|integer',
-                'id_guru' => 'required|exists:pegawai,id_guru',
+                'id_guru' => 'nullable|exists:pegawai,id_guru',
                 'id_tahun_ajaran' => 'required|exists:tahun_ajaran,id_tahun_ajaran'
             ]);
 
             Log::info('VALIDASI OK', $validated);
 
-            // 🔥 CEK GURU
+            //  CEK GURU
             $pegawai = Pegawai::with('jabatan')->find($validated['id_guru']);
 
             if (!$pegawai || !$pegawai->hasRole('Kelas')) {
@@ -54,7 +54,7 @@ class KelasController extends Controller
                 ], 400);
             }
 
-            // 🔥 CEK SUDAH JADI WALI
+            //  CEK SUDAH JADI WALI
             if (Kelas::where('id_guru', $validated['id_guru'])->exists()) {
                 return response()->json([
                     'success' => false,
@@ -62,7 +62,7 @@ class KelasController extends Controller
                 ], 400);
             }
 
-            // 🔥 SIMPAN
+            //  SIMPAN
             $data = Kelas::create($validated);
 
             Log::info('BERHASIL SIMPAN KELAS', [
@@ -107,24 +107,26 @@ class KelasController extends Controller
      * PUT /api/kelas/{id}
      */
     public function update(Request $request, $id)
-    {
-        $data = Kelas::find($id);
+{
+    $data = Kelas::find($id);
 
-        if (!$data) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Data tidak ditemukan'
-            ], 404);
-        }
+    if (!$data) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Data tidak ditemukan'
+        ], 404);
+    }
 
-        $validated = $request->validate([
-            'nama_kelas' => 'required|integer',
-            'total_siswa' => 'required|integer',
-            'id_guru' => 'required|exists:pegawai,id_guru',
-            'id_tahun_ajaran' => 'required|exists:tahun_ajaran,id_tahun_ajaran'
-        ]);
+    $validated = $request->validate([
+        'nama_kelas'       => 'required|integer',
+        'total_siswa'      => 'required|integer',
+        'id_guru'          => 'nullable|exists:pegawai,id_guru',
+        'id_tahun_ajaran'  => 'required|exists:tahun_ajaran,id_tahun_ajaran'
+    ]);
 
-        // 🔥 CEK ROLE
+    // Cek role hanya jika id_guru diisi
+    if (!empty($validated['id_guru'])) {
+
         $pegawai = Pegawai::with('jabatan')->find($validated['id_guru']);
 
         if (!$pegawai || !$pegawai->hasRole('Kelas')) {
@@ -134,25 +136,25 @@ class KelasController extends Controller
             ], 400);
         }
 
-        // 🔥 CEK DUPLIKAT (kecuali dirinya sendiri)
+        // Cek duplikat, kecuali dirinya sendiri
         if (Kelas::where('id_guru', $validated['id_guru'])
             ->where('id_kelas', '!=', $id)
             ->exists()) {
-
             return response()->json([
                 'success' => false,
-                'message' => 'Guru sudah menjadi wali kelas'
+                'message' => 'Guru sudah menjadi wali kelas lain'
             ], 400);
         }
-
-        $data->update($validated);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Berhasil update',
-            'data' => $data
-        ]);
     }
+
+    $data->update($validated);
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Berhasil update',
+        'data'    => $data->load(['pegawai', 'tahunAjaran'])
+    ]);
+}
 
     /**
      * DELETE /api/kelas/{id}

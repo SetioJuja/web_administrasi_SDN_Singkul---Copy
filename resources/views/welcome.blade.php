@@ -4,373 +4,480 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SD Negeri Singkul — Sistem Administrasi</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
+/* ── RESET & BASE ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --navy:       #05122b;
-  --navy2:      #0b2150;
-  --blue:       #1547c0;
-  --blue-mid:   #1e5ccc;
-  --blue-soft:  #4a85e8;
-  --sky:        #c8dcff;
-  --pale:       #f0f5ff;
+  --navy:       #0f2057;
+  --blue:       #1a56db;
+  --blue-mid:   #2563eb;
+  --blue-soft:  #60a5fa;
+  --sky:        #dbeafe;
+  --pale:       #f8faff;
   --white:      #ffffff;
-  --ink:        #07152b;
-  --muted:      #4d6a8a;
-  --line:       rgba(20,72,192,0.12);
-  --gold:       #e8b84b;
+  --ink:        #0f172a;
+  --slate:      #475569;
+  --muted:      #64748b;
+  --line:       rgba(37,99,235,0.10);
+  --gold:       #f59e0b;
+  --gold-light: #fef3c7;
+  --green:      #059669;
 }
 
 html { scroll-behavior: smooth; }
-body { font-family: 'DM Sans', sans-serif; background: var(--pale); color: var(--ink); overflow-x: hidden; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--pale);
+  color: var(--ink);
+  overflow-x: hidden;
+}
 
-/* ── TOPBAR ── */
-.topbar {
-  height: 3px;
-  background: linear-gradient(90deg, var(--navy), var(--blue-mid) 40%, var(--gold) 70%, var(--sky));
+/* ── ACCENT BAR ── */
+.accent-bar {
+  height: 4px;
+  background: linear-gradient(90deg, var(--blue) 0%, var(--blue-soft) 50%, var(--gold) 100%);
 }
 
 /* ── NAV ── */
 nav {
-  position: fixed; top: 3px; left: 0; right: 0; z-index: 200;
+  position: fixed; top: 4px; left: 0; right: 0; z-index: 200;
   display: flex; align-items: center; justify-content: space-between;
-  padding: 0 56px; height: 64px;
-  background: rgba(5,18,43,0.92);
-  backdrop-filter: blur(18px);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  padding: 0 60px; height: 62px;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(37,99,235,0.08);
+  box-shadow: 0 1px 20px rgba(15,32,87,0.06);
 }
 
 .nav-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
 .nav-shield {
-  width: 38px; height: 38px; border-radius: 10px;
-  background: var(--blue);
+  width: 36px; height: 36px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--blue), #3b82f6);
   display: flex; align-items: center; justify-content: center;
-  border: 1px solid rgba(255,255,255,0.15);
+  box-shadow: 0 2px 8px rgba(37,99,235,0.3);
+  overflow: hidden; flex-shrink: 0;
 }
-.nav-shield svg { width: 18px; height: 18px; }
-.nav-name { font-family: 'Playfair Display', serif; font-size: 17px; color: #fff; font-weight: 700; }
+.nav-shield svg { width: 17px; height: 17px; }
+.nav-shield img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.nav-shield.has-img { background: none; box-shadow: 0 2px 8px rgba(37,99,235,0.15); padding: 0; }
+.nav-name { font-family: 'Lora', serif; font-size: 16px; color: var(--ink); font-weight: 700; }
+.nav-sub  { font-size: 10px; color: var(--muted); font-weight: 500; letter-spacing: 0.5px; display: block; margin-top: -2px; }
+
 .nav-login {
   display: inline-flex; align-items: center; gap: 8px;
-  background: var(--white); color: var(--blue);
-  padding: 8px 22px; border-radius: 100px;
+  background: var(--blue); color: white;
+  padding: 9px 22px; border-radius: 100px;
   font-size: 13px; font-weight: 600; text-decoration: none;
-  transition: opacity 0.15s;
+  transition: all 0.2s; box-shadow: 0 2px 10px rgba(37,99,235,0.25);
 }
-.nav-login:hover { opacity: 0.88; }
+.nav-login:hover { background: var(--navy); transform: translateY(-1px); }
+.nav-login svg { width: 14px; height: 14px; }
 
 /* ── HERO ── */
 .hero {
-  margin-top: 67px;
-  min-height: 600px;
-  background: var(--navy);
-  position: relative; overflow: hidden;
-  display: flex; align-items: center;
+  margin-top: 66px;
+  position: relative;
+  overflow: hidden;
+  padding: 80px 60px 100px;
+  background: var(--pale);
 }
 
-.hero-geo {
-  position: absolute; inset: 0; pointer-events: none;
+/* Orbs */
+.hero-orb-right {
+  position: absolute; top: -120px; right: -100px;
+  width: 600px; height: 600px; border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(37,99,235,0.07) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
 }
-
-/* Big circle top-right */
-.hero-geo::before {
-  content: '';
-  position: absolute; top: -200px; right: -160px;
-  width: 560px; height: 560px; border-radius: 50%;
-  border: 1px solid rgba(200,220,255,0.09);
-}
-.hero-geo::after {
-  content: '';
-  position: absolute; top: -120px; right: -80px;
-  width: 380px; height: 380px; border-radius: 50%;
-  border: 1px solid rgba(200,220,255,0.13);
-}
-
-.hero-dot-grid {
-  position: absolute; inset: 0;
-  background-image: radial-gradient(circle, rgba(255,255,255,0.045) 1px, transparent 1px);
-  background-size: 28px 28px;
-}
-
-.hero-glow {
-  position: absolute; top: -60px; right: -60px;
-  width: 520px; height: 400px;
-  background: radial-gradient(ellipse at top right, rgba(30,92,204,0.35) 0%, transparent 65%);
-}
-
-.hero-line-left {
-  position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
-  background: linear-gradient(to bottom, transparent, var(--gold) 40%, var(--blue-soft) 70%, transparent);
+.hero-orb-left {
+  position: absolute; bottom: -80px; left: -80px;
+  width: 400px; height: 400px; border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(245,158,11,0.06) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
 }
 
 .hero-inner {
+  max-width: 1100px; margin: 0 auto;
   position: relative; z-index: 2;
-  max-width: 1100px; margin: 0 auto; width: 100%;
-  padding: 88px 56px 108px;
-  display: grid; grid-template-columns: 1.1fr 1fr; gap: 64px; align-items: center;
+  display: grid; grid-template-columns: 1fr 1.05fr; gap: 64px; align-items: center;
 }
 
-.hero-badge {
-  display: inline-flex; align-items: center; gap: 8px;
-  border: 1px solid rgba(232,184,75,0.45);
-  background: rgba(232,184,75,0.08);
-  color: var(--gold); font-size: 11px; font-weight: 600;
-  letter-spacing: 1.5px; text-transform: uppercase;
-  padding: 5px 14px; border-radius: 4px; margin-bottom: 28px;
+/* LEFT: text */
+.hero-left {}
+
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: var(--sky); color: var(--blue);
+  font-size: 11px; font-weight: 700; letter-spacing: 1.2px;
+  text-transform: uppercase; padding: 5px 14px; border-radius: 100px;
+  margin-bottom: 24px; border: 1px solid rgba(37,99,235,0.15);
 }
-.hero-badge-dot { width: 5px; height: 5px; background: var(--gold); border-radius: 50%; }
+.hero-tag-dot { width: 6px; height: 6px; background: var(--blue); border-radius: 50%; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
 
 .hero h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: 50px; font-weight: 800;
-  color: #fff; line-height: 1.1; letter-spacing: -0.5px;
-  margin-bottom: 22px;
+  font-family: 'Lora', serif;
+  font-size: 46px; font-weight: 700;
+  color: var(--ink); line-height: 1.18; letter-spacing: -0.5px;
+  margin-bottom: 18px;
 }
-.hero h1 em {
-  font-style: normal;
-  color: var(--sky);
-}
+.hero h1 .accent  { color: var(--blue); }
+.hero h1 .accent2 { color: var(--gold); }
 
 .hero-desc {
-  font-size: 15px; font-weight: 300;
-  color: rgba(255,255,255,0.55); line-height: 1.9;
-  max-width: 420px; margin-bottom: 40px;
+  font-size: 15px; font-weight: 400;
+  color: var(--slate); line-height: 1.85;
+  max-width: 400px; margin-bottom: 32px;
 }
 
-.hero-cta { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
-
-.btn-primary {
-  display: inline-flex; align-items: center; gap: 10px;
-  background: var(--white); color: var(--navy);
-  padding: 13px 28px; border-radius: 100px;
-  font-size: 14px; font-weight: 600; text-decoration: none;
-  transition: transform 0.15s;
+/* STAT CARDS below text */
+.stat-grid {
+  display: flex; gap: 14px; flex-wrap: wrap;
+  margin-bottom: 32px;
 }
-.btn-primary:hover { transform: translateY(-2px); }
-.btn-primary svg { width: 14px; height: 14px; }
-
-.btn-ghost {
-  display: inline-flex; align-items: center; gap: 8px;
-  color: rgba(255,255,255,0.55); font-size: 14px; font-weight: 400;
-  text-decoration: none; transition: color 0.2s;
+.stat-card {
+  background: var(--white);
+  border: 1px solid rgba(37,99,235,0.12);
+  border-radius: 16px;
+  padding: 14px 18px;
+  display: flex; align-items: center; gap: 12px;
+  transition: all 0.25s;
+  box-shadow: 0 2px 10px rgba(15,32,87,0.05);
+  min-width: 160px;
 }
-.btn-ghost:hover { color: rgba(255,255,255,0.9); }
-.btn-ghost::after { content: '↓'; }
-
-/* STAT PANEL */
-.stat-panel {
-  display: flex; flex-direction: column; gap: 16px;
+.stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(15,32,87,0.10); border-color: rgba(37,99,235,0.2); }
+.stat-icon {
+  width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
 }
-
-.stat-row {
-  background: rgba(255,255,255,0.055);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 16px; padding: 24px 28px;
-  display: flex; align-items: center; gap: 20px;
-  transition: background 0.2s;
-}
-.stat-row:hover { background: rgba(255,255,255,0.09); }
-
-.stat-icon-box {
-  width: 46px; height: 46px; border-radius: 12px;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.12);
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-}
-.stat-icon-box svg { width: 20px; height: 20px; }
-
-.stat-label { font-size: 12px; color: rgba(255,255,255,0.38); margin-bottom: 4px; }
+.stat-icon.blue  { background: linear-gradient(135deg, #eff6ff, #dbeafe); }
+.stat-icon.green { background: linear-gradient(135deg, #ecfdf5, #d1fae5); }
+.stat-icon svg { width: 20px; height: 20px; }
+.stat-label  { font-size: 11px; color: var(--muted); font-weight: 500; margin-bottom: 4px; }
 .stat-number {
-  font-family: 'Playfair Display', serif;
-  font-size: 32px; font-weight: 700; color: #fff; line-height: 1;
+  font-family: 'Lora', serif;
+  font-size: 24px; font-weight: 600; color: var(--ink); line-height: 1;
+}
+.stat-trend {
+  display: none; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 600; color: var(--green);
+  background: #ecfdf5; padding: 2px 8px; border-radius: 20px; margin-top: 5px;
 }
 
-/* shimmer */
+/* CTA */
+.hero-cta { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 9px;
+  background: var(--blue); color: white;
+  padding: 13px 26px; border-radius: 100px;
+  font-size: 14px; font-weight: 600; text-decoration: none;
+  transition: all 0.2s; box-shadow: 0 4px 14px rgba(37,99,235,0.3);
+}
+.btn-primary:hover { background: var(--navy); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37,99,235,0.35); }
+.btn-primary svg { width: 15px; height: 15px; }
+.btn-outline {
+  display: inline-flex; align-items: center; gap: 8px;
+  border: 1.5px solid rgba(37,99,235,0.25); color: var(--blue);
+  padding: 12px 22px; border-radius: 100px;
+  font-size: 14px; font-weight: 500; text-decoration: none;
+  transition: all 0.2s; background: white;
+}
+.btn-outline:hover { border-color: var(--blue); background: var(--sky); }
+.btn-outline svg { width: 14px; height: 14px; }
+
+/* ── HERO IMAGE CARD (RIGHT) ── */
+.hero-right {
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* Floating decoration rings */
+.hero-right::before {
+  content: '';
+  position: absolute;
+  inset: -20px;
+  border-radius: 32px;
+  background: linear-gradient(135deg, rgba(37,99,235,0.08) 0%, rgba(245,158,11,0.06) 100%);
+  z-index: 0;
+}
+
+.hero-img-frame {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  border-radius: 24px;
+  overflow: hidden;
+
+  /* Clean border */
+  border: 1.5px solid rgba(255,255,255,0.9);
+  box-shadow:
+    0 0 0 1px rgba(37,99,235,0.10),
+    0 20px 60px rgba(15,32,87,0.14),
+    0 4px 16px rgba(15,32,87,0.08);
+
+  background: #e8f0fe; /* fallback */
+  aspect-ratio: 4 / 3;
+}
+
+.hero-img-frame img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  display: block;
+  transition: transform 0.6s ease;
+}
+.hero-img-frame:hover img { transform: scale(1.03); }
+
+/* Overlay bawah dengan info badge */
+.hero-img-badge {
+  position: absolute;
+  bottom: 16px; left: 16px; right: 16px;
+  background: rgba(255,255,255,0.90);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.9);
+  border-radius: 14px;
+  padding: 12px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  box-shadow: 0 4px 20px rgba(15,32,87,0.12);
+  z-index: 2;
+}
+.badge-left { display: flex; align-items: center; gap: 10px; }
+.badge-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34,197,94,0.2);
+  animation: pulse-green 2s infinite;
+  flex-shrink: 0;
+}
+@keyframes pulse-green { 0%,100%{box-shadow:0 0 0 3px rgba(34,197,94,0.2)} 50%{box-shadow:0 0 0 5px rgba(34,197,94,0.1)} }
+.badge-text { font-size: 12px; font-weight: 600; color: var(--ink); }
+.badge-sub  { font-size: 10.5px; color: var(--muted); font-weight: 400; }
+.badge-year {
+  font-family: 'Lora', serif;
+  font-size: 16px; font-weight: 700;
+  color: var(--blue);
+}
+
+/* Corner accent dots */
+.hero-img-corner {
+  position: absolute;
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+.hero-img-corner.tr {
+  top: -20px; right: -20px;
+  background: radial-gradient(ellipse, rgba(245,158,11,0.15) 0%, transparent 70%);
+}
+.hero-img-corner.bl {
+  bottom: -20px; left: -20px;
+  background: radial-gradient(ellipse, rgba(37,99,235,0.12) 0%, transparent 70%);
+}
+
+/* ── Skeleton ── */
 @keyframes shimmer {
-  0%   { background-position: -300px 0; }
-  100% { background-position: 300px 0; }
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
 }
 .skel {
-  display: inline-block; width: 64px; height: 30px; border-radius: 6px;
-  background: linear-gradient(90deg, rgba(255,255,255,0.07) 25%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.07) 75%);
-  background-size: 300px 100%; animation: shimmer 1.5s infinite;
+  display: inline-block; height: 30px; border-radius: 8px;
+  background: linear-gradient(90deg, #e8eef7 25%, #d5dff0 50%, #e8eef7 75%);
+  background-size: 400px 100%; animation: shimmer 1.6s infinite;
 }
-.skel-line {
-  display: block; height: 13px; border-radius: 4px; margin-bottom: 8px;
-  background: linear-gradient(90deg, rgba(29,92,204,0.07) 25%, rgba(29,92,204,0.14) 50%, rgba(29,92,204,0.07) 75%);
-  background-size: 300px 100%; animation: shimmer 1.5s infinite;
+.skel-sm {
+  display: block; height: 11px; border-radius: 4px; margin-bottom: 7px;
+  background: linear-gradient(90deg, #e8eef7 25%, #d5dff0 50%, #e8eef7 75%);
+  background-size: 400px 100%; animation: shimmer 1.6s infinite;
 }
+/* Image skeleton */
+.img-skeleton {
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, #e8eef7 25%, #dce6f5 50%, #e8eef7 75%);
+  background-size: 600px 100%;
+  animation: shimmer 1.8s infinite;
+  display: flex; align-items: center; justify-content: center;
+}
+.img-skeleton svg { width: 48px; height: 48px; opacity: 0.2; }
 
-/* HERO WAVE */
-.hero-wave { position: absolute; bottom: -2px; left: 0; right: 0; z-index: 1; }
+/* ── MAIN CONTENT ── */
+.main { max-width: 1100px; margin: 0 auto; padding: 96px 60px 104px; }
 
-/* ── MAIN ── */
-.main { max-width: 1100px; margin: 0 auto; padding: 90px 56px 100px; }
-
-.section-head { text-align: center; margin-bottom: 56px; }
+.section-head { text-align: center; margin-bottom: 60px; }
 .section-eyebrow {
-  display: inline-block; font-size: 11px; font-weight: 600;
-  letter-spacing: 2.5px; text-transform: uppercase;
-  color: var(--blue); margin-bottom: 10px;
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--blue); margin-bottom: 12px;
+}
+.section-eyebrow::before, .section-eyebrow::after {
+  content: ''; display: block; width: 22px; height: 1.5px; background: var(--blue-soft); opacity: 0.5;
 }
 .section-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 34px; font-weight: 700; color: var(--ink);
-  letter-spacing: -0.3px; margin-bottom: 12px;
+  font-family: 'Lora', serif;
+  font-size: 36px; font-weight: 700; color: var(--ink);
+  letter-spacing: -0.4px; margin-bottom: 14px;
 }
-.section-sub { font-size: 15px; color: var(--muted); line-height: 1.8; max-width: 480px; margin: 0 auto; }
+.section-sub { font-size: 15px; color: var(--muted); line-height: 1.85; max-width: 460px; margin: 0 auto; }
 
-/* ── VISI MISI GRID ── */
-.vm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+/* ── FEATURE STRIP ── */
+.feature-strip {
+  background: linear-gradient(135deg, var(--navy) 0%, #1e3a8a 100%);
+  border-radius: 28px; padding: 52px 56px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px;
+  position: relative; overflow: hidden;
+  margin-bottom: 80px;
+}
+.feature-strip::before {
+  content: '';
+  position: absolute; top: -60px; right: -60px;
+  width: 300px; height: 300px; border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(96,165,250,0.15), transparent 70%);
+}
+.feature-item { position: relative; z-index: 1; }
+.feature-num {
+  font-family: 'Lora', serif; font-size: 48px; font-weight: 700;
+  color: rgba(255,255,255,0.10); line-height: 1; margin-bottom: 4px;
+}
+.feature-title { font-size: 15px; font-weight: 700; color: white; margin-bottom: 8px; }
+.feature-desc  { font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.75; }
+.feature-divider {
+  position: absolute; right: 0; top: 0; bottom: 0; width: 1px;
+  background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.1) 30%, rgba(255,255,255,0.1) 70%, transparent);
+}
+.feature-item:last-child .feature-divider { display: none; }
+
+/* ── VM GRID ── */
+.vm-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
 
 /* VISI */
 .visi-card {
-  background: var(--navy);
-  border-radius: 24px; padding: 44px 40px;
+  background: var(--white); border: 1px solid var(--line);
+  border-radius: 24px; padding: 40px 36px;
   position: relative; overflow: hidden;
+  box-shadow: 0 2px 20px rgba(15,32,87,0.05);
+  transition: box-shadow 0.2s; text-align: center;
 }
-
-.visi-card-stripe {
-  position: absolute; top: 0; left: 0; right: 0; height: 3px;
-  background: linear-gradient(90deg, var(--gold), var(--blue-soft));
+.visi-card:hover { box-shadow: 0 8px 30px rgba(15,32,87,0.09); }
+.visi-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--gold), #fbbf24);
 }
-.visi-card-circle {
-  position: absolute; bottom: -80px; right: -80px;
-  width: 280px; height: 280px; border-radius: 50%;
-  border: 1px solid rgba(255,255,255,0.06);
+.visi-card::after {
+  content: '';
+  position: absolute; bottom: -60px; right: -60px;
+  width: 200px; height: 200px; border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(245,158,11,0.06), transparent 70%);
 }
-.visi-card-circle2 {
-  position: absolute; bottom: -40px; right: -40px;
-  width: 180px; height: 180px; border-radius: 50%;
-  border: 1px solid rgba(255,255,255,0.09);
-}
-
-.card-eyebrow {
-  font-size: 10px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase;
-  color: var(--gold); margin-bottom: 12px;
-}
-
-.visi-icon {
-  width: 48px; height: 48px; border-radius: 14px;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.13);
+.card-icon-wrap {
+  width: 50px; height: 50px; border-radius: 14px;
   display: flex; align-items: center; justify-content: center;
-  margin-bottom: 22px;
+  margin: 0 auto 22px;
 }
-.visi-icon svg { width: 22px; height: 22px; }
-
-.visi-card .card-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 21px; font-weight: 700; color: #fff; margin-bottom: 18px;
-}
-.visi-card p { font-size: 14px; color: rgba(255,255,255,0.58); line-height: 1.9; position: relative; z-index: 1; }
-.visi-card .skel { background: linear-gradient(90deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.14) 50%, rgba(255,255,255,0.06) 75%); background-size: 300px 100%; width: 100%; height: 13px; margin-bottom: 9px; }
+.card-icon-wrap.gold { background: var(--gold-light); border: 1px solid rgba(245,158,11,0.2); }
+.card-icon-wrap.blue { background: var(--sky); border: 1px solid rgba(37,99,235,0.15); }
+.card-icon-wrap svg { width: 22px; height: 22px; }
+.card-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+.card-eyebrow.gold { color: #b45309; }
+.card-eyebrow.blue { color: var(--blue); }
+.card-title { font-family: 'Lora', serif; font-size: 22px; font-weight: 700; color: var(--ink); margin-bottom: 18px; }
+.visi-text  { font-size: 14.5px; color: var(--slate); line-height: 1.9; position: relative; z-index: 1; }
 
 /* MISI */
 .misi-card {
-  background: var(--white);
-  border: 1px solid var(--line);
-  border-radius: 24px; padding: 44px 40px;
+  background: var(--white); border: 1px solid var(--line);
+  border-radius: 24px; padding: 40px 36px;
   position: relative; overflow: hidden;
+  box-shadow: 0 2px 20px rgba(15,32,87,0.05);
+  transition: box-shadow 0.2s;
 }
-.misi-card-stripe {
-  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+.misi-card:hover { box-shadow: 0 8px 30px rgba(15,32,87,0.09); }
+.misi-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
   background: linear-gradient(90deg, var(--blue), var(--blue-soft));
-}
-.misi-card .card-eyebrow { color: var(--blue); }
-.misi-icon {
-  width: 48px; height: 48px; border-radius: 14px;
-  background: #e9efff; border: 1px solid var(--line);
-  display: flex; align-items: center; justify-content: center;
-  margin-bottom: 22px;
-}
-.misi-icon svg { width: 22px; height: 22px; }
-
-.misi-card .card-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 21px; font-weight: 700; color: var(--ink); margin-bottom: 24px;
 }
 .misi-list { list-style: none; }
 .misi-item {
   display: flex; align-items: flex-start; gap: 14px;
-  padding: 12px 0; border-bottom: 1px solid var(--line);
+  padding: 13px 0; border-bottom: 1px solid rgba(37,99,235,0.07);
 }
-.misi-item:last-child { border-bottom: none; padding-bottom: 0; }
+.misi-item:first-child { padding-top: 0; }
+.misi-item:last-child  { border-bottom: none; padding-bottom: 0; }
 .misi-num {
-  width: 26px; height: 26px; border-radius: 7px; flex-shrink: 0;
-  background: #e9efff; color: var(--blue);
-  font-size: 12px; font-weight: 600;
-  display: flex; align-items: center; justify-content: center; margin-top: 2px;
+  min-width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+  background: var(--sky); color: var(--blue);
+  font-size: 12px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; margin-top: 1px;
 }
-.misi-text { font-size: 14px; color: var(--ink); line-height: 1.75; }
-.misi-skel { display: block; height: 13px; border-radius: 4px; width: 100%; }
+.misi-text { font-size: 14px; color: var(--slate); line-height: 1.8; }
 
 /* ── FOOTER ── */
-footer { background: var(--navy); }
-
+footer { background: white; border-top: 1px solid rgba(37,99,235,0.08); }
 .footer-top {
   max-width: 1100px; margin: 0 auto;
-  padding: 64px 56px 48px;
-  display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 56px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  padding: 64px 60px 48px;
+  display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 60px;
+  border-bottom: 1px solid rgba(37,99,235,0.08);
 }
-
 .footer-logo-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
 .footer-shield {
-  width: 36px; height: 36px; border-radius: 9px;
-  background: var(--blue); display: flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--blue), #3b82f6);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.25); overflow: hidden; flex-shrink: 0;
 }
 .footer-shield svg { width: 16px; height: 16px; }
-.footer-school-name { font-family: 'Playfair Display', serif; font-size: 18px; color: #fff; font-weight: 700; }
-.footer-tagline { font-size: 13px; color: rgba(255,255,255,0.3); line-height: 1.8; margin-bottom: 22px; max-width: 280px; }
-
+.footer-shield img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.footer-shield.has-img { background: none; box-shadow: 0 2px 8px rgba(37,99,235,0.15); padding: 0; }
+.footer-school-name { font-family: 'Lora', serif; font-size: 18px; color: var(--ink); font-weight: 700; }
+.footer-tagline { font-size: 13.5px; color: var(--muted); line-height: 1.85; margin-bottom: 22px; max-width: 280px; }
 .footer-akred {
-  display: inline-flex; align-items: center; gap: 6px;
-  border: 1px solid rgba(232,184,75,0.3);
-  background: rgba(232,184,75,0.06);
-  color: var(--gold); font-size: 12px; font-weight: 600;
-  padding: 5px 14px; border-radius: 4px;
+  display: inline-flex; align-items: center; gap: 7px;
+  background: var(--gold-light); color: #92400e;
+  font-size: 12px; font-weight: 700; padding: 6px 14px;
+  border-radius: 8px; border: 1px solid rgba(245,158,11,0.25);
 }
 .footer-akred svg { width: 12px; height: 12px; }
-
 .footer-col-label {
   font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
-  color: rgba(255,255,255,0.22); margin-bottom: 24px;
+  color: var(--muted); margin-bottom: 24px;
 }
-
-.contact-item { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 20px; }
+.contact-item { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 18px; }
 .contact-icon {
-  width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
-  background: rgba(30,92,204,0.2);
-  display: flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; border-radius: 10px; flex-shrink: 0;
+  background: var(--sky); display: flex; align-items: center; justify-content: center;
 }
 .contact-icon svg { width: 14px; height: 14px; }
-.contact-lbl { font-size: 11px; color: rgba(255,255,255,0.25); margin-bottom: 3px; }
-.contact-val { font-size: 13px; color: rgba(255,255,255,0.6); line-height: 1.65; }
-
+.contact-lbl { font-size: 11px; color: var(--muted); margin-bottom: 3px; font-weight: 500; }
+.contact-val { font-size: 13.5px; color: var(--slate); line-height: 1.65; }
 .maps-link {
   display: inline-flex; align-items: center; gap: 5px;
-  font-size: 12px; color: var(--sky); text-decoration: none; margin-top: 5px;
-  opacity: 0.8; transition: opacity 0.2s;
+  font-size: 12px; color: var(--blue); text-decoration: none; margin-top: 5px;
+  font-weight: 500; transition: opacity 0.2s;
 }
-.maps-link:hover { opacity: 1; }
-
+.maps-link:hover { opacity: 0.75; }
 .footer-bottom {
-  max-width: 1100px; margin: 0 auto;
-  padding: 20px 56px;
+  max-width: 1100px; margin: 0 auto; padding: 20px 60px;
   display: flex; align-items: center; justify-content: space-between;
 }
-.footer-copy { font-size: 12px; color: rgba(255,255,255,0.2); }
-.footer-copy b { color: rgba(255,255,255,0.35); font-weight: 400; }
+.footer-copy { font-size: 12px; color: var(--muted); }
+.footer-copy b { color: var(--slate); font-weight: 600; }
 
 /* ── RESPONSIVE ── */
 @media (max-width: 960px) {
   nav { padding: 0 22px; }
-  .hero-inner { grid-template-columns: 1fr; padding: 68px 22px 90px; gap: 44px; }
-  .hero h1 { font-size: 36px; }
+  .hero { padding: 52px 22px 72px; }
+  .hero-inner { grid-template-columns: 1fr; gap: 36px; }
+  .hero h1 { font-size: 34px; }
+  /* On mobile, image goes above text */
+  .hero-right { order: -1; }
+  .hero-img-frame { aspect-ratio: 16/9; }
   .main { padding: 60px 22px 72px; }
   .vm-grid { grid-template-columns: 1fr; }
+  .feature-strip { grid-template-columns: 1fr; padding: 36px 28px; gap: 24px; }
+  .feature-divider { display: none; }
   .footer-top { grid-template-columns: 1fr; gap: 36px; padding: 44px 22px 36px; }
   .footer-bottom { flex-direction: column; gap: 6px; text-align: center; padding: 18px 22px; }
 }
@@ -378,88 +485,140 @@ footer { background: var(--navy); }
 </head>
 <body>
 
-<div class="topbar"></div>
+<div class="accent-bar"></div>
 
-<!-- NAV -->
+<!-- ── NAV ── -->
 <nav>
   <a href="#" class="nav-brand">
-    <div class="nav-shield">
+    <div class="nav-shield" id="nav-logo-wrap">
       <svg viewBox="0 0 24 24" fill="none">
         <path d="M12 3L4 7V13C4 17.4 7.4 21.5 12 22.5C16.6 21.5 20 17.4 20 13V7L12 3Z" fill="white"/>
       </svg>
     </div>
-    <span class="nav-name">SD Negeri Singkul</span>
+    <div>
+      <span class="nav-name">SD Negeri Singkul</span>
+      <span class="nav-sub">Sistem Administrasi Guru</span>
+    </div>
   </a>
   <a href="/login" class="nav-login">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-      <path d="M15 3H19C20.1 3 21 3.9 21 5V19C21 20.1 20.1 21 19 21H15M10 17L15 12M15 12L10 7M15 12H3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <svg viewBox="0 0 24 24" fill="none">
+      <path d="M15 3H19C20.1 3 21 3.9 21 5V19C21 20.1 20.1 21 19 21H15M10 17L15 12M15 12L10 7M15 12H3"
+        stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
-    Masuk
+    Masuk ke Sistem
   </a>
 </nav>
 
-<!-- HERO -->
+<!-- ── HERO ── -->
 <section class="hero">
-  <div class="hero-geo"></div>
-  <div class="hero-dot-grid"></div>
-  <div class="hero-glow"></div>
-  <div class="hero-line-left"></div>
+  <div class="hero-orb-right"></div>
+  <div class="hero-orb-left"></div>
 
   <div class="hero-inner">
-    <!-- Left -->
-    <div>
-      <div class="hero-badge">
-        <span class="hero-badge-dot"></span>
-        Sistem Administrasi Digital
+    <!-- LEFT: Text + Stats + CTA -->
+    <div class="hero-left">
+      <h1>Kelola Sekolah<br>dengan lebih cerdas</h1>
+      <p class="hero-desc">
+        Platform administrasi guru yang terintegrasi — data siswa, absensi,
+        dan laporan dalam satu sistem yang efisien dan mudah digunakan.
+      </p>
+
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-icon blue">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M20 21V19C20 17.9 19.1 17 18 17H6C4.9 17 4 17.9 4 19V21" stroke="#2563eb" stroke-width="1.6" stroke-linecap="round"/>
+              <circle cx="12" cy="9" r="4" stroke="#2563eb" stroke-width="1.6"/>
+            </svg>
+          </div>
+          <div>
+            <div class="stat-label">Guru Aktif</div>
+            <div class="stat-number" id="total-guru"><span class="skel" style="width:60px;"></span></div>
+            <div class="stat-trend" id="trend-guru"></div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon green">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M17 21V19C17 17.9 16.1 17 15 17H5C3.9 17 3 17.9 3 19V21M21 21V19C21 17.9 20.1 17 19 17H17M16 3.13C17.8 3.63 19 5.27 19 7C19 8.73 17.8 10.37 16 10.87M13 7C13 9.2 11.2 11 9 11C6.8 11 5 9.2 5 7C5 4.8 6.8 3 9 3C11.2 3 13 4.8 13 7Z"
+                stroke="#059669" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div>
+            <div class="stat-label">Siswa Terdaftar</div>
+            <div class="stat-number" id="total-siswa"><span class="skel" style="width:60px;"></span></div>
+            <div class="stat-trend" id="trend-siswa"></div>
+          </div>
+        </div>
       </div>
-      <h1>Kelola Sekolah dengan <em>Lebih Cerdas</em></h1>
-      <p class="hero-desc">Platform administrasi guru yang terintegrasi — data, absensi, dan laporan dalam satu sistem yang efisien dan mudah digunakan.</p>
+
       <div class="hero-cta">
         <a href="/login" class="btn-primary">
           Mulai Sekarang
           <svg viewBox="0 0 16 16" fill="none">
-            <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </a>
-        <a href="#konten" class="btn-ghost">Pelajari lebih </a>
+        <a href="#konten" class="btn-outline">
+          <svg viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.4"/>
+            <path d="M8 5.5V8.5L10 10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+          Pelajari Lebih
+        </a>
       </div>
     </div>
 
-    <!-- Right: Stats -->
-    <div class="stat-panel">
-      <div class="stat-row">
-        <div class="stat-icon-box">
-          <svg viewBox="0 0 24 24" fill="none">
-            <path d="M17 21V19C17 17.9 16.1 17 15 17H9C7.9 17 7 17.9 7 19V21M12 11C14.2 11 16 9.2 16 7C16 4.8 14.2 3 12 3C9.8 3 8 4.8 8 7C8 9.2 9.8 11 12 11Z" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
-        </div>
-        <div>
-          <div class="stat-label">Total Guru</div>
-          <div class="stat-number" id="total-guru"><span class="skel"></span></div>
-        </div>
-      </div>
+    <!-- RIGHT: Clean Image Card -->
+    <div class="hero-right">
+      <div class="hero-img-corner tr"></div>
+      <div class="hero-img-corner bl"></div>
 
-      <div class="stat-row">
-        <div class="stat-icon-box">
+      <div class="hero-img-frame" id="hero-img-frame">
+        <!-- Skeleton saat loading -->
+        <div class="img-skeleton" id="img-skeleton">
           <svg viewBox="0 0 24 24" fill="none">
-            <path d="M17 21V19C17 17.9 16.1 17 15 17H5C3.9 17 3 17.9 3 19V21M21 21V19C21 17.9 20.1 17 19 17H17M16 3.13C17.8 3.63 19 5.27 19 7C19 8.73 17.8 10.37 16 10.87M13 7C13 9.2 11.2 11 9 11C6.8 11 5 9.2 5 7C5 4.8 6.8 3 9 3C11.2 3 13 4.8 13 7Z" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="3" y="3" width="18" height="18" rx="3" stroke="#2563eb" stroke-width="1.5"/>
+            <circle cx="8.5" cy="8.5" r="1.5" stroke="#2563eb" stroke-width="1.5"/>
+            <path d="M21 15L16 10L5 21" stroke="#2563eb" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
-        <div>
-          <div class="stat-label">Total Siswa Terdaftar</div>
-          <div class="stat-number" id="total-siswa"><span class="skel"></span></div>
-        </div>
+
+        <!-- Foto sekolah -->
+        <img id="hero-img" src="" alt="SD Negeri Singkul" style="display:none; width:100%; height:100%; object-fit:cover; object-position:center 30%;">
+
+        <!-- Badge di bawah foto -->
       </div>
     </div>
   </div>
-
-  <svg class="hero-wave" viewBox="0 0 1440 56" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="height:50px;">
-    <path d="M0,18 C360,52 1080,0 1440,28 L1440,56 L0,56 Z" fill="#f0f5ff"/>
-  </svg>
 </section>
 
-<!-- MAIN -->
-<div class="main" id="konten">
+<!-- ── FEATURE STRIP ── -->
+<div class="main" style="padding-top:80px; padding-bottom:0;">
+  <div class="feature-strip">
+    <div class="feature-item">
+      <div class="feature-num">01</div>
+      <div class="feature-title">Data Terintegrasi</div>
+      <div class="feature-desc">Seluruh data guru dan siswa tersimpan terpusat, aman, dan mudah diakses kapan saja.</div>
+      <div class="feature-divider"></div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-num">02</div>
+      <div class="feature-title">Absensi Digital</div>
+      <div class="feature-desc">Rekam kehadiran guru dan siswa secara digital, real-time, dan akurat setiap harinya.</div>
+      <div class="feature-divider"></div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-num">03</div>
+      <div class="feature-title">Laporan Otomatis</div>
+      <div class="feature-desc">Laporan administrasi tersaji otomatis, siap cetak, dan dapat dipantau kapan saja.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── VISI MISI ── -->
+<div class="main" id="konten" style="padding-top:0;">
   <div class="section-head">
     <div class="section-eyebrow">Arah &amp; Tujuan</div>
     <div class="section-title">Visi &amp; Misi Sekolah</div>
@@ -467,64 +626,55 @@ footer { background: var(--navy); }
   </div>
 
   <div class="vm-grid">
-
-    <!-- VISI -->
     <div class="visi-card">
-      <div class="visi-card-stripe"></div>
-      <div class="visi-card-circle"></div>
-      <div class="visi-card-circle2"></div>
-      <div class="visi-icon">
+      <div class="card-icon-wrap gold">
         <svg viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="12" r="3" stroke="white" stroke-width="1.5"/>
-          <path d="M12 5C7 5 2.7 8.1 1 12.5C2.7 16.9 7 20 12 20C17 20 21.3 16.9 23 12.5C21.3 8.1 17 5 12 5Z" stroke="white" stroke-width="1.5"/>
+          <circle cx="12" cy="12" r="3.5" stroke="#b45309" stroke-width="1.6"/>
+          <path d="M12 5C7 5 2.7 8.1 1 12.5C2.7 16.9 7 20 12 20C17 20 21.3 16.9 23 12.5C21.3 8.1 17 5 12 5Z" stroke="#b45309" stroke-width="1.6"/>
         </svg>
       </div>
-      <div class="card-eyebrow">Visi</div>
+      <div class="card-eyebrow gold">Visi Sekolah</div>
       <div class="card-title">Unggulan &amp; Berkarakter</div>
-      <p id="visi">
-        <span class="skel" style="display:block;width:100%;height:13px;margin-bottom:9px;"></span>
-        <span class="skel" style="display:block;width:88%;height:13px;margin-bottom:9px;"></span>
-        <span class="skel" style="display:block;width:70%;height:13px;"></span>
-      </p>
+      <div class="visi-text" id="visi">
+        <span class="skel-sm" style="width:100%;"></span>
+        <span class="skel-sm" style="width:88%;"></span>
+        <span class="skel-sm" style="width:70%;"></span>
+      </div>
     </div>
 
-    <!-- MISI -->
     <div class="misi-card">
-      <div class="misi-card-stripe"></div>
-      <div class="misi-icon">
+      <div class="card-icon-wrap blue">
         <svg viewBox="0 0 24 24" fill="none">
-          <path d="M9 11L12 14L22 4M3 12V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V12" stroke="#1547c0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M9 11L12 14L22 4M3 12V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V12"
+            stroke="#1a56db" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
-      <div class="card-eyebrow">Misi</div>
+      <div class="card-eyebrow blue">Misi Sekolah</div>
       <div class="card-title">Langkah Kami</div>
       <ul class="misi-list" id="misi-list">
         <li class="misi-item">
-          <span class="misi-num" style="background:#e9efff;"></span>
-          <span class="misi-skel skel-line"></span>
+          <span class="misi-num" style="background:#e8eef7;"></span>
+          <span class="skel-sm" style="flex:1;margin-top:8px;"></span>
         </li>
         <li class="misi-item">
-          <span class="misi-num" style="background:#e9efff;"></span>
-          <span class="misi-skel skel-line"></span>
+          <span class="misi-num" style="background:#e8eef7;"></span>
+          <span class="skel-sm" style="flex:1;margin-top:8px;"></span>
         </li>
         <li class="misi-item">
-          <span class="misi-num" style="background:#e9efff;"></span>
-          <span class="misi-skel skel-line" style="width:75%;"></span>
+          <span class="misi-num" style="background:#e8eef7;"></span>
+          <span class="skel-sm" style="flex:1;width:75%;margin-top:8px;"></span>
         </li>
       </ul>
     </div>
-
   </div>
 </div>
 
-<!-- FOOTER -->
+<!-- ── FOOTER ── -->
 <footer>
   <div class="footer-top">
-
-    <!-- Brand -->
     <div>
       <div class="footer-logo-row">
-        <div class="footer-shield">
+        <div class="footer-shield" id="footer-logo-wrap">
           <svg viewBox="0 0 24 24" fill="none">
             <path d="M12 3L4 7V13C4 17.4 7.4 21.5 12 22.5C16.6 21.5 20 17.4 20 13V7L12 3Z" fill="white"/>
           </svg>
@@ -534,27 +684,27 @@ footer { background: var(--navy); }
       <p class="footer-tagline">Sistem Administrasi Guru yang modern dan terintegrasi untuk mendukung operasional sekolah sehari-hari secara efisien.</p>
       <div class="footer-akred" id="akreditasi">
         <svg viewBox="0 0 24 24" fill="none">
-          <path d="M12 3L4 7V13C4 17.4 7.4 21.5 12 22.5C16.6 21.5 20 17.4 20 13V7L12 3Z" stroke="#e8b84b" stroke-width="1.5"/>
+          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="#f59e0b"/>
         </svg>
         Terakreditasi —
       </div>
     </div>
 
-    <!-- Alamat -->
     <div>
-      <div class="footer-col-label">Alamat</div>
+      <div class="footer-col-label">Alamat Sekolah</div>
       <div class="contact-item">
         <div class="contact-icon">
           <svg viewBox="0 0 24 24" fill="none">
-            <path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2ZM12 11.5C10.6 11.5 9.5 10.4 9.5 9C9.5 7.6 10.6 6.5 12 6.5C13.4 6.5 14.5 7.6 14.5 9C14.5 10.4 13.4 11.5 12 11.5Z" fill="#4a85e8"/>
+            <path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2ZM12 11.5C10.6 11.5 9.5 10.4 9.5 9C9.5 7.6 10.6 6.5 12 6.5C13.4 6.5 14.5 7.6 14.5 9C14.5 10.4 13.4 11.5 12 11.5Z" fill="#2563eb"/>
           </svg>
         </div>
         <div>
-          <div class="contact-lbl">Alamat Sekolah</div>
+          <div class="contact-lbl">Lokasi</div>
           <div class="contact-val" id="alamat">Memuat...</div>
-          <a href="https://www.google.com/maps/place/SDN+Singkul/@-8.3530575,120.2934728,862m/" class="maps-link" id="maps-link" target="_blank" rel="noopener">
+          <a href="#" class="maps-link" id="maps-link" target="_blank" rel="noopener">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
-              <path d="M18 13V19C18 20.1 17.1 21 16 21H5C3.9 21 3 20.1 3 19V8C3 6.9 3.9 6 5 6H11M15 3H21V9M10 14L21 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M18 13V19C18 20.1 17.1 21 16 21H5C3.9 21 3 20.1 3 19V8C3 6.9 3.9 6 5 6H11M15 3H21V9M10 14L21 3"
+                stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
             Lihat di Google Maps
           </a>
@@ -562,14 +712,12 @@ footer { background: var(--navy); }
       </div>
     </div>
 
-    <!-- Kontak -->
     <div>
       <div class="footer-col-label">Kontak Kami</div>
-
       <div class="contact-item">
         <div class="contact-icon">
           <svg viewBox="0 0 24 24" fill="none">
-            <path d="M6.6 10.8C7.8 13.2 9.8 15.1 12.2 16.4L14.1 14.5C14.4 14.3 14.7 14.2 14.9 14.4C15.7 14.7 16.6 14.9 17.5 14.9C17.8 14.9 18 15.1 18 15.4V17.5C18 17.8 17.8 18 17.5 18C10.1 18 4 11.9 4 4.5C4 4.2 4.2 4 4.5 4H6.6C6.9 4 7.1 4.2 7.1 4.5C7.1 5.4 7.3 6.3 7.6 7.1C7.7 7.4 7.6 7.7 7.4 7.9L6.6 10.8Z" fill="#4a85e8"/>
+            <path d="M6.6 10.8C7.8 13.2 9.8 15.1 12.2 16.4L14.1 14.5C14.4 14.3 14.7 14.2 14.9 14.4C15.7 14.7 16.6 14.9 17.5 14.9C17.8 14.9 18 15.1 18 15.4V17.5C18 17.8 17.8 18 17.5 18C10.1 18 4 11.9 4 4.5C4 4.2 4.2 4 4.5 4H6.6C6.9 4 7.1 4.2 7.1 4.5C7.1 5.4 7.3 6.3 7.6 7.1C7.7 7.4 7.6 7.7 7.4 7.9L6.6 10.8Z" fill="#2563eb"/>
           </svg>
         </div>
         <div>
@@ -577,11 +725,10 @@ footer { background: var(--navy); }
           <div class="contact-val" id="telepon">Memuat...</div>
         </div>
       </div>
-
       <div class="contact-item">
         <div class="contact-icon">
           <svg viewBox="0 0 24 24" fill="none">
-            <path d="M20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4ZM20 8L12 13L4 8V6L12 11L20 6V8Z" fill="#4a85e8"/>
+            <path d="M20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4ZM20 8L12 13L4 8V6L12 11L20 6V8Z" fill="#2563eb"/>
           </svg>
         </div>
         <div>
@@ -589,12 +736,11 @@ footer { background: var(--navy); }
           <div class="contact-val" id="email">Memuat...</div>
         </div>
       </div>
-
       <div class="contact-item">
         <div class="contact-icon">
           <svg viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="9" stroke="#4a85e8" stroke-width="1.5"/>
-            <path d="M12 7V12L15 14" stroke="#4a85e8" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="12" cy="12" r="9" stroke="#2563eb" stroke-width="1.6"/>
+            <path d="M12 7V12L15 14" stroke="#2563eb" stroke-width="1.6" stroke-linecap="round"/>
           </svg>
         </div>
         <div>
@@ -603,7 +749,6 @@ footer { background: var(--navy); }
         </div>
       </div>
     </div>
-
   </div>
 
   <div class="footer-bottom">
@@ -612,47 +757,105 @@ footer { background: var(--navy); }
   </div>
 </footer>
 
+<!-- ── SCRIPT ── -->
 <script>
-fetch('/api/konten-umum')
-  .then(r => r.json())
-  .then(res => {
-    const d = res.data;
+  const HERO_FALLBACK = 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=1200&q=80';
 
-    document.getElementById('total-guru').innerText  = d?.total_guru  ?? '0';
-    document.getElementById('total-siswa').innerText = d?.total_siswa ?? '0';
+  /** Tampilkan gambar di card kanan hero */
+  function setHeroImage(url) {
+    const skeleton = document.getElementById('img-skeleton');
+    const img      = document.getElementById('hero-img');
+    const loader   = new Image();
 
-    document.getElementById('visi').innerText = d?.visi || '-';
+    loader.onload = () => {
+      img.src = url;
+      img.style.display = 'block';
+      skeleton.style.display = 'none';
+    };
+    loader.onerror = () => {
+      const fb = new Image();
+      fb.onload = () => {
+        img.src = HERO_FALLBACK;
+        img.style.display = 'block';
+        skeleton.style.display = 'none';
+      };
+      fb.src = HERO_FALLBACK;
+    };
+    loader.src = url;
+  }
 
-    const lines = d?.misi ? d.misi.split('\n').filter(l => l.trim()) : [];
-    document.getElementById('misi-list').innerHTML = lines.length
-      ? lines.map((l, i) => `
-          <li class="misi-item">
-            <span class="misi-num">${i + 1}</span>
-            <span class="misi-text">${l.trim()}</span>
-          </li>`).join('')
-      : '<li class="misi-item"><span class="misi-text">-</span></li>';
+  /** Set logo di nav & footer */
+  function setLogo(src) {
+    ['nav-logo-wrap', 'footer-logo-wrap'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const img = document.createElement('img');
+      img.src = src; img.alt = 'Logo Sekolah';
+      img.onerror = function () {
+        this.parentElement.classList.remove('has-img');
+        this.remove();
+      };
+      el.classList.add('has-img');
+      el.innerHTML = '';
+      el.appendChild(img);
+    });
+  }
 
-    document.getElementById('alamat').innerText  = d?.alamat          || '-';
-    document.getElementById('telepon').innerText = d?.telepon         || '-';
-    document.getElementById('email').innerText   = d?.email           || '-';
-    document.getElementById('jam').innerText     = d?.jam_operasional || '-';
+  // ── Fetch /api/konten-umum ──
+  fetch('/api/konten-umum')
+    .then(r => r.json())
+    .then(res => {
+      const d = res.data;
 
-    const akr = d?.akreditasi || '-';
-    document.getElementById('akreditasi').innerHTML = `
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
-        <path d="M12 3L4 7V13C4 17.4 7.4 21.5 12 22.5C16.6 21.5 20 17.4 20 13V7L12 3Z" stroke="#e8b84b" stroke-width="1.5"/>
-      </svg>
-      Terakreditasi ${akr}`;
+      if (d?.gambar_beranda) {
+        setHeroImage(d.gambar_beranda);
+        setLogo(d.gambar_beranda);
+      } else {
+        setHeroImage(HERO_FALLBACK);
+      }
 
-    if (d?.maps_url) document.getElementById('maps-link').href = d.maps_url;
-  })
-  .catch(() => {
-    ['total-guru','total-siswa'].forEach(id => document.getElementById(id).innerText = '0');
-    document.getElementById('visi').innerText = 'Data tidak tersedia.';
-    document.getElementById('misi-list').innerHTML = '<li class="misi-item"><span class="misi-text">Data tidak tersedia.</span></li>';
-    ['alamat','telepon','email','jam'].forEach(id => document.getElementById(id).innerText = '-');
-  });
+      document.getElementById('total-guru').innerText  = d?.total_guru  ?? '0';
+      document.getElementById('total-siswa').innerText = d?.total_siswa ?? '0';
+      if (d?.total_guru)  { document.getElementById('trend-guru').style.display  = 'inline-flex'; }
+      if (d?.total_siswa) { document.getElementById('trend-siswa').style.display = 'inline-flex'; }
+
+      document.getElementById('visi').innerText = d?.visi || '-';
+
+      const lines = d?.misi ? d.misi.split('\n').filter(l => l.trim()) : [];
+      document.getElementById('misi-list').innerHTML = lines.length
+        ? lines.map((l, i) => `
+            <li class="misi-item">
+              <span class="misi-num">${i + 1}</span>
+              <span class="misi-text">${l.trim()}</span>
+            </li>`).join('')
+        : '<li class="misi-item"><span class="misi-text">-</span></li>';
+
+      document.getElementById('alamat').innerText  = d?.alamat          || '-';
+      document.getElementById('telepon').innerText = d?.telepon         || '-';
+      document.getElementById('email').innerText   = d?.email           || '-';
+      document.getElementById('jam').innerText     = d?.jam_operasional || '-';
+
+      const akr = d?.akreditasi || '-';
+      document.getElementById('akreditasi').innerHTML = `
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="#f59e0b"/>
+        </svg>
+        Terakreditasi ${akr}`;
+
+      if (d?.maps_url) document.getElementById('maps-link').href = d.maps_url;
+    })
+    .catch(() => {
+      setHeroImage(HERO_FALLBACK);
+      ['total-guru', 'total-siswa'].forEach(id =>
+        document.getElementById(id).innerText = '0'
+      );
+      document.getElementById('visi').innerText = 'Data tidak tersedia.';
+      document.getElementById('misi-list').innerHTML =
+        '<li class="misi-item"><span class="misi-text">Data tidak tersedia.</span></li>';
+      ['alamat', 'telepon', 'email', 'jam'].forEach(id =>
+        document.getElementById(id).innerText = '-'
+      );
+    });
 </script>
-
 </body>
 </html>

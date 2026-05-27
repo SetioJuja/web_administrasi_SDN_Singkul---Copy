@@ -148,7 +148,7 @@ class StatusPresensiController extends Controller
             ], 404);
         }
 
-        // 🔥 CEK DIGUNAKAN DI PRESENSI
+        //  CEK DIGUNAKAN DI PRESENSI
         if ($data->presensiGuru()->count() > 0) {
             return response()->json([
                 'success' => false,
