@@ -19,6 +19,7 @@ use App\Http\Controllers\API\KomponenPenilaianController;
 use App\Http\Controllers\API\NilaiSiswaController;
 use App\Http\Controllers\API\TugasController;
 use App\Http\Controllers\API\NilaiTugasController;
+use Illuminate\Support\Facades\DB;
 
 Route::apiResource('tugas', TugasController::class);
 
@@ -102,10 +103,18 @@ Route::get('/jadwal-guru-mapel/{id}', [JadwalMengajarController::class, 'byGuruM
 
 Route::get('/fix-password', function () {
 
-    $pegawai = \App\Models\Pegawai::find(2);
+    $hash = password_hash('123456789', PASSWORD_BCRYPT);
 
-    $pegawai->password = bcrypt('123456789');
-    $pegawai->save();
+    DB::table('pegawai')
+        ->where('id_guru', 2)
+        ->update([
+            'password' => $hash
+        ]);
 
-    return 'password updated';
+    return [
+        'hash' => $hash,
+        'saved' => DB::table('pegawai')
+            ->where('id_guru', 2)
+            ->value('password')
+    ];
 });
