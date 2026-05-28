@@ -11,7 +11,7 @@
     --danger:#dc2626;
 }
 
-/* CARD */
+/* ================= CARD ================= */
 .card{
     background:white;
     border-radius:16px;
@@ -19,7 +19,7 @@
     box-shadow:0 10px 25px rgba(0,0,0,0.05);
 }
 
-/* FORM */
+/* ================= FORM ================= */
 .form-inline{
     display:flex;
     gap:10px;
@@ -32,15 +32,25 @@ input{
     border:1px solid var(--border);
     border-radius:8px;
     flex:1;
+    outline:none;
 }
 
-/* BUTTON */
+input:focus{
+    border-color:var(--primary);
+}
+
+/* ================= BUTTON ================= */
 button{
     padding:10px 14px;
     border:none;
     border-radius:8px;
     cursor:pointer;
     color:white;
+    transition:.2s;
+}
+
+button:hover{
+    opacity:0.9;
 }
 
 .btn-primary{
@@ -55,7 +65,11 @@ button{
     background:#f59e0b;
 }
 
-/* TABLE */
+.btn-secondary{
+    background:#6b7280;
+}
+
+/* ================= TABLE ================= */
 table{
     width:100%;
     border-collapse:collapse;
@@ -68,28 +82,64 @@ td{
     text-align:center;
 }
 
-/* MODAL */
+thead{
+    background:#f8fafc;
+}
+
+tbody tr:hover{
+    background:#f9fafb;
+}
+
+/* ================= MODAL ================= */
 .modal{
     position:fixed;
     top:0;
     left:0;
     width:100%;
     height:100%;
-    background:rgba(0,0,0,0.4);
+    background:rgba(0,0,0,0.45);
     display:none;
     justify-content:center;
     align-items:center;
+    z-index:999;
 }
 
 .modal-content{
     background:white;
-    padding:20px;
-    border-radius:12px;
+    padding:24px;
+    border-radius:16px;
     width:400px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.12);
+    animation:fade .2s ease;
 }
 
 .modal.show{
     display:flex;
+}
+
+/* ================= NOTIF ================= */
+.notif-icon{
+    width:70px;
+    height:70px;
+    margin:auto;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:32px;
+    margin-bottom:15px;
+    color:white;
+}
+
+@keyframes fade{
+    from{
+        opacity:0;
+        transform:scale(.95);
+    }
+    to{
+        opacity:1;
+        transform:scale(1);
+    }
 }
 </style>
 
@@ -97,9 +147,14 @@ td{
 
 <div class="card">
 
-    <h3>Data Mata Pelajaran</h3>
+    <h3 style="
+        margin-bottom:20px;
+        color:var(--primary);
+    ">
+        Data Mata Pelajaran
+    </h3>
 
-    <!-- FORM TAMBAH -->
+    <!-- ================= FORM TAMBAH ================= -->
     <div class="form-inline">
 
         <input
@@ -122,7 +177,7 @@ td{
     </div>
 
 
-    <!-- TABLE -->
+    <!-- ================= TABLE ================= -->
     <table>
 
         <thead>
@@ -152,7 +207,12 @@ td{
 
     <div class="modal-content">
 
-        <h4>Edit Mapel</h4>
+        <h3 style="
+            margin-bottom:18px;
+            color:var(--primary);
+        ">
+            Edit Mapel
+        </h3>
 
         <input
             type="hidden"
@@ -180,13 +240,53 @@ td{
 
         <button
             onclick="closeModal()"
-            class="btn-danger"
+            class="btn-secondary"
+            style="margin-top:8px;"
         >
             Batal
         </button>
 
     </div>
 
+</div>
+
+
+
+<!-- ================= MODAL NOTIFIKASI ================= -->
+<div id="modalNotif" class="modal">
+
+<div class="modal-content"
+     style="
+        width:340px;
+        text-align:center;
+     ">
+
+    <div id="notifIcon"
+         class="notif-icon">
+        ✓
+    </div>
+
+    <h3 id="notifTitle">
+        Berhasil
+    </h3>
+
+    <p id="notifText"
+       style="
+        margin-bottom:20px;
+        color:#6b7280;
+        font-size:14px;
+        line-height:1.5;
+       ">
+       Data berhasil disimpan
+    </p>
+
+    <button
+        onclick="tutupNotif()"
+        class="btn-primary">
+        OK
+    </button>
+
+</div>
 </div>
 
 @endsection
@@ -300,7 +400,8 @@ function tambah(){
         !kode_mapel.value
     ){
 
-        alert(
+        showNotif(
+            'warning',
             'Semua field wajib diisi'
         );
 
@@ -329,7 +430,10 @@ function tambah(){
 
     .then(res => {
 
-        alert('Berhasil tambah');
+        showNotif(
+            'success',
+            'Berhasil tambah data'
+        );
 
         nama_mapel.value = '';
         kode_mapel.value = '';
@@ -341,7 +445,10 @@ function tambah(){
 
         console.error(err);
 
-        alert('Gagal tambah data');
+        showNotif(
+            'danger',
+            'Gagal tambah data'
+        );
     });
 }
 
@@ -356,7 +463,10 @@ function openModal(id){
 
     if(!m){
 
-        alert('Data tidak ditemukan');
+        showNotif(
+            'danger',
+            'Data tidak ditemukan'
+        );
 
         return;
     }
@@ -390,7 +500,10 @@ function updateData(){
 
     if(!id){
 
-        alert('ID tidak ditemukan');
+        showNotif(
+            'danger',
+            'ID tidak ditemukan'
+        );
 
         return;
     }
@@ -423,7 +536,10 @@ function updateData(){
 
             JSON.parse(text);
 
-            alert('Berhasil update');
+            showNotif(
+                'edit',
+                'Berhasil update data'
+            );
 
             closeModal();
 
@@ -433,7 +549,10 @@ function updateData(){
 
             console.error(text);
 
-            alert('Server error');
+            showNotif(
+                'danger',
+                'Server error'
+            );
         }
     })
 
@@ -441,7 +560,10 @@ function updateData(){
 
         console.error(err);
 
-        alert('Gagal update data');
+        showNotif(
+            'danger',
+            'Gagal update data'
+        );
     });
 }
 
@@ -449,11 +571,6 @@ function updateData(){
 
 // ================= HAPUS =================
 function hapus(id){
-
-    if(
-        confirm('Yakin hapus data?')
-    ){
-
         fetch('/api/mapel/' + id,{
 
             method:'DELETE'
@@ -463,7 +580,10 @@ function hapus(id){
 
         .then(res => {
 
-            alert('Berhasil hapus');
+            showNotif(
+                'delete',
+                'Berhasil hapus data'
+            );
 
             loadData();
         })
@@ -472,9 +592,75 @@ function hapus(id){
 
             console.error(err);
 
-            alert('Gagal hapus data');
+            showNotif(
+                'danger',
+                'Gagal hapus data'
+            );
         });
+    
+}
+
+
+
+// ================= MODAL NOTIF =================
+function showNotif(type, message){
+
+    let icon =
+        document.getElementById('notifIcon');
+
+    let title =
+        document.getElementById('notifTitle');
+
+    let text =
+        document.getElementById('notifText');
+
+    if(type === 'success'){
+
+        icon.innerHTML = '✓';
+        icon.style.background = '#16a34a';
+
+        title.innerText = 'Berhasil';
+
+    }else if(type === 'delete'){
+
+        icon.innerHTML = '🗑';
+        icon.style.background = '#dc2626';
+
+        title.innerText = 'Data Dihapus';
+
+    }else if(type === 'edit'){
+
+        icon.innerHTML = '✎';
+        icon.style.background = '#2563eb';
+
+        title.innerText = 'Data Diperbarui';
+
+    }else if(type === 'warning'){
+
+        icon.innerHTML = '!';
+        icon.style.background = '#f59e0b';
+
+        title.innerText = 'Peringatan';
+
+    }else if(type === 'danger'){
+
+        icon.innerHTML = '✕';
+        icon.style.background = '#dc2626';
+
+        title.innerText = 'Gagal';
     }
+
+    text.innerText = message;
+
+    document.getElementById('modalNotif')
+        .style.display = 'flex';
+}
+
+
+function tutupNotif(){
+
+    document.getElementById('modalNotif')
+        .style.display = 'none';
 }
 
 </script>

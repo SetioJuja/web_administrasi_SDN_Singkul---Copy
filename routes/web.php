@@ -108,3 +108,7 @@ Route::get('/rapor', function () {
     return view('raport');
 });
 
+Route::get('/status_presensi', function () {
+    return view('status_presensi');
+});
+

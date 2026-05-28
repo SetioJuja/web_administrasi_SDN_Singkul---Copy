@@ -312,29 +312,116 @@ body{
     margin-left:240px;
     flex:1;
     min-height:100vh;
-    min-width:0;          /* ← TAMBAHKAN: penting untuk flexbox */
-    overflow-x:auto;      /* ← TAMBAHKAN: biar bisa scroll horizontal */
+    min-width:0;
+    overflow-x:auto;
     padding:24px;
     background:#f0f4f9;
 }
 
-
 /* =========================================================
-   CARD
+   MODAL LOGOUT
 ========================================================= */
-/* .card{
+.modal-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.45);
+    z-index:999;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    opacity:0;
+    visibility:hidden;
+    transition:opacity .22s ease, visibility .22s ease;
+}
+
+.modal-overlay.show{
+    opacity:1;
+    visibility:visible;
+}
+
+.modal-box{
     background:white;
+    border-radius:16px;
+    padding:32px 28px 24px;
+    width:100%;
+    max-width:360px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.18);
+    text-align:center;
+    transform:scale(.92) translateY(10px);
+    transition:transform .22s ease;
+}
 
-    padding:18px;
+.modal-overlay.show .modal-box{
+    transform:scale(1) translateY(0);
+}
 
-    border-radius:12px;
+.modal-icon{
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    background:#fff3f3;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:0 auto 16px;
+    font-size:26px;
+    color:#e03e3e;
+}
 
-    border:1px solid #dfe7f4;
+.modal-title{
+    font-size:16px;
+    font-weight:700;
+    color:#1a2a4a;
+    margin-bottom:8px;
+}
 
-    margin-top:16px;
+.modal-desc{
+    font-size:13px;
+    color:#6b7a99;
+    line-height:1.6;
+    margin-bottom:24px;
+}
 
-    box-shadow:0 2px 10px rgba(0,0,0,0.03);
-} */
+.modal-actions{
+    display:flex;
+    gap:10px;
+}
+
+.btn-cancel{
+    flex:1;
+    padding:10px;
+    border-radius:10px;
+    border:1.5px solid #dfe7f4;
+    background:white;
+    color:#1a2a4a;
+    font-size:13px;
+    font-weight:600;
+    cursor:pointer;
+    transition:.18s;
+}
+
+.btn-cancel:hover{
+    background:#f0f4f9;
+}
+
+.btn-logout{
+    flex:1;
+    padding:10px;
+    border-radius:10px;
+    border:none;
+    background:linear-gradient(135deg,#e03e3e,#c0392b);
+    color:white;
+    font-size:13px;
+    font-weight:600;
+    cursor:pointer;
+    transition:.18s;
+    box-shadow:0 4px 12px rgba(224,62,62,0.3);
+}
+
+.btn-logout:hover{
+    background:linear-gradient(135deg,#c0392b,#a93226);
+    box-shadow:0 6px 16px rgba(224,62,62,0.4);
+}
 
 /* =========================================================
    RESPONSIVE
@@ -377,7 +464,7 @@ body{
                 </div>
 
                 <div class="sidebar-brand-sub">
-                    Sistem Manajemen Administrasi Guru SDN Singkul 
+                    Sistem Manajemen Administrasi Guru SDN Singkul
                 </div>
 
             </div>
@@ -412,7 +499,7 @@ body{
     <!-- FOOTER -->
     <div class="sidebar-footer">
 
-        <a href="#" onclick="logout()">
+        <a href="#" onclick="showLogoutModal()">
 
             <span class="nav-icon">
                 <i class="bi bi-box-arrow-right"></i>
@@ -431,6 +518,41 @@ body{
 ========================================================= -->
 <div class="content">
     @yield('content')
+</div>
+
+<!-- =========================================================
+     MODAL LOGOUT
+========================================================= -->
+<div class="modal-overlay" id="logoutModal" onclick="handleOverlayClick(event)">
+
+    <div class="modal-box">
+
+        <div class="modal-icon">
+            <i class="bi bi-box-arrow-right"></i>
+        </div>
+
+        <div class="modal-title">Konfirmasi Logout</div>
+
+        <div class="modal-desc">
+            Apakah Anda yakin ingin keluar?<br>
+            Sesi Anda akan diakhiri.
+        </div>
+
+        <div class="modal-actions">
+
+            <button class="btn-cancel" onclick="hideLogoutModal()">
+                Batal
+            </button>
+
+            <button class="btn-logout" onclick="doLogout()">
+                <i class="bi bi-box-arrow-right"></i>
+                Ya, Logout
+            </button>
+
+        </div>
+
+    </div>
+
 </div>
 
 <!-- =========================================================
@@ -464,16 +586,13 @@ function hasAnyRole(list) {
 // ================= AUTO REDIRECT DASHBOARD =================
 const currentPath = window.location.pathname;
 
-// hanya redirect jika benar-benar di dashboard
 if(
     currentPath === '/' ||
     currentPath === '/dashboard'
 ){
 
-    // tujuan halaman
     let target = '/lihat_pengumuman';
 
-    // hindari redirect berulang
     if(currentPath !== target){
 
         window.location.replace(target);
@@ -534,7 +653,6 @@ function loadMenu(){
 
         section('Data Master');
 
-
         add('Data Pegawai',
             '/pegawai',
             'bi bi-people-fill');
@@ -568,6 +686,10 @@ function loadMenu(){
         add('Jadwal Mengajar',
             '/jadwal_mengajar',
             'bi bi-calendar-week-fill');
+
+        add('Status Presensi',
+            '/status_presensi',
+            'bi bi-clipboard-data');
 
         add('Presensi Guru',
             '/presensi_guru',
@@ -649,7 +771,6 @@ function loadMenu(){
 
         section('Kepala Sekolah');
 
-
         add('Kelola Presensi Guru',
             '/presensi_guru',
             'bi bi-bar-chart-fill');
@@ -666,10 +787,6 @@ function loadMenu(){
             '/sguru',
             'bi bi-people-fill');
 
-        add('Data Kelas',
-            '/skelas',
-            'bi bi-building');
-
         add('Kelola Pengumuman',
             '/pengumuman',
             'bi bi-megaphone-fill');
@@ -679,15 +796,36 @@ function loadMenu(){
         html;
 }
 
-// ================= LOGOUT =================
-function logout(){
+// ================= MODAL LOGOUT =================
+function showLogoutModal(){
+    document.getElementById('logoutModal').classList.add('show');
+}
 
-    if(confirm('Yakin ingin logout?')){
+function hideLogoutModal(){
+    document.getElementById('logoutModal').classList.remove('show');
+}
 
-        localStorage.removeItem('user');
-
-        window.location.href = '/login';
+function handleOverlayClick(e){
+    if(e.target === document.getElementById('logoutModal')){
+        hideLogoutModal();
     }
+}
+
+// tutup modal dengan tombol Escape
+document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape'){
+        hideLogoutModal();
+    }
+});
+
+function doLogout(){
+    localStorage.removeItem('user');
+    window.location.href = '/login';
+}
+
+// ================= LOGOUT (lama — tidak dipakai) =================
+function logout(){
+    showLogoutModal();
 }
 
 loadMenu();

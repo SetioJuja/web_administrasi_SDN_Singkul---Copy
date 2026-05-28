@@ -24,23 +24,28 @@ class KelasController extends Controller
     /**
      * POST /api/kelas
      */
-    public function store(Request $request)
-    {
-        Log::info('REQUEST TAMBAH KELAS', $request->all());
+public function store(Request $request)
+{
+    Log::info('REQUEST TAMBAH KELAS', $request->all());
 
-        try {
+    try {
 
-            $validated = $request->validate([
-                'nama_kelas' => 'required|integer',
-                'total_siswa' => 'required|integer',
-                'id_guru' => 'nullable|exists:pegawai,id_guru',
-                'id_tahun_ajaran' => 'required|exists:tahun_ajaran,id_tahun_ajaran'
-            ]);
+        $validated = $request->validate([
+            'nama_kelas'       => 'required|integer',
+            'total_siswa'      => 'required|integer',
+            'id_guru'          => 'nullable|exists:pegawai,id_guru',
+            'id_tahun_ajaran'  => 'required|exists:tahun_ajaran,id_tahun_ajaran'
+        ]);
 
-            Log::info('VALIDASI OK', $validated);
+        Log::info('VALIDASI OK', $validated);
 
-            //  CEK GURU
-            $pegawai = Pegawai::with('jabatan')->find($validated['id_guru']);
+        // =====================================================
+        // CEK GURU HANYA JIKA ADA ID GURU
+        // =====================================================
+        if (!empty($validated['id_guru'])) {
+
+            $pegawai = Pegawai::with('jabatan')
+                ->find($validated['id_guru']);
 
             if (!$pegawai || !$pegawai->hasRole('Kelas')) {
 
@@ -54,43 +59,52 @@ class KelasController extends Controller
                 ], 400);
             }
 
-            //  CEK SUDAH JADI WALI
-            if (Kelas::where('id_guru', $validated['id_guru'])->exists()) {
+            // =====================================================
+            // CEK SUDAH JADI WALI
+            // =====================================================
+            if (
+                Kelas::where('id_guru', $validated['id_guru'])
+                ->exists()
+            ) {
+
                 return response()->json([
                     'success' => false,
                     'message' => 'Guru sudah menjadi wali kelas'
                 ], 400);
             }
-
-            //  SIMPAN
-            $data = Kelas::create($validated);
-
-            Log::info('BERHASIL SIMPAN KELAS', [
-                'id_kelas' => $data->id_kelas,
-                'data' => $data
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Berhasil tambah',
-                'data' => $data
-            ]);
-
-        } catch (\Exception $e) {
-
-            Log::error('ERROR SIMPAN KELAS', [
-                'message' => $e->getMessage(),
-                'line' => $e->getLine(),
-                'file' => $e->getFile(),
-                'request' => $request->all()
-            ]);
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan server'
-            ], 500);
         }
+
+        // =====================================================
+        // SIMPAN
+        // =====================================================
+        $data = Kelas::create($validated);
+
+        Log::info('BERHASIL SIMPAN KELAS', [
+            'id_kelas' => $data->id_kelas,
+            'data' => $data
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil tambah',
+            'data' => $data
+        ]);
+
+    } catch (\Exception $e) {
+
+        Log::error('ERROR SIMPAN KELAS', [
+            'message' => $e->getMessage(),
+            'line' => $e->getLine(),
+            'file' => $e->getFile(),
+            'request' => $request->all()
+        ]);
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Terjadi kesalahan server'
+        ], 500);
     }
+}
 
     /**
      * GET /api/kelas/{id}

@@ -23,6 +23,7 @@ return new class extends Migration
             $table->integer('total_guru')->nullable();
             $table->integer('total_siswa')->nullable();
             $table->string('gambar_login')->nullable();
+            $table->string('gambar_beranda')->nullable();
         });
     }
 

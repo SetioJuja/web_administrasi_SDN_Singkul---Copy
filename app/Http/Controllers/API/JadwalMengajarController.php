@@ -83,6 +83,109 @@ class JadwalMengajarController extends Controller
         }
     }
 
+    public function update(Request $request, $id)
+{
+    try {
+
+        Log::info('REQUEST UPDATE JADWAL', [
+            'id' => $id,
+            'data' => $request->all()
+        ]);
+
+        $data = JadwalMengajar::find($id);
+
+        if (!$data) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Data tidak ditemukan'
+            ], 404);
+        }
+
+        // ================= VALIDASI =================
+        $validated = $request->validate([
+
+            'hari' => 'required',
+
+            'jam_mulai' => 'required',
+
+            'jam_selesai' => 'required',
+
+            'id_guru' => 'required|exists:pegawai,id_guru',
+
+            'id_kelas' => 'required|exists:kelas,id_kelas',
+
+            'id_mapel' => 'required|exists:mapel,id_mapel',
+
+            'id_tahun_ajaran' =>
+                'required|exists:tahun_ajaran,id_tahun_ajaran'
+        ]);
+
+        Log::info('VALIDASI UPDATE BERHASIL', $validated);
+
+        // ================= UPDATE =================
+        $data->update($validated);
+
+        Log::info('JADWAL BERHASIL DIUPDATE', [
+            'id' => $data->id_jadwal
+        ]);
+
+        return response()->json([
+
+            'success' => true,
+
+            'message' => 'Berhasil update jadwal',
+
+            'data' => $data->load([
+                'guru',
+                'kelas',
+                'mapel',
+                'tahunAjaran'
+            ])
+        ]);
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+
+        Log::error('VALIDASI UPDATE GAGAL', [
+
+            'errors' => $e->errors(),
+
+            'request' => $request->all()
+        ]);
+
+        return response()->json([
+
+            'success' => false,
+
+            'message' => 'Validasi gagal',
+
+            'errors' => $e->errors()
+
+        ], 422);
+
+    } catch (\Exception $e) {
+
+        Log::error('ERROR UPDATE JADWAL', [
+
+            'message' => $e->getMessage(),
+
+            'line' => $e->getLine(),
+
+            'file' => $e->getFile(),
+
+            'request' => $request->all()
+        ]);
+
+        return response()->json([
+
+            'success' => false,
+
+            'message' => 'Terjadi kesalahan server'
+
+        ], 500);
+    }
+}
+
     public function destroy($id)
     {
         try {

@@ -34,7 +34,8 @@ h3{
     margin-bottom:15px;
 }
 
-input, select{
+input,
+select{
     padding:10px 12px;
     border:1px solid var(--border);
     border-radius:8px;
@@ -42,7 +43,8 @@ input, select{
     width:100%;
 }
 
-input:focus, select:focus{
+input:focus,
+select:focus{
     border-color:var(--primary);
 }
 
@@ -67,8 +69,9 @@ button{
 .btn-edit{
     background:#2563eb;
 }
-.btn-secondary{ 
-    background:#6b7280; 
+
+.btn-secondary{
+    background:#6b7280;
 }
 
 button:hover{
@@ -97,7 +100,8 @@ thead{
     background:#f1f5f9;
 }
 
-th, td{
+th,
+td{
     border:1px solid var(--border);
     padding:12px;
     text-align:center;
@@ -115,7 +119,7 @@ tbody tr:hover{
     left:0;
     width:100%;
     height:100%;
-    background:rgba(0,0,0,0.4);
+    background:rgba(0,0,0,0.45);
     justify-content:center;
     align-items:center;
     z-index:999;
@@ -123,10 +127,11 @@ tbody tr:hover{
 
 .modal-content{
     background:white;
-    padding:20px;
-    border-radius:12px;
-    width:320px;
+    padding:24px;
+    border-radius:16px;
+    width:340px;
     animation:fade 0.2s ease;
+    box-shadow:0 10px 25px rgba(0,0,0,0.12);
 }
 
 .modal-content input,
@@ -138,6 +143,20 @@ tbody tr:hover{
 .modal-content button{
     width:100%;
     margin-top:5px;
+}
+
+/* ===== NOTIF ===== */
+.notif-icon{
+    width:70px;
+    height:70px;
+    margin:auto;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:32px;
+    margin-bottom:15px;
+    color:white;
 }
 
 /* ===== ANIMATION ===== */
@@ -159,59 +178,138 @@ tbody tr:hover{
 
     <!-- FORM -->
     <div class="form-grid">
-        <input id="nama_kelas" type="number" placeholder="Nama Kelas">
-        <input id="total_siswa" type="number" placeholder="Total Siswa">
+
+        <input
+            id="nama_kelas"
+            type="number"
+            placeholder="Nama Kelas"
+        >
+
+        <input
+            id="total_siswa"
+            type="number"
+            placeholder="Total Siswa"
+        >
 
         <select id="id_guru"></select>
+
         <select id="id_tahun_ajaran"></select>
+
     </div>
 
     <!-- BUTTON -->
-    <button id="btnTambah" class="btn-primary">
+    <button
+        id="btnTambah"
+        class="btn-primary">
         Tambah
     </button>
 
     <!-- TABLE -->
     <div class="table-wrapper">
+
         <table>
+
             <thead>
+
                 <tr>
+
                     <th>Kelas</th>
+
                     <th>Wali</th>
+
                     <th>Tahun</th>
+
                     <th>Total</th>
+
                     <th>Aksi</th>
+
                 </tr>
+
             </thead>
 
             <tbody id="data"></tbody>
+
         </table>
+
     </div>
 
 </div>
 
-<!-- MODAL EDIT -->
+
+
+<!-- ================= MODAL EDIT ================= -->
 <div id="modal" class="modal">
 
     <div class="modal-content">
 
         <h3>Edit Kelas</h3>
 
-        <input id="edit_nama" type="number">
-        <input id="edit_total" type="number">
+        <input
+            id="edit_nama"
+            type="number"
+        >
+
+        <input
+            id="edit_total"
+            type="number"
+        >
 
         <select id="edit_guru"></select>
+
         <select id="edit_tahun"></select>
 
-        <button id="btnUpdate" class="btn-primary">
+        <button
+            id="btnUpdate"
+            class="btn-primary">
             Update
         </button>
 
-        <button id="btnTutup" class="btn-secondary">Batal</button>
-
+        <button
+            id="btnTutup"
+            class="btn-secondary">
+            Batal
+        </button>
 
     </div>
 
+</div>
+
+
+
+<!-- ================= MODAL NOTIFIKASI ================= -->
+<div id="modalNotif" class="modal">
+
+<div class="modal-content"
+     style="
+        text-align:center;
+     ">
+
+    <div id="notifIcon"
+         class="notif-icon">
+        ✓
+    </div>
+
+    <h3 id="notifTitle">
+        Berhasil
+    </h3>
+
+    <p id="notifText"
+       style="
+        margin-bottom:20px;
+        color:#6b7280;
+        font-size:14px;
+        line-height:1.5;
+       ">
+       Data berhasil disimpan
+    </p>
+
+    <button
+        onclick="tutupNotif()"
+        class="btn-primary">
+        OK
+    </button>
+
+</div>
 </div>
 
 @endsection
@@ -242,44 +340,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 // ================= LOAD GURU =================
-// Pastikan option kosong ada di dropdown edit
 function loadGuru(){
+
     fetch('/api/pegawai/guru-kelas')
+
     .then(res => res.json())
+
     .then(res => {
 
-        let html = '<option value="">-- Tanpa Wali Kelas --</option>';
+        let html =
+            '<option value="">-- Tanpa Wali Kelas --</option>';
 
         res.data.forEach(g => {
-            html += `<option value="${g.id_guru}">${g.nama_guru}</option>`;
+
+            html += `
+                <option value="${g.id_guru}">
+                    ${g.nama_guru}
+                </option>
+            `;
         });
 
         id_guru.innerHTML   = html;
         edit_guru.innerHTML = html;
-    });
-}
-
-// Kirim null jika id_guru kosong
-function update(){
-
-    fetch('/api/kelas/' + editId, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            nama_kelas:       edit_nama.value,
-            total_siswa:      edit_total.value,
-            id_guru:          edit_guru.value || null,   
-            id_tahun_ajaran:  edit_tahun.value
-        })
-    })
-    .then(res => res.json())
-    .then(res => {
-        if(res.success){
-            tutup();
-            loadData();
-        } else {
-            alert(res.message);
-        }
     });
 }
 
@@ -288,10 +370,13 @@ function update(){
 function loadTahun(){
 
     fetch('/api/tahun-ajaran')
+
     .then(res => res.json())
+
     .then(res => {
 
-        let html = '<option value="">Pilih Tahun</option>';
+        let html =
+            '<option value="">Pilih Tahun</option>';
 
         res.data.forEach(t => {
 
@@ -312,7 +397,9 @@ function loadTahun(){
 function loadData(){
 
     fetch('/api/kelas')
+
     .then(res => res.json())
+
     .then(res => {
 
         let html = '';
@@ -332,7 +419,10 @@ function loadData(){
 
             html += `
                 <tr>
-                    <td>${k.nama_kelas}</td>
+
+                    <td>
+                        ${k.nama_kelas}
+                    </td>
 
                     <td>
                         ${k.pegawai?.nama_guru ?? '-'}
@@ -347,6 +437,7 @@ function loadData(){
                     </td>
 
                     <td>
+
                         <button 
                             class="btn-edit" 
                             data-id="${k.id_kelas}">
@@ -358,7 +449,9 @@ function loadData(){
                             data-id="${k.id_kelas}">
                             Hapus
                         </button>
+
                     </td>
+
                 </tr>
             `;
         });
@@ -368,13 +461,15 @@ function loadData(){
         document.querySelectorAll('.btn-edit')
         .forEach(btn => {
 
-            btn.onclick = () => edit(btn.dataset.id);
+            btn.onclick = () =>
+                edit(btn.dataset.id);
         });
 
         document.querySelectorAll('.btn-danger')
         .forEach(btn => {
 
-            btn.onclick = () => hapus(btn.dataset.id);
+            btn.onclick = () =>
+                hapus(btn.dataset.id);
         });
 
     });
@@ -388,7 +483,12 @@ function tambah(){
         !nama_kelas.value ||
         !total_siswa.value
     ){
-        alert('Isi semua data!');
+
+        showNotif(
+            'warning',
+            'Isi semua data!'
+        );
+
         return;
     }
 
@@ -402,19 +502,43 @@ function tambah(){
 
         body: JSON.stringify({
 
-            nama_kelas: nama_kelas.value,
-            total_siswa: total_siswa.value,
-            id_guru: id_guru.value,
-            id_tahun_ajaran: id_tahun_ajaran.value
+            nama_kelas:
+                nama_kelas.value,
+
+            total_siswa:
+                total_siswa.value,
+
+            id_guru:
+                id_guru.value || null,
+
+            id_tahun_ajaran:
+                id_tahun_ajaran.value
         })
     })
 
-    .then(() => {
+    .then(res => res.json())
+
+    .then(res => {
 
         nama_kelas.value = '';
         total_siswa.value = '';
 
+        showNotif(
+            'success',
+            'Berhasil tambah data kelas'
+        );
+
         loadData();
+    })
+
+    .catch(err => {
+
+        console.error(err);
+
+        showNotif(
+            'danger',
+            'Gagal tambah data'
+        );
     });
 }
 
@@ -432,10 +556,17 @@ function edit(id){
 
         let d = res.data;
 
-        edit_nama.value = d.nama_kelas;
-        edit_total.value = d.total_siswa;
-        edit_guru.value = d.id_guru;
-        edit_tahun.value = d.id_tahun_ajaran;
+        edit_nama.value =
+            d.nama_kelas;
+
+        edit_total.value =
+            d.total_siswa;
+
+        edit_guru.value =
+            d.id_guru ?? '';
+
+        edit_tahun.value =
+            d.id_tahun_ajaran;
 
         modal.style.display = 'flex';
     });
@@ -455,17 +586,52 @@ function update(){
 
         body: JSON.stringify({
 
-            nama_kelas: edit_nama.value,
-            total_siswa: edit_total.value,
-            id_guru: edit_guru.value,
-            id_tahun_ajaran: edit_tahun.value
+            nama_kelas:
+                edit_nama.value,
+
+            total_siswa:
+                edit_total.value,
+
+            id_guru:
+                edit_guru.value || null,
+
+            id_tahun_ajaran:
+                edit_tahun.value
         })
     })
 
-    .then(() => {
+    .then(res => res.json())
 
-        tutup();
-        loadData();
+    .then(res => {
+
+        if(res.success){
+
+            tutup();
+
+            showNotif(
+                'edit',
+                'Data kelas berhasil diperbarui'
+            );
+
+            loadData();
+
+        }else{
+
+            showNotif(
+                'danger',
+                res.message
+            );
+        }
+    })
+
+    .catch(err => {
+
+        console.error(err);
+
+        showNotif(
+            'danger',
+            'Gagal update data'
+        );
     });
 }
 
@@ -481,8 +647,91 @@ function hapus(id){
 
         })
 
-        .then(() => loadData());
+        .then(res => res.json())
+
+        .then(res => {
+
+            showNotif(
+                'delete',
+                'Berhasil hapus data'
+            );
+
+            loadData();
+        })
+
+        .catch(err => {
+
+            console.error(err);
+
+            showNotif(
+                'danger',
+                'Gagal hapus data'
+            );
+        });
     }
+}
+
+
+// ================= MODAL NOTIF =================
+function showNotif(type, message){
+
+    let icon =
+        document.getElementById('notifIcon');
+
+    let title =
+        document.getElementById('notifTitle');
+
+    let text =
+        document.getElementById('notifText');
+
+    if(type === 'success'){
+
+        icon.innerHTML = '✓';
+        icon.style.background = '#16a34a';
+
+        title.innerText = 'Berhasil';
+
+    }else if(type === 'delete'){
+
+        icon.innerHTML = '🗑';
+        icon.style.background = '#dc2626';
+
+        title.innerText = 'Data Dihapus';
+
+    }else if(type === 'edit'){
+
+        icon.innerHTML = '✎';
+        icon.style.background = '#2563eb';
+
+        title.innerText = 'Data Diperbarui';
+
+    }else if(type === 'warning'){
+
+        icon.innerHTML = '!';
+        icon.style.background = '#f59e0b';
+
+        title.innerText = 'Peringatan';
+
+    }else if(type === 'danger'){
+
+        icon.innerHTML = '✕';
+        icon.style.background = '#dc2626';
+
+        title.innerText = 'Gagal';
+    }
+
+    text.innerText = message;
+
+    document.getElementById('modalNotif')
+        .style.display = 'flex';
+}
+
+
+// ================= TUTUP NOTIF =================
+function tutupNotif(){
+
+    document.getElementById('modalNotif')
+        .style.display = 'none';
 }
 
 

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title','Manajemen Jabatan')
+@section('title','Status Presensi')
 
 @section('content')
 
@@ -8,7 +8,6 @@
 :root{
     --primary:#0a3d62;
     --border:#e5e7eb;
-    --success:#16a34a;
     --danger:#dc2626;
 }
 
@@ -55,10 +54,21 @@ button{
     transition:.2s;
 }
 
-.btn-primary{ background:var(--primary); }
-.btn-danger{ background:var(--danger); }
-.btn-info{ background:#2563eb; }
-.btn-secondary{ background:#6b7280; }
+.btn-primary{
+    background:var(--primary);
+}
+
+.btn-danger{
+    background:var(--danger);
+}
+
+.btn-edit{
+    background:#2563eb;
+}
+
+.btn-secondary{
+    background:#6b7280;
+}
 
 button:hover{
     opacity:0.9;
@@ -75,7 +85,8 @@ thead{
     background:#f1f5f9;
 }
 
-th, td{
+th,
+td{
     border:1px solid var(--border);
     padding:10px;
     text-align:center;
@@ -104,13 +115,8 @@ tbody tr:hover{
     padding:24px;
     border-radius:16px;
     width:340px;
-    text-align:center;
-    animation:fade 0.2s ease;
+    animation:fade .2s ease;
     box-shadow:0 10px 25px rgba(0,0,0,0.12);
-}
-
-.modal-content h3{
-    margin-bottom:15px;
 }
 
 .modal-content input{
@@ -123,18 +129,7 @@ tbody tr:hover{
     margin-top:5px;
 }
 
-/* ===== LIST ===== */
-#detailList{
-    text-align:left;
-    margin-bottom:10px;
-}
-
-#detailList li{
-    padding:6px;
-    border-bottom:1px solid var(--border);
-}
-
-/* ===== ICON ===== */
+/* ===== NOTIF ===== */
 .notif-icon{
     width:70px;
     height:70px;
@@ -148,10 +143,11 @@ tbody tr:hover{
     color:white;
 }
 
+/* ===== ANIMATION ===== */
 @keyframes fade{
     from{
         opacity:0;
-        transform:scale(0.95);
+        transform:scale(.95);
     }
     to{
         opacity:1;
@@ -162,16 +158,19 @@ tbody tr:hover{
 
 <div class="card">
 
-<h3>Manajemen Jabatan</h3>
+<h3>Status Presensi</h3>
 
 <!-- FORM -->
 <div class="form-inline">
 
-    <input id="nama_jabatan"
-           placeholder="Nama Jabatan">
+    <input
+        id="nama_status"
+        placeholder="Nama Status"
+    >
 
-    <button id="btnTambah"
-            class="btn-primary">
+    <button
+        id="btnTambah"
+        class="btn-primary">
         Tambah
     </button>
 
@@ -182,8 +181,7 @@ tbody tr:hover{
 
 <thead>
 <tr>
-<th>Nama Jabatan</th>
-<th>Jumlah Pegawai</th>
+<th>Status</th>
 <th>Aksi</th>
 </tr>
 </thead>
@@ -194,49 +192,44 @@ tbody tr:hover{
 
 </div>
 
+
+
 <!-- ================= MODAL EDIT ================= -->
 <div id="modalEdit" class="modal">
 
 <div class="modal-content">
 
-<h3>Edit Jabatan</h3>
+<h3 style="
+    margin-bottom:18px;
+    color:var(--primary);
+">
+    Edit Status
+</h3>
 
-<input id="edit_nama">
+<input id="edit_status">
 
-<button id="btnUpdate"
-        class="btn-primary">
+<button
+    id="btnUpdate"
+    class="btn-primary">
     Update
 </button>
 
-<button id="btnTutup"
-        class="btn-secondary">
+<button
+    id="btnTutup"
+    class="btn-secondary">
     Batal
 </button>
 
 </div>
 </div>
 
-<!-- ================= MODAL DETAIL ================= -->
-<div id="modalDetail" class="modal">
 
-<div class="modal-content">
-
-<h3>Detail Pegawai</h3>
-
-<ul id="detailList"></ul>
-
-<button id="btnTutupDetail"
-        class="btn-secondary">
-    Tutup
-</button>
-
-</div>
-</div>
 
 <!-- ================= MODAL NOTIFIKASI ================= -->
 <div id="modalNotif" class="modal">
 
-<div class="modal-content">
+<div class="modal-content"
+     style="text-align:center;">
 
     <div id="notifIcon"
          class="notif-icon">
@@ -257,8 +250,9 @@ tbody tr:hover{
        Data berhasil disimpan
     </p>
 
-    <button onclick="tutupNotif()"
-            class="btn-primary">
+    <button
+        onclick="tutupNotif()"
+        class="btn-primary">
         OK
     </button>
 
@@ -273,6 +267,7 @@ tbody tr:hover{
 
 let editId = null;
 
+
 // ================= INIT =================
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -286,16 +281,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('btnTutup')
         .addEventListener('click', tutup);
-
-    document.getElementById('btnTutupDetail')
-        .addEventListener('click', tutupDetail);
 });
 
 
 // ================= LOAD DATA =================
 function loadData(){
 
-    fetch('/api/jabatan')
+    fetch('/api/status-presensi')
 
     .then(res => res.json())
 
@@ -303,74 +295,47 @@ function loadData(){
 
         let html = '';
 
-        res.data.forEach(j => {
+        if(!res.data.length){
+
+            html = `
+                <tr>
+                    <td colspan="2">
+                        Belum ada data
+                    </td>
+                </tr>
+            `;
+        }
+
+        res.data.forEach(s => {
 
             html += `
             <tr>
 
                 <td>
-                    ${j.nama_jabatan}
-                </td>
-
-                <td>
-                    <b>${j.pegawai_count}</b>
+                    ${s.nama_status}
                 </td>
 
                 <td>
 
-                    <button class="btn-info"
-                            data-id="${j.id_jabatan}">
-                        Detail
-                    </button>
-
-                    <button class="btn-primary"
-                            data-id="${j.id_jabatan}"
-                            data-nama="${j.nama_jabatan}">
+                    <button
+                        class="btn-edit"
+                        onclick="edit(${s.id_status})">
                         Edit
                     </button>
 
-                    <button class="btn-danger"
-                            data-id="${j.id_jabatan}">
+                    <button
+                        class="btn-danger"
+                        onclick="hapus(${s.id_status})">
                         Hapus
                     </button>
 
                 </td>
 
-            </tr>`;
+            </tr>
+            `;
         });
 
-        document.getElementById('data').innerHTML = html;
-
-        // DETAIL
-        document.querySelectorAll('.btn-info')
-        .forEach(btn => {
-
-            btn.onclick = () =>
-                detail(btn.dataset.id);
-        });
-
-        // EDIT
-        document.querySelectorAll('.btn-primary')
-        .forEach(btn => {
-
-            if(btn.dataset.id){
-
-                btn.onclick = () =>
-                    edit(
-                        btn.dataset.id,
-                        btn.dataset.nama
-                    );
-            }
-        });
-
-        // HAPUS
-        document.querySelectorAll('.btn-danger')
-        .forEach(btn => {
-
-            btn.onclick = () =>
-                hapus(btn.dataset.id);
-        });
-
+        data.innerHTML = html;
     });
 }
 
@@ -378,20 +343,17 @@ function loadData(){
 // ================= TAMBAH =================
 function tambah(){
 
-    let nama =
-        document.getElementById('nama_jabatan').value;
-
-    if(!nama){
+    if(!nama_status.value){
 
         showNotif(
-            'danger',
-            'Nama jabatan wajib diisi'
+            'warning',
+            'Nama status wajib diisi'
         );
 
         return;
     }
 
-    fetch('/api/jabatan',{
+    fetch('/api/status-presensi',{
 
         method:'POST',
 
@@ -400,44 +362,69 @@ function tambah(){
         },
 
         body: JSON.stringify({
-            nama_jabatan: nama
+            nama_status: nama_status.value
         })
     })
 
-    .then(res => res.json())
+    .then(async res => {
 
-    .then(res => {
+        const data = await res.json();
+
+        if(res.ok){
+
+            showNotif(
+                'success',
+                data.message
+            );
+
+            nama_status.value = '';
+
+            loadData();
+
+        }else{
+
+            showNotif(
+                'danger',
+                data.message || 'Gagal tambah data'
+            );
+        }
+    })
+
+    .catch(err => {
+
+        console.error(err);
 
         showNotif(
-            'success',
-            res.message
+            'danger',
+            'Terjadi kesalahan server'
         );
-
-        document.getElementById('nama_jabatan')
-            .value = '';
-
-        loadData();
     });
 }
 
 
 // ================= EDIT =================
-function edit(id, nama){
+function edit(id){
 
     editId = id;
 
-    document.getElementById('edit_nama')
-        .value = nama;
+    fetch('/api/status-presensi/' + id)
 
-    document.getElementById('modalEdit')
-        .style.display = 'flex';
+    .then(res => res.json())
+
+    .then(res => {
+
+        edit_status.value =
+            res.data.nama_status;
+
+        modalEdit.style.display = 'flex';
+    });
 }
 
 
 // ================= UPDATE =================
 function update(){
 
-    fetch('/api/jabatan/' + editId,{
+    fetch('/api/status-presensi/' + editId,{
 
         method:'PUT',
 
@@ -446,23 +433,42 @@ function update(){
         },
 
         body: JSON.stringify({
-            nama_jabatan:
-                document.getElementById('edit_nama').value
+            nama_status: edit_status.value
         })
     })
 
-    .then(res => res.json())
+    .then(async res => {
 
-    .then(res => {
+        const data = await res.json();
+
+        if(res.ok){
+
+            tutup();
+
+            showNotif(
+                'edit',
+                data.message
+            );
+
+            loadData();
+
+        }else{
+
+            showNotif(
+                'danger',
+                data.message || 'Gagal update data'
+            );
+        }
+    })
+
+    .catch(err => {
+
+        console.error(err);
 
         showNotif(
-            'edit',
-            res.message
+            'danger',
+            'Terjadi kesalahan server'
         );
-
-        tutup();
-
-        loadData();
     });
 }
 
@@ -470,63 +476,49 @@ function update(){
 // ================= HAPUS =================
 function hapus(id){
 
-        fetch('/api/jabatan/' + id,{
+    fetch('/api/status-presensi/' + id,{
 
-            method:'DELETE'
-        })
+        method:'DELETE'
+    })
 
-        .then(res => res.json())
+    .then(async res => {
 
-        .then(res => {
+        const data = await res.json();
+
+        if(res.ok){
 
             showNotif(
                 'delete',
-                res.message
+                data.message
             );
 
             loadData();
-        });
-    
+
+        }else{
+
+            showNotif(
+                'danger',
+                data.message || 'Gagal hapus data'
+            );
+        }
+    })
+
+    .catch(err => {
+
+        console.error(err);
+
+        showNotif(
+            'danger',
+            'Terjadi kesalahan server'
+        );
+    });
 }
 
 
-// ================= DETAIL =================
-function detail(id){
+// ================= TUTUP =================
+function tutup(){
 
-    fetch('/api/jabatan/' + id)
-
-    .then(res => res.json())
-
-    .then(res => {
-
-        let html = '';
-
-        if(res.data.pegawai.length === 0){
-
-            html = `
-                <li>
-                    Tidak ada pegawai
-                </li>
-            `;
-
-        } else {
-
-            res.data.pegawai.forEach(p => {
-
-                html += `
-                    <li>
-                        ${p.nama_guru}
-                    </li>
-                `;
-            });
-        }
-
-        document.getElementById('detailList')
-            .innerHTML = html;
-
-        document.getElementById('modalDetail')
-            .style.display = 'flex';
-    });
+    modalEdit.style.display = 'none';
 }
 
 
@@ -563,12 +555,19 @@ function showNotif(type, message){
 
         title.innerText = 'Data Diperbarui';
 
-    }else if(type === 'danger'){
+    }else if(type === 'warning'){
 
         icon.innerHTML = '!';
         icon.style.background = '#f59e0b';
 
         title.innerText = 'Peringatan';
+
+    }else if(type === 'danger'){
+
+        icon.innerHTML = '✕';
+        icon.style.background = '#dc2626';
+
+        title.innerText = 'Gagal';
     }
 
     text.innerText = message;
@@ -577,25 +576,14 @@ function showNotif(type, message){
         .style.display = 'flex';
 }
 
+
+// ================= TUTUP NOTIF =================
 function tutupNotif(){
 
     document.getElementById('modalNotif')
         .style.display = 'none';
 }
 
-
-// ================= TUTUP =================
-function tutup(){
-
-    document.getElementById('modalEdit')
-        .style.display = 'none';
-}
-
-function tutupDetail(){
-
-    document.getElementById('modalDetail')
-        .style.display = 'none';
-}
-
 </script>
 @endsection
+
