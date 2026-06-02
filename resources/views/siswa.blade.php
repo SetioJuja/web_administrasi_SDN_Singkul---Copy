@@ -353,6 +353,35 @@ tbody tr:hover{
 
 </div>
 
+<!-- MODAL HAPUS -->
+<div id="modalHapus" class="modal">
+    <div class="modal-content" style="max-width:400px;text-align:center;">
+
+        <h3 style="color:#ef4444;">
+            Konfirmasi Hapus
+        </h3>
+
+        <p style="margin:15px 0;color:#64748b;">
+            Apakah Anda yakin ingin menghapus data siswa ini?
+        </p>
+
+        <div style="display:flex;gap:10px;justify-content:center;">
+
+            <button id="btnYaHapus" class="btn-danger">
+                Hapus
+            </button>
+
+            <button
+                class="btn-primary"
+                onclick="document.getElementById('modalHapus').style.display='none'">
+                Batal
+            </button>
+
+        </div>
+
+    </div>
+</div>
+
 @endsection
 
 @section('script')
@@ -573,30 +602,32 @@ async function updateData(){
 }
 
 /* DELETE */
+/* DELETE */
 function hapus(id,id_guru){
 
-    if(confirm('Yakin hapus data siswa ini?')){
+    document.getElementById('modalHapus').style.display = 'flex';
 
-        fetch('/api/siswa/' + id,{
+    document.getElementById('btnYaHapus').onclick = async function(){
 
+        const res = await fetch('/api/siswa/' + id,{
             method:'DELETE'
-
-        })
-        .then(res => res.json())
-        .then(d => {
-
-            if(d.success){
-
-                showNotif('Data berhasil dihapus');
-
-                loadData(id_guru);
-
-            }else{
-
-                showNotif('Gagal hapus data','error');
-            }
         });
-    }
+
+        const d = await res.json();
+
+        if(d.success){
+
+            showNotif('Data berhasil dihapus');
+
+            loadData(id_guru);
+
+        }else{
+
+            showNotif('Gagal hapus data','error');
+        }
+
+        document.getElementById('modalHapus').style.display = 'none';
+    };
 }
 
 /* TUTUP MODAL */
