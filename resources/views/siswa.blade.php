@@ -258,8 +258,8 @@ tbody tr:hover{
 
         <select id="jenis_kelamin">
             <option value="">Jenis Kelamin</option>
-            <option value="L">Laki-laki</option>
-            <option value="P">Perempuan</option>
+            <option value="Laki-laki">Laki-laki</option>
+            <option value="Perempuan">Perempuan</option>
         </select>
 
         <input id="tempat_lahir" placeholder="Tempat Lahir">
@@ -320,8 +320,8 @@ tbody tr:hover{
         <input id="edit_nis" placeholder="NIS">
 
         <select id="edit_jk">
-            <option value="L">Laki-laki</option>
-            <option value="P">Perempuan</option>
+            <option value="Laki-laki">Laki-laki</option>
+            <option value="Perempuan">Perempuan</option>
         </select>
 
         <input id="edit_tempat" placeholder="Tempat Lahir">

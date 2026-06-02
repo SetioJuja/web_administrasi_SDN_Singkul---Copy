@@ -461,10 +461,14 @@ function togglePassword(){
 function login(){
 
     const username =
-        document.getElementById('username').value;
+        document.getElementById('username')
+        .value
+        .trim();
 
     const password =
-        document.getElementById('password').value;
+        document.getElementById('password')
+        .value
+        .trim();
 
     const msg =
         document.getElementById('msg');
@@ -472,11 +476,56 @@ function login(){
     const btn =
         document.getElementById('btnLogin');
 
+    /* =========================
+       VALIDASI INPUT
+    ========================= */
+
+    if(!username && !password){
+
+        msg.innerHTML =
+            'Username dan password wajib diisi';
+
+        msg.className =
+            'msg error';
+
+        return;
+    }
+
+    if(!username){
+
+        msg.innerHTML =
+            'Username wajib diisi';
+
+        msg.className =
+            'msg error';
+
+        return;
+    }
+
+    if(!password){
+
+        msg.innerHTML =
+            'Password wajib diisi';
+
+        msg.className =
+            'msg error';
+
+        return;
+    }
+
+    /* =========================
+       LOADING
+    ========================= */
+
     btn.disabled = true;
     btn.innerHTML = 'Loading...';
 
-    msg.innerHTML = 'Loading...';
+    msg.innerHTML = 'Memproses login...';
     msg.className = 'msg';
+
+    /* =========================
+       REQUEST LOGIN
+    ========================= */
 
     fetch('/api/login',{
 
@@ -493,9 +542,23 @@ function login(){
 
     })
 
-    .then(res=>res.json())
+    .then(async response => {
 
-    .then(res=>{
+        const data =
+            await response.json();
+
+        if(!response.ok){
+
+            throw {
+                status: response.status,
+                data: data
+            };
+        }
+
+        return data;
+    })
+
+    .then(res => {
 
         if(res.success){
 
@@ -520,7 +583,8 @@ function login(){
         }else{
 
             msg.innerHTML =
-                res.message || 'Login gagal';
+                res.message ||
+                'Username atau password salah';
 
             msg.className =
                 'msg error';
@@ -531,16 +595,65 @@ function login(){
 
     })
 
-    .catch(()=>{
+    .catch(error => {
 
-        msg.innerHTML =
-            'Server error';
+        let pesan =
+            'Terjadi kesalahan';
+
+        if(error.status === 422){
+
+            if(error.data.errors){
+
+                const firstError =
+                    Object.values(
+                        error.data.errors
+                    )[0];
+
+                pesan =
+                    Array.isArray(firstError)
+                    ? firstError[0]
+                    : firstError;
+
+            }else{
+
+                pesan =
+                    error.data.message ||
+                    'Data yang dikirim tidak valid';
+            }
+
+        }else if(
+            error.status === 401 ||
+            error.status === 403
+        ){
+
+            pesan =
+                error.data?.message ||
+                'Username atau password salah';
+
+        }else if(
+            error.status === 500
+        ){
+
+            pesan =
+                'Terjadi kesalahan pada server';
+
+        }else if(
+            error.data?.message
+        ){
+
+            pesan =
+                error.data.message;
+        }
+
+        msg.innerHTML = pesan;
 
         msg.className =
             'msg error';
 
         btn.disabled = false;
         btn.innerHTML = 'Login';
+
+        console.error(error);
     });
 }
 

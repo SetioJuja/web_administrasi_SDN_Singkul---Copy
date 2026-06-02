@@ -15,7 +15,7 @@ return new class extends Migration
             $table->integer('id_siswa', true);
             $table->string('nama_siswa', 100);
             $table->string('nis', 50)->unique('nis');
-            $table->enum('jenis_kelamin', ['L', 'P']);
+            $table->enum('jenis_kelamin', 255);
             $table->string('tempat_lahir', 100);
             $table->date('tanggal_lahir');
             $table->text('alamat')->nullable();

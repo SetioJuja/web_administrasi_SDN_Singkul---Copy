@@ -30,7 +30,7 @@ class SiswaController extends Controller
             $validated = $request->validate([
                 'nama_siswa' => 'required',
                 'nis' => 'required|unique:siswa,nis',
-                'jenis_kelamin' => 'required|in:L,P',
+                'jenis_kelamin' => 'required',
                 'tempat_lahir' => 'required',
                 'tanggal_lahir' => 'required|date',
                 'alamat' => 'nullable',
@@ -101,7 +101,7 @@ class SiswaController extends Controller
             $validated = $request->validate([
                 'nama_siswa' => 'sometimes|required',
                 'nis' => 'sometimes|required|unique:siswa,nis,' . $id . ',id_siswa',
-                'jenis_kelamin' => 'sometimes|required|in:L,P',
+                'jenis_kelamin' => 'sometimes|required',
                 'tempat_lahir' => 'sometimes|required',
                 'tanggal_lahir' => 'sometimes|required|date',
                 'alamat' => 'nullable',

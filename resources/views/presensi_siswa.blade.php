@@ -497,239 +497,141 @@ function downloadPDF() {
     const [year, month] = bulan.split('-');
     const totalHari     = new Date(year, month, 0).getDate();
     const bulanLabel    = getBulanLabel(bulan);
-    const marginL = 12, marginR = 12;
+    const marginL = 15, marginR = 15; // Menggunakan margin standar kedinasan
     const usable  = pageW - marginL - marginR;
 
-    // ══════════════════════════════════════════════
-    //  HEADER AREA  — gradient bar + judul
-    // ══════════════════════════════════════════════
-    // Background bar
-    doc.setFillColor(10, 61, 98);
-    doc.roundedRect(marginL, 6, pageW - marginL - marginR, 18, 2, 2, 'F');
+    // ── KOP LAPORAN FORMAL (Hitam Putih resmi) ─────────────────────────
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(13);
+    doc.text('REKAPITULASI PRESENSI SISWA', pageW / 2, 13, { align: 'center' });
 
-    // Judul utama (putih, di dalam bar)
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(11);
-    doc.setTextColor(255, 255, 255);
-    doc.text('REKAP PRESENSI SISWA', pageW / 2, 17, { align: 'center' });
-
-    // Sub‑info (strip kecil di bawah bar)
-    doc.setFillColor(230, 237, 248);
-    doc.rect(marginL, 24, pageW - marginL - marginR, 7, 'F');
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(7.5);
-    doc.setTextColor(40, 60, 100);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5);
     doc.text(
-        `Periode: ${periodeInfo.periode}     Semester: ${periodeInfo.semester}     Bulan: ${bulanLabel}     Total Siswa: ${siswa.length}`,
-        pageW / 2, 28.5, { align: 'center' }
+        `Periode: ${periodeInfo.periode}   |   Semester: ${periodeInfo.semester}   |   Bulan: ${bulanLabel}   |   Total: ${siswa.length} Siswa`,
+        pageW / 2, 18, { align: 'center' }
     );
 
-    // ══════════════════════════════════════════════
-    //  HITUNG LEBAR KOLOM
-    // ══════════════════════════════════════════════
-    const noW   = 5.5;
-    const namaW = 36;
+    // Garis horizontal pembatas dokumen formal
+    doc.setLineWidth(0.4); doc.setDrawColor(0, 0, 0);
+    doc.line(marginL, 21, pageW - marginR, 21);
+
+    // ── HITUNG LEBAR KOLOM ──────────────────────────────────────────────
+    const noW   = 7;
+    const namaW = 55;
     const rekW  = 7;
-    const dayW  = (usable - noW - namaW - rekW * 4) / totalHari;
+    const dayW  = (usable - noW - namaW - (rekW * 4)) / totalHari;
 
-    // ══════════════════════════════════════════════
-    //  BUILD DATA
-    // ══════════════════════════════════════════════
-    const STATUS_COLOR = {
-        'H': { fill: [39, 174, 96],  text: [255, 255, 255] },
-        'I': { fill: [243, 156, 18], text: [255, 255, 255] },
-        'S': { fill: [41, 182, 246], text: [255, 255, 255] },
-        'A': { fill: [231, 76, 60],  text: [255, 255, 255] },
-    };
-
-    const today = new Date().toISOString().slice(0, 10);
-
+    // ── STRUKTUR HEADER TABEL RESMI ─────────────────────────────────────
     const head = [[
-        { content: 'No',  styles: { halign: 'center' } },
+        { content: 'No', styles: { halign: 'center' } },
         { content: 'Nama Siswa', styles: { halign: 'left' } },
-        ...Array.from({ length: totalHari }, (_, i) => {
-            const tgl = bulan + '-' + String(i + 1).padStart(2, '0');
-            return {
-                content: String(i + 1),
-                styles: {
-                    halign: 'center',
-                    fillColor: tgl === today ? [13, 71, 161] : [10, 61, 98],
-                    fontStyle: tgl === today ? 'bold' : 'normal',
-                }
-            };
-        }),
-        { content: 'H', styles: { halign: 'center', fillColor: [27, 94, 32]   } },
-        { content: 'I', styles: { halign: 'center', fillColor: [230, 81, 0]   } },
-        { content: 'S', styles: { halign: 'center', fillColor: [0, 96, 100]   } },
-        { content: 'A', styles: { halign: 'center', fillColor: [183, 28, 28]  } },
+        ...Array.from({ length: totalHari }, (_, i) => ({
+            content: String(i + 1), styles: { halign: 'center' }
+        })),
+        { content: 'H', styles: { halign: 'center' } },
+        { content: 'I', styles: { halign: 'center' } },
+        { content: 'S', styles: { halign: 'center' } },
+        { content: 'A', styles: { halign: 'center' } },
     ]];
 
+    // ── EVALUASI DATA BADAN TABEL ────────────────────────────────────────
     const bodyData = siswa.map((s, idx) => {
         const sid = Number(s.id_siswa);
         let cH = 0, cI = 0, cS = 0, cA = 0;
         const cols = [];
+
         for (let d = 1; d <= totalHari; d++) {
             const tgl = bulan + '-' + String(d).padStart(2, '0');
             const st  = presensi[sid]?.[tgl]?.id_status ?? null;
             const lbl = getLabel(st);
+            
             cols.push(lbl === '-' ? '' : lbl);
             if (st === 1) cH++;
             else if (st === 2) cI++;
             else if (st === 3) cS++;
             else if (st === 4) cA++;
         }
-        return [idx + 1, s.nama_siswa, ...cols,
-            cH || '', cI || '', cS || '', cA || ''];
+
+        return [
+            idx + 1, 
+            s.nama_siswa, 
+            ...cols,
+            cH || '0', 
+            cI || '0', 
+            cS || '0', 
+            cA || '0'
+        ];
     });
 
-    // ══════════════════════════════════════════════
-    //  COLUMN STYLES
-    // ══════════════════════════════════════════════
+    // ── KONFIGURASI LEBAR & PENJAJARAN KOLOM ─────────────────────────────
     const colStyles = {};
-    colStyles[0] = { halign: 'center', cellWidth: noW,   cellPadding: { top: 1.5, bottom: 1.5, left: 1, right: 1 } };
-    colStyles[1] = { halign: 'left',   cellWidth: namaW, fontStyle: 'bold',
-                     cellPadding: { top: 1.5, bottom: 1.5, left: 3, right: 2 } };
+    colStyles[0] = { halign: 'center', cellWidth: noW };
+    colStyles[1] = { halign: 'left', cellWidth: namaW };
     for (let i = 0; i < totalHari; i++) {
-        colStyles[i + 2] = { halign: 'center', cellWidth: dayW,
-                              cellPadding: { top: 1.5, bottom: 1.5, left: 0.5, right: 0.5 } };
+        colStyles[i + 2] = { halign: 'center', cellWidth: dayW };
     }
     const ri = totalHari + 2;
-    const rekPad = { top: 1.5, bottom: 1.5, left: 1, right: 1 };
-    colStyles[ri]   = { halign: 'center', cellWidth: rekW, fontStyle: 'bold', cellPadding: rekPad };
-    colStyles[ri+1] = { halign: 'center', cellWidth: rekW, fontStyle: 'bold', cellPadding: rekPad };
-    colStyles[ri+2] = { halign: 'center', cellWidth: rekW, fontStyle: 'bold', cellPadding: rekPad };
-    colStyles[ri+3] = { halign: 'center', cellWidth: rekW, fontStyle: 'bold', cellPadding: rekPad };
+    colStyles[ri]   = { halign: 'center', cellWidth: rekW, fontStyle: 'bold' };
+    colStyles[ri+1] = { halign: 'center', cellWidth: rekW, fontStyle: 'bold' };
+    colStyles[ri+2] = { halign: 'center', cellWidth: rekW, fontStyle: 'bold' };
+    colStyles[ri+3] = { halign: 'center', cellWidth: rekW, fontStyle: 'bold' };
 
-    // ══════════════════════════════════════════════
-    //  AUTOTABLE
-    // ══════════════════════════════════════════════
+    // ── EKSEKUSI PENYUSUNAN AUTOTABLE FORMAL ─────────────────────────────
     doc.autoTable({
         head,
         body: bodyData,
-        startY: 33,
+        startY: 25,
         margin: { left: marginL, right: marginR },
         columnStyles: colStyles,
-        tableLineColor: [200, 210, 230],
-        tableLineWidth: 0.1,
+        tableLineColor: [0, 0, 0], // Garis luar hitam tegas
+        tableLineWidth: 0.2,
 
         headStyles: {
-            fillColor: [10, 61, 98],
-            textColor: [255, 255, 255],
+            fillColor: [255, 255, 255], // Latar belakang putih polos bersih
+            textColor: [0, 0, 0],       // Teks hitam
             fontStyle: 'bold',
-            fontSize: 6,
-            cellPadding: { top: 2.5, bottom: 2.5, left: 1, right: 1 },
+            fontSize: 7,
+            cellPadding: { top: 2, bottom: 2, left: 0.5, right: 0.5 },
             halign: 'center',
             valign: 'middle',
-            lineWidth: 0.1,
-            lineColor: [255, 255, 255],
+            lineWidth: 0.2,
+            lineColor: [0, 0, 0],      // Kisi pembatas garis hitam
         },
 
         bodyStyles: {
-            fontSize: 6,
-            cellPadding: { top: 1.8, bottom: 1.8, left: 1.5, right: 1.5 },
+            fillColor: [255, 255, 255],
+            textColor: [0, 0, 0],       // Teks data hitam polos
+            fontSize: 6.5,
+            cellPadding: { top: 1.5, bottom: 1.5, left: 1, right: 1 },
             valign: 'middle',
             lineWidth: 0.1,
-            lineColor: [210, 220, 235],
+            lineColor: [150, 150, 150], // Kisi dalam abu-abu tipis agar tetap rapi
         },
 
-        alternateRowStyles: { fillColor: [245, 249, 255] },
+        alternateRowStyles: { fillColor: [255, 255, 255] }, // Menghapus efek zebra striping warna-warni
 
-        didParseCell: function (data) {
-            if (data.section !== 'body') return;
-            const col = data.column.index;
-            const val = String(data.cell.raw ?? '');
-
-            // Kolom tanggal → hanya huruf yang berwarna
-            if (col >= 2 && col <= totalHari + 1 && STATUS_COLOR[val]) {
-
-                // background tetap putih
-                data.cell.styles.fillColor = [255,255,255];
-
-                // hanya teks berwarna
-                data.cell.styles.textColor =
-                    STATUS_COLOR[val].fill;
-
-                data.cell.styles.fontStyle =
-                    'bold';
-
-                data.cell.styles.fontSize =
-                    6;
-            }
-
-            // kosong
-            if (col >= 2 && col <= totalHari + 1 && val === '') {
-
-                data.cell.styles.fillColor =
-                    [255,255,255];
-
-                data.cell.styles.textColor =
-                    [210,210,210];
-            }
-
-            // Kolom rekap: pewarnaan background + teks
-            if (col === ri   && val !== '' && val !== '0') { data.cell.styles.fillColor = [200, 230, 201]; data.cell.styles.textColor = [27,94,32]; }
-            if (col === ri+1 && val !== '' && val !== '0') { data.cell.styles.fillColor = [255, 224, 178]; data.cell.styles.textColor = [230,81,0]; }
-            if (col === ri+2 && val !== '' && val !== '0') { data.cell.styles.fillColor = [178, 235, 242]; data.cell.styles.textColor = [0,96,100]; }
-            if (col === ri+3 && val !== '' && val !== '0') { data.cell.styles.fillColor = [255, 205, 210]; data.cell.styles.textColor = [183,28,28]; }
-
-            // Nilai 0 di kolom rekap → abu
-            if (col >= ri && col <= ri + 3 && (val === '0' || val === '')) {
-                data.cell.styles.textColor = [200, 200, 200];
-                data.cell.text = [''];
-            }
-        },
-
-        // Footer tiap halaman
+        // ── KAKI HALAMAN (FOOTER) ─────────────────────────────────────────
         didDrawPage: function (hookData) {
-            const pg     = doc.internal.getCurrentPageInfo().pageNumber;
-            const totPg  = '{total_pages_count_string}';
-            const y      = pageH - 5;
+            const pg = doc.internal.getCurrentPageInfo().pageNumber;
+            const y  = pageH - 8;
 
-            // Strip bawah
-            doc.setFillColor(230, 237, 248);
-            doc.rect(marginL, y - 5, pageW - marginL - marginR, 6, 'F');
+            // Batas garis halus dokumen arsip bawah
+            doc.setDrawColor(180, 180, 180); doc.setLineWidth(0.1);
+            doc.line(marginL, y - 2, pageW - marginR, y - 2);
 
-            doc.setFontSize(6);
+            doc.setFontSize(7);
             doc.setFont('helvetica', 'normal');
-            doc.setTextColor(60, 80, 120);
+            doc.setTextColor(0, 0, 0);
 
-            // Kiri: legend warna
-            doc.setFont('helvetica', 'bold');
-            doc.text('Keterangan:', marginL + 2, y - 1.5);
-            doc.setFont('helvetica', 'normal');
-            const badges = [
-                { label: 'H = Hadir', color: [39, 174, 96]  },
-                { label: 'I = Izin',  color: [243, 156, 18] },
-                { label: 'S = Sakit', color: [41, 182, 246] },
-                { label: 'A = Alpa',  color: [231, 76, 60]  },
-            ];
-            let bx = marginL + 24;
-            badges.forEach(b => {
-                doc.setFillColor(...b.color);
-                doc.roundedRect(bx, y - 4.5, 20, 4, 0.8, 0.8, 'F');
-                doc.setTextColor(255, 255, 255);
-                doc.setFontSize(5.5);
-                doc.text(b.label, bx + 10, y - 1.8, { align: 'center' });
-                bx += 23;
-            });
+            // Keterangan teks polos biasa (Tanpa lencana kotak warna)
+            doc.text('Keterangan:  H = Hadir  |  I = Izin  |  S = Sakit  |  A = Alpa', marginL, y + 2);
 
-            // Kanan: halaman
-            doc.setTextColor(60, 80, 120);
-            doc.setFontSize(6);
-            doc.setFont('helvetica', 'normal');
-            doc.text(
-                `Halaman ${pg}`,
-                pageW - marginR - 2, y - 1.5, { align: 'right' }
-            );
+            // Penomoran Halaman instansi resmi kanan bawah
+            doc.text(`Halaman ${pg}`, pageW - marginR, y + 2, { align: 'right' });
         },
     });
 
-    // Ganti placeholder total halaman
-    if (typeof doc.putTotalPages === 'function') {
-        doc.putTotalPages('{total_pages_count_string}');
-    }
-
-    doc.save(`presensi_${bulanLabel.replace(' ', '_')}.pdf`);
+    doc.save(`Rekap_Presensi_Siswa_${bulanLabel.replace(' ', '_')}.pdf`);
 }
 
 // ===================== SEARCH =====================

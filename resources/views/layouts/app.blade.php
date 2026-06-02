@@ -604,7 +604,9 @@ document.getElementById('user-nama').innerText =
     user.nama || '-';
 
 document.getElementById('user-role').innerText =
-    (user.roles || []).join(', ') || '-';
+    (user.roles || [])
+        .map(role => 'Guru ' + role)
+        .join(', ') || '-';
 
 const words =
     (user.nama || 'U').trim().split(' ');
