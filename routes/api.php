@@ -100,3 +100,4 @@ Route::get('/tahun_ajaran/aktif1', [TahunAjaranController::class, 'aktif1']);
 Route::get('/nilai-tugas-kelas/{kelas}/{mapel}', [NilaiTugasController::class,'nilaiTugasKelas']);
 Route::get('/jadwal-guru-mapel/{id}', [JadwalMengajarController::class, 'byGuruMapel']);
 
+Route::get('/nilai-siswa-semua/{kelas}',[NilaiSiswaController::class, 'semuaNilaiKelas']);

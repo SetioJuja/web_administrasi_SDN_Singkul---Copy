@@ -1,8 +1,10 @@
 @extends('layouts.app')
 
-@section('title','Nilai Siswa')
+@section('title','Rekap Nilai Siswa')
 
 @section('content')
+
+<link href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 
 <style>
 :root{
@@ -16,7 +18,6 @@ body{
     background:var(--bg);
 }
 
-/* CARD */
 .card{
     background:white;
     border-radius:14px;
@@ -24,7 +25,6 @@ body{
     border:1px solid var(--border);
 }
 
-/* HEADER */
 .header{
     display:flex;
     justify-content:space-between;
@@ -46,17 +46,12 @@ body{
     margin-top:4px;
 }
 
-/* TOP BAR */
 .top-bar{
     display:flex;
     gap:10px;
     margin-bottom:18px;
     flex-wrap:wrap;
     align-items:center;
-}
-
-.top-bar .right{
-    margin-left:auto;
 }
 
 select,
@@ -76,31 +71,29 @@ input:focus{
     border-color:#2563eb;
 }
 
-/* BUTTON */
-.btn-rapor{
+.btn{
     height:42px;
     border:none;
-    background:#16a34a;
-    color:white;
     padding:0 16px;
     border-radius:8px;
     cursor:pointer;
     font-size:13px;
     font-weight:600;
+    color:white;
 }
 
-.btn-rapor:hover{
-    background:#15803d;
-}
+.btn-primary{ background:#0a3d62; }
+.btn-primary:hover{ background:#083150; }
 
-/* INFO */
+.btn-success{ background:#16a34a; }
+.btn-success:hover{ background:#15803d; }
+
 .info{
     margin-bottom:14px;
     font-size:13px;
     color:#64748b;
 }
 
-/* TABLE */
 .table-wrap{
     overflow:auto;
     border:1px solid var(--border);
@@ -110,7 +103,7 @@ input:focus{
 table{
     width:100%;
     border-collapse:collapse;
-    min-width:800px;
+    min-width:900px;
     font-size:13px;
 }
 
@@ -124,34 +117,44 @@ th{
     text-align:center;
     white-space:nowrap;
     font-weight:600;
+    border:1px solid rgba(255,255,255,0.15);
 }
 
 td{
-    padding:10px;
-    border-bottom:1px solid #f1f5f9;
+    padding:9px 10px;
+    border:1px solid #e5e7eb;
     text-align:center;
     color:var(--text);
+    vertical-align:middle;
 }
 
-tbody tr:nth-child(even){
-    background:#fafafa;
+/* garis tebal batas antar siswa */
+tr.row-first td{
+    border-top:2px solid #0a3d62 !important;
 }
 
-td:first-child,
-th:first-child{
+tr.row-last td{
+    border-bottom:2px solid #0a3d62 !important;
+}
+
+td.nama-siswa{
     text-align:left;
-    min-width:220px;
+    font-weight:600;
+    background:#f0f4f8;
+    color:var(--primary);
+    min-width:160px;
+    border-left:3px solid var(--primary) !important;
 }
 
-.empty{
-    color:#94a3b8;
+td.nama-mapel{
+    text-align:left;
+    min-width:160px;
 }
 
-.total{
-    font-weight:700;
+td.nilai{
+    min-width:70px;
 }
 
-/* LOADING */
 .loading{
     padding:30px;
     text-align:center;
@@ -159,112 +162,191 @@ th:first-child{
     display:none;
 }
 
-/* EMPTY */
 .empty-state{
     text-align:center;
     padding:35px;
     color:#64748b;
 }
 
-/* MOBILE */
+/* tombol lihat deskripsi */
+.btn-lihat{
+    background:#2563eb;
+    border:none;
+    border-radius:7px;
+    padding:5px 12px;
+    font-size:12px;
+    cursor:pointer;
+    color:white;
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+}
+.btn-lihat:hover{
+    background:#1d4ed8;
+}
+
+/* ===== MODAL CUSTOM (sama persis gaya input-nilai) ===== */
+.modal-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.5);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+}
+
+.modal-overlay.show{
+    display:flex;
+}
+
+.modal-box{
+    width:520px;
+    max-width:95vw;
+    background:white;
+    border-radius:18px;
+    padding:24px;
+    max-height:90vh;
+    overflow-y:auto;
+}
+
+.modal-box .modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.modal-box .modal-header h4{
+    margin:0;
+    color:var(--primary);
+    font-size:17px;
+    font-weight:700;
+}
+
+.modal-box .modal-header .judul-sub{
+    font-size:12px;
+    color:#64748b;
+    margin-top:3px;
+}
+
+.modal-close{
+    font-size:24px;
+    cursor:pointer;
+    color:#94a3b8;
+    line-height:1;
+    border:none;
+    background:none;
+    padding:0;
+}
+
+.modal-close:hover{
+    color:#0a3d62;
+}
+
+.modal-card{
+    border:1px solid var(--border);
+    border-radius:10px;
+    margin-bottom:14px;
+    overflow:hidden;
+}
+
+.modal-card-header{
+    background:#f1f5f9;
+    padding:9px 14px;
+    font-size:13px;
+    font-weight:600;
+    color:var(--primary);
+    border-bottom:1px solid var(--border);
+}
+
+.modal-card-body{
+    padding:14px;
+    font-size:13px;
+    color:var(--text);
+    line-height:1.7;
+    min-height:50px;
+    white-space:pre-wrap;
+}
+
+.modal-card-body.empty-text{
+    color:#94a3b8;
+    font-style:italic;
+}
+
 @media(max-width:768px){
-
-    .top-bar{
-        flex-direction:column;
-        align-items:stretch;
-    }
-
-    .top-bar .right{
-        margin-left:0;
-    }
-
-    select,
-    input,
-    .btn-rapor{
-        width:100%;
-    }
+    .top-bar{ flex-direction:column; align-items:stretch; }
+    select, input, .btn{ width:100%; }
 }
 </style>
+
+
+{{-- ===== MODAL DESKRIPSI (custom, bukan Bootstrap modal) ===== --}}
+<div class="modal-overlay" id="modalDeskripsi">
+    <div class="modal-box">
+
+        <div class="modal-header">
+            <div>
+                <h4>Detail Deskripsi</h4>
+                <div class="judul-sub" id="modalSubjudul"></div>
+            </div>
+            <button class="modal-close" onclick="tutupModal()">&times;</button>
+        </div>
+
+        <div class="modal-card">
+            <div class="modal-card-header">Deskripsi Pengetahuan</div>
+            <div class="modal-card-body" id="deskripsiPengetahuan"></div>
+        </div>
+
+        <div class="modal-card">
+            <div class="modal-card-header">Deskripsi Keterampilan</div>
+            <div class="modal-card-body" id="deskripsiKeterampilan"></div>
+        </div>
+
+    </div>
+</div>
 
 
 <div class="card">
 
     <div class="header">
-
         <div>
-
-            <h3>Data Nilai Siswa</h3>
-
-            <div
-                class="subtitle"
-                id="subtitle"
-            >
-                Pilih mata pelajaran
-            </div>
-
+            <h3>Rekap Nilai Siswa</h3>
+            <div class="subtitle" id="subtitle">Pilih kelas untuk menampilkan data</div>
         </div>
-
-        <button
-            class="btn-rapor"
-            onclick="location.href='/rapor'"
-        >
+        <button class="btn btn-success" onclick="location.href='/rapor'">
             Halaman Rapor
         </button>
-
     </div>
-
 
     <div class="top-bar">
-
-        <select id="kelas" disabled></select>
-
-        <select id="mapel"></select>
-
-        <input
-            id="search"
-            placeholder="Cari nama siswa..."
-        >
-
+        <input id="search" placeholder="Cari nama siswa..." style="max-width:220px;">
     </div>
 
+    <div class="info" id="info"></div>
 
-    <div
-        class="info"
-        id="info"
-    ></div>
-
-
-    <div
-        class="loading"
-        id="loading"
-    >
-        Memuat data...
-    </div>
-
+    <div class="loading" id="loading">Memuat data...</div>
 
     <div class="table-wrap">
-
         <table>
-
             <thead>
-                <tr id="headerTable"></tr>
-            </thead>
-
-            <tbody id="data">
-
                 <tr>
-                    <td
-                        colspan="99"
-                        class="empty-state"
-                    >
-                        Pilih mata pelajaran
-                    </td>
+                    <th>Nama Siswa</th>
+                    <th>Mata Pelajaran</th>
+                    <th>Rata-rata Tugas</th>
+                    <th>UTS</th>
+                    <th>UAS</th>
+                    <th>Total</th>
+                    <th>Keterampilan</th>
+                    <th>Deskripsi</th>
                 </tr>
-
+            </thead>
+            <tbody id="data">
+                <tr>
+                    <td colspan="8" class="empty-state">Pilih kelas untuk menampilkan data</td>
+                </tr>
             </tbody>
-
         </table>
-
     </div>
 
 </div>
@@ -272,484 +354,230 @@ th:first-child{
 @endsection
 
 
-
 @section('script')
-
 <script>
 
-let siswa = [];
-let siswaFiltered = [];
-let tugas = [];
-let nilai = {};
-let nilaiSiswa = {};
-
+let rawData = [];
 let id_kelas;
-let id_mapel;
+let namaKelas = '';
 let id_guru;
+
+const deskripsiStore = {};
 
 
 // ================= INIT =================
-document.addEventListener(
-    'DOMContentLoaded',
-    init
-);
+document.addEventListener('DOMContentLoaded', init);
 
 async function init(){
-
-    const user = JSON.parse(
-        localStorage.getItem('user')
-    );
-
-    if(!user){
-
-        location.href = '/login';
-
-        return;
-    }
-
+    const user = JSON.parse(localStorage.getItem('user'));
+    if(!user){ location.href = '/login'; return; }
     id_guru = user.id;
 
     await loadKelasSaya();
 
-    document
-        .getElementById('mapel')
-        .addEventListener(
-            'change',
-            loadData
-        );
+    document.getElementById('search').addEventListener('input', filterRender);
 
-    document
-        .getElementById('search')
-        .addEventListener(
-            'input',
-            filterData
-        );
+    // tutup modal klik backdrop
+    document.getElementById('modalDeskripsi')
+        .addEventListener('click', function(e){
+            if(e.target === this) tutupModal();
+        });
 }
 
 
 // ================= LOAD KELAS =================
 async function loadKelasSaya(){
-
-    const res = await fetch(
-        '/api/kelas-saya/' + id_guru
-    );
-
+    const res  = await fetch('/api/kelas-saya/' + id_guru);
     const json = await res.json();
 
-    if(json.data.length === 0){
-
+    if(!json.data || json.data.length === 0){
         alert('Tidak punya kelas');
-
         return;
     }
 
-    const k = json.data[0];
-
-    id_kelas = k.id_kelas;
-
-    document.getElementById(
-        'kelas'
-    ).innerHTML =
-        `<option>${k.nama_kelas}</option>`;
-
-    loadMapel();
-}
-
-
-// ================= LOAD MAPEL =================
-async function loadMapel(){
-
-    const res = await fetch(
-        '/api/mapel'
-    );
-
-    const json = await res.json();
-
-    let html =
-        '<option value="">Pilih Mata Pelajaran</option>';
-
-    json.data.forEach(m=>{
-
-        html += `
-        <option value="${m.id_mapel}">
-            ${m.nama_mapel}
-        </option>
-        `;
-    });
-
-    document.getElementById(
-        'mapel'
-    ).innerHTML = html;
+    id_kelas  = json.data[0].id_kelas;
+    namaKelas = json.data[0].nama_kelas;
+    loadData();
 }
 
 
 // ================= LOAD DATA =================
 async function loadData(){
-
-    id_mapel =
-        document.getElementById(
-            'mapel'
-        ).value;
-
-    if(!id_mapel){
-
-        resetTable();
-
-        return;
-    }
+    if(!id_kelas) return;
 
     showLoading(true);
+    clearTable();
 
-    // siswa
-    const s = await fetch(
-        '/api/siswa-by-kelas/' + id_kelas
-    ).then(r=>r.json());
+    const res  = await fetch('/api/nilai-siswa-semua/' + id_kelas);
+    const json = await res.json();
 
-    siswa = s.data;
+    rawData = json.data || [];
 
-    siswaFiltered = siswa;
-
-    // tugas
-    const t = await fetch(
-        '/api/tugas-by-mapel/' + id_mapel
-    ).then(r=>r.json());
-
-    tugas = t.data;
-
-    // nilai tugas
-    await loadNilai();
-
-    // nilai siswa
-    const ns = await fetch(
-        `/api/nilai-siswa/${id_kelas}/${id_mapel}`
-    ).then(r=>r.json());
-
-    nilaiSiswa = {};
-
-    ns.data.forEach(n=>{
-
-        nilaiSiswa[n.id_siswa] = n;
-    });
-
-    // subtitle
-    const namaMapel =
-        document.getElementById(
-            'mapel'
-        ).selectedOptions[0].text;
-
-    document.getElementById(
-        'subtitle'
-    ).innerText =
-        `Mata Pelajaran : ${namaMapel}`;
-
-    render();
-
+    filterRender();
     showLoading(false);
 }
 
 
-// ================= LOAD NILAI =================
-async function loadNilai(){
+// ================= FILTER + RENDER =================
+function filterRender(){
+    const keyword = document.getElementById('search').value.toLowerCase().trim();
 
-    nilai = {};
+    const grouped = {};
+    const order   = [];
 
-    const res = await fetch(
-        `/api/nilai-tugas-kelas/${id_kelas}/${id_mapel}`
-    );
-
-    const json = await res.json();
-
-    json.data.forEach(n=>{
-
-        if(!nilai[n.id_siswa]){
-
-            nilai[n.id_siswa] = {};
+    rawData.forEach(row => {
+        if(!grouped[row.id_siswa]){
+            grouped[row.id_siswa] = { nama: row.nama_siswa, mapel: [] };
+            order.push(row.id_siswa);
         }
-
-        nilai[n.id_siswa][n.id_tugas] =
-            n.nilai;
+        grouped[row.id_siswa].mapel.push(row);
     });
-}
 
+    const filtered = order
+        .filter(id => !keyword || grouped[id].nama.toLowerCase().includes(keyword))
+        .map(id => ({ id, ...grouped[id] }));
 
-// ================= AVG =================
-function hitungAvg(id){
+    document.getElementById('subtitle').innerText =
+        namaKelas ? 'Kelas : ' + namaKelas : '';
 
-    const data =
-        nilai[id] || {};
-
-    const arr =
-        Object.values(data);
-
-    if(arr.length === 0){
-
-        return 0;
-    }
-
-    const total = arr.reduce(
-        (a,b)=>a+Number(b),
-        0
-    );
-
-    return total / arr.length;
+    render(filtered);
 }
 
 
 // ================= RENDER =================
-function render(){
+function render(data){
 
-    renderHeader();
-
-    renderBody();
-
-    renderInfo();
-}
-
-
-// ================= HEADER =================
-function renderHeader(){
-
-    let header =
-        '<th>Nama Siswa</th>';
-
-    tugas.forEach(t=>{
-
-        header += `
-        <th title="${t.judul_tugas}">
-            ${shortText(
-                t.judul_tugas,
-                12
-            )}
-        </th>
-        `;
-    });
-
-    header += `
-        <th>Rata rata Tugas</th>
-        <th>UTS</th>
-        <th>UAS</th>
-        <th>Total</th>
-        <th>Keterampilan</th>
-    `;
-
-    document.getElementById(
-        'headerTable'
-    ).innerHTML = header;
-}
-
-
-// ================= BODY =================
-function renderBody(){
-
-    let html = '';
-
-    if(siswaFiltered.length === 0){
-
-        html = `
-        <tr>
-            <td
-                colspan="99"
-                class="empty-state"
-            >
-                Data tidak ditemukan
-            </td>
-        </tr>
-        `;
-
-        document.getElementById(
-            'data'
-        ).innerHTML = html;
-
+    if(data.length === 0){
+        document.getElementById('data').innerHTML =
+            `<tr><td colspan="8" class="empty-state">Data tidak ditemukan</td></tr>`;
+        document.getElementById('info').innerText = '';
         return;
     }
 
-    siswaFiltered.forEach(s=>{
+    Object.keys(deskripsiStore).forEach(k => delete deskripsiStore[k]);
 
-        let avg =
-            hitungAvg(s.id_siswa);
+    let html    = '';
+    let deskKey = 0;
 
-        let uts =
-            nilaiSiswa[s.id_siswa]
-            ?.nilai_uts ?? '-';
+    data.forEach(siswa => {
+        const mapelList = siswa.mapel;
+        const rowspan   = mapelList.length || 1;
 
-        let uas =
-            nilaiSiswa[s.id_siswa]
-            ?.nilai_uas ?? '-';
-
-        let total =
-            Number(
-                nilaiSiswa[s.id_siswa]
-                ?.total ?? 0
-            );
-
-        let keterampilan =
-            nilaiSiswa[s.id_siswa]
-            ?.nilai_keterampilan ?? '-';
-
-        let row = `
-        <tr>
-
-            <td>
-                ${s.nama_siswa}
-            </td>
-        `;
-
-        // nilai tugas
-        tugas.forEach(t=>{
-
-            let val =
-                nilai[s.id_siswa]
-                ?.[t.id_tugas] ?? '-';
-
-            row += `
-            <td class="${
-                val === '-'
-                ? 'empty'
-                : ''
-            }">
-                ${val}
-            </td>
-            `;
-        });
-
-        row += `
-
-        <td>
-            ${avg.toFixed(2)}
-        </td>
-
-        <td>
-            ${uts}
-        </td>
-
-        <td>
-            ${uas}
-        </td>
-
-        <td class="total">
-            ${total.toFixed(2)}
-        </td>
-
-        <td>
-            ${keterampilan}
-        </td>
-
-        </tr>
-        `;
-
-        html += row;
-    });
-
-    document.getElementById(
-        'data'
-    ).innerHTML = html;
-}
-
-
-// ================= INFO =================
-function renderInfo(){
-
-    document.getElementById(
-        'info'
-    ).innerHTML =
-        `Menampilkan ${siswaFiltered.length} siswa`;
-}
-
-
-// ================= SEARCH =================
-function filterData(){
-
-    const keyword =
-        document.getElementById(
-            'search'
-        )
-        .value
-        .toLowerCase();
-
-    const rows =
-        document.querySelectorAll(
-            '#data tr'
-        );
-
-    let visible = 0;
-
-    rows.forEach(row=>{
-
-        const nama =
-            row.children[0]
-            ?.innerText
-            ?.toLowerCase() || '';
-
-        const show =
-            nama.includes(keyword);
-
-        row.style.display =
-            show ? '' : 'none';
-
-        if(show){
-            visible++;
+        if(mapelList.length === 0){
+            html += `
+            <tr class="row-first row-last">
+                <td class="nama-siswa">${esc(siswa.nama)}</td>
+                <td colspan="7" class="empty-state" style="padding:10px;">Belum ada data nilai</td>
+            </tr>`;
+            return;
         }
+
+        mapelList.forEach((m, i) => {
+            const isFirst  = (i === 0);
+            const isLast   = (i === mapelList.length - 1);
+            const rowClass = [
+                isFirst ? 'row-first' : '',
+                isLast  ? 'row-last'  : ''
+            ].filter(Boolean).join(' ');
+
+            const avg          = fmt(m.nilai_tugas);
+            const uts          = m.nilai_uts          ?? '-';
+            const uas          = m.nilai_uas          ?? '-';
+            const total        = m.total              ?? '-';
+            const keterampilan = m.nilai_keterampilan ?? '-';
+
+            // simpan ke store — gunakan id numerik agar aman di onclick
+            const key = deskKey;
+            deskripsiStore[key] = {
+                subjudul    : siswa.nama + ' — ' + m.nama_mapel,
+                pengetahuan : m.deskripsi_pengetahuan  || '',
+                keterampilan: m.deskripsi_keterampilan || ''
+            };
+            deskKey++;
+
+            html += `<tr class="${rowClass}">`;
+
+            if(isFirst){
+                html += `<td class="nama-siswa" rowspan="${rowspan}">${esc(siswa.nama)}</td>`;
+            }
+
+            html += `
+                <td class="nama-mapel">${esc(m.nama_mapel)}</td>
+                <td class="nilai">${avg}</td>
+                <td class="nilai">${uts}</td>
+                <td class="nilai">${uas}</td>
+                <td class="nilai" style="font-weight:700;">${total !== '-' ? Number(total).toFixed(2) : '-'}</td>
+                <td class="nilai">${keterampilan}</td>
+                <td style="text-align:center;min-width:110px;">
+                    <button class="btn-lihat" onclick="bukaDeskripsi(${key})">
+                        <i class='bx bx-notepad'></i> Lihat
+                    </button>
+                </td>
+            </tr>`;
+        });
     });
 
-    document.getElementById(
-        'info'
-    ).innerHTML =
-        `Menampilkan ${visible} siswa`;
+    document.getElementById('data').innerHTML = html;
+    document.getElementById('info').innerText = `Menampilkan ${data.length} siswa`;
 }
 
 
-// ================= SHORT TEXT =================
-function shortText(text, limit){
+// ================= MODAL =================
+function bukaDeskripsi(key){
+    const d = deskripsiStore[key];
+    if(!d) return;
 
-    if(text.length <= limit){
+    document.getElementById('modalSubjudul').innerText = d.subjudul;
 
-        return text;
-    }
+    const elP = document.getElementById('deskripsiPengetahuan');
+    const elK = document.getElementById('deskripsiKeterampilan');
 
-    return text.substring(0,limit) + '...';
+    elP.textContent = d.pengetahuan  || '-';
+    elK.textContent = d.keterampilan || '-';
+
+    elP.className = 'modal-card-body' + (!d.pengetahuan  ? ' empty-text' : '');
+    elK.className = 'modal-card-body' + (!d.keterampilan ? ' empty-text' : '');
+
+    document.getElementById('modalDeskripsi').classList.add('show');
+    document.body.style.overflow = 'hidden';
 }
 
-
-// ================= RESET =================
-function resetTable(){
-
-    document.getElementById(
-        'subtitle'
-    ).innerText =
-        'Pilih mata pelajaran';
-
-    document.getElementById(
-        'headerTable'
-    ).innerHTML = '';
-
-    document.getElementById(
-        'info'
-    ).innerHTML = '';
-
-    document.getElementById(
-        'data'
-    ).innerHTML = `
-        <tr>
-            <td
-                colspan="99"
-                class="empty-state"
-            >
-                Pilih mata pelajaran
-            </td>
-        </tr>
-    `;
+function tutupModal(){
+    document.getElementById('modalDeskripsi').classList.remove('show');
+    document.body.style.overflow = '';
 }
 
+// tutup dengan Escape
+document.addEventListener('keydown', e => {
+    if(e.key === 'Escape') tutupModal();
+});
 
-// ================= LOADING =================
+
+// ================= HELPERS =================
+function fmt(val){
+    if(val === null || val === undefined || val === '') return '-';
+    const n = Number(val);
+    return isNaN(n) ? '-' : n.toFixed(2);
+}
+
+function esc(str){
+    if(!str) return '';
+    return String(str)
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;');
+}
+
+function clearTable(){
+    document.getElementById('data').innerHTML =
+        `<tr><td colspan="8" class="empty-state">Memuat...</td></tr>`;
+    document.getElementById('info').innerText = '';
+}
+
 function showLoading(status=true){
-
-    document.getElementById(
-        'loading'
-    ).style.display =
-        status ? 'block':'none';
+    document.getElementById('loading').style.display = status ? 'block' : 'none';
 }
 
 </script>
-
 @endsection

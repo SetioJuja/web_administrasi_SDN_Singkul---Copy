@@ -126,4 +126,44 @@ class NilaiSiswaController extends Controller
             'data'=>$data
         ]);
     }
+
+    // ================= SEMUA NILAI KELAS =================
+public function semuaNilaiKelas($kelas)
+{
+    $data = DB::table('siswa')
+        ->crossJoin('mapel')
+
+        ->leftJoin('nilai_siswa', function ($join) {
+            $join->on('nilai_siswa.id_siswa', '=', 'siswa.id_siswa')
+                 ->on('nilai_siswa.id_mapel', '=', 'mapel.id_mapel');
+        })
+
+        ->where('siswa.id_kelas', $kelas)
+
+        ->select(
+            'siswa.id_siswa',
+            'siswa.nama_siswa',
+
+            'mapel.id_mapel',
+            'mapel.nama_mapel',
+
+            'nilai_siswa.nilai_tugas',
+            'nilai_siswa.nilai_uts',
+            'nilai_siswa.nilai_uas',
+            'nilai_siswa.total',
+            'nilai_siswa.nilai_keterampilan',
+            'nilai_siswa.deskripsi_pengetahuan',
+            'nilai_siswa.deskripsi_keterampilan'
+        )
+
+        ->orderBy('siswa.nama_siswa')
+        ->orderBy('mapel.nama_mapel')
+
+        ->get();
+
+    return response()->json([
+        'success' => true,
+        'data' => $data
+    ]);
+}
 }
