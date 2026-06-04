@@ -546,27 +546,57 @@ function bindInput(){
 
     document.querySelectorAll('.nilai').forEach(inp=>{
 
-        inp.addEventListener('input', async (e)=>{
+        // simpan saat selesai mengetik
+        inp.addEventListener('change', async (e)=>{
 
             let id_siswa = e.target.dataset.siswa;
             let id_tugas = e.target.dataset.tugas;
-            let val = e.target.value;
+            let val = e.target.value.trim();
 
-            if(val < 0 || val > 100) return;
+            // jika dikosongkan jadikan 0
+            if(val === ''){
+                val = 0;
+                e.target.value = 0;
+            }
 
-            await fetch('/api/nilai-tugas',{
-                method:'POST',
-                headers:{'Content-Type':'application/json'},
-                body: JSON.stringify({id_siswa,id_tugas,nilai:val})
-            });
+            val = Number(val);
 
-            if(!nilaiTugas[id_siswa]) nilaiTugas[id_siswa] = {};
-            nilaiTugas[id_siswa][id_tugas] = val;
+            if(isNaN(val) || val < 0 || val > 100){
+                alert('Nilai harus antara 0 - 100');
+                return;
+            }
 
-            updateAvg(id_siswa);
+            try{
+
+                await fetch('/api/nilai-tugas',{
+                    method:'POST',
+                    headers:{
+                        'Content-Type':'application/json'
+                    },
+                    body: JSON.stringify({
+                        id_siswa,
+                        id_tugas,
+                        nilai: val
+                    })
+                });
+
+                if(!nilaiTugas[id_siswa]){
+                    nilaiTugas[id_siswa] = {};
+                }
+
+                nilaiTugas[id_siswa][id_tugas] = val;
+
+                updateAvg(id_siswa);
+
+            }catch(err){
+                console.error(err);
+                alert('Gagal menyimpan nilai');
+            }
+
         });
 
     });
+
 }
 
 
