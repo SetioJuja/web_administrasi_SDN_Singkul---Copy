@@ -3,32 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>@yield('title', 'SiAkad')</title>
-
-<link rel="stylesheet"
-href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
 <style>
 
 /* =========================================================
    RESET
 ========================================================= */
-*,
-*::before,
-*::after{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-}
-
-html,
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
 body{
-    height:100%;
-}
-
-body{
-    font-family:'Segoe UI', Arial, sans-serif;
+    font-family:'Segoe UI',Arial,sans-serif;
     display:flex;
     background:#f0f4f9;
     color:#1a2a4a;
@@ -37,387 +23,370 @@ body{
 }
 
 /* =========================================================
+   CSS VARIABLE — lebar sidebar
+========================================================= */
+:root{
+    --sb-width:240px;
+    --sb-collapsed:60px;
+    --transition:.22s ease;
+}
+
+/* =========================================================
    SIDEBAR
 ========================================================= */
 .sidebar{
-    width:240px;
+    width:var(--sb-width);
     height:100vh;
     position:fixed;
-    top:0;
-    left:0;
-
+    top:0;left:0;
     display:flex;
     flex-direction:column;
-
-    background:linear-gradient(180deg,#17345f 0%, #1d4379 100%);
-
+    background:linear-gradient(180deg,#17345f 0%,#1d4379 100%);
     box-shadow:4px 0 20px rgba(0,0,0,0.08);
-
-    z-index:100;
-
+    z-index:200;
     overflow:hidden;
+    transition:width var(--transition);
+}
+
+/* STATE: collapsed */
+body.sb-closed .sidebar{
+    width:var(--sb-collapsed);
+}
+
+/* =========================================================
+   OVERLAY (mobile)
+========================================================= */
+.sb-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.45);
+    z-index:199;
+    opacity:0;
+    transition:opacity var(--transition);
 }
 
 /* =========================================================
    HEADER
 ========================================================= */
 .sidebar-header{
-    padding:18px 15px 14px;
+    padding:14px 10px 12px;
     border-bottom:1px solid rgba(255,255,255,0.08);
-
     flex-shrink:0;
+    position:relative;
 }
 
 .sidebar-brand{
     display:flex;
     align-items:center;
     gap:12px;
-
-    margin-bottom:15px;
-
+    margin-bottom:12px;
     text-decoration:none;
+    overflow:hidden;
+    white-space:nowrap;
 }
 
 .sidebar-brand-icon{
-    width:42px;
-    height:42px;
-
+    width:40px;height:40px;
     border-radius:10px;
-
     background:rgba(255,255,255,0.12);
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    color:white;
-    font-size:20px;
-
+    display:flex;align-items:center;justify-content:center;
+    color:white;font-size:20px;
     flex-shrink:0;
 }
 
+.sidebar-brand-text{
+    overflow:hidden;
+    transition:opacity var(--transition),width var(--transition);
+    width:160px;
+}
+
 .sidebar-brand-name{
-    font-size:16px;
-    font-weight:700;
-    color:white;
-    line-height:1.1;
+    font-size:15px;font-weight:700;color:white;line-height:1.1;
 }
 
 .sidebar-brand-sub{
-    font-size:10px;
-    color:rgba(255,255,255,0.5);
-    margin-top:2px;
-    letter-spacing:.4px;
+    font-size:9.5px;color:rgba(255,255,255,0.5);margin-top:2px;letter-spacing:.3px;
+    white-space:normal;line-height:1.3;
 }
 
 /* =========================================================
    USER
 ========================================================= */
 .sidebar-user{
-    display:flex;
-    align-items:center;
-    gap:10px;
-
+    display:flex;align-items:center;gap:10px;
     background:rgba(255,255,255,0.06);
-
-    border-radius:10px;
-
-    padding:10px;
+    border-radius:10px;padding:9px;
+    overflow:hidden;white-space:nowrap;
 }
 
 .sidebar-user-av{
-    width:34px;
-    height:34px;
-
+    width:34px;height:34px;
     border-radius:50%;
-
     background:rgba(255,255,255,0.15);
+    display:flex;align-items:center;justify-content:center;
+    color:white;font-size:12px;font-weight:700;
+    flex-shrink:0;text-transform:uppercase;
+}
 
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    color:white;
-
-    font-size:12px;
-    font-weight:700;
-
-    flex-shrink:0;
-
-    text-transform:uppercase;
+.sidebar-user-info{
+    min-width:0;overflow:hidden;
+    transition:opacity var(--transition),width var(--transition);
+    width:140px;
 }
 
 .sidebar-user-name{
-    font-size:12px;
-    font-weight:600;
-    color:white;
-
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
+    font-size:12px;font-weight:600;color:white;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 
 .sidebar-user-role{
-    font-size:10px;
-    color:rgba(255,255,255,0.45);
+    font-size:10px;color:rgba(255,255,255,0.45);margin-top:2px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
 
-    margin-top:2px;
+/* =========================================================
+   COLLAPSED STATE: hide text
+========================================================= */
+body.sb-closed .sidebar-brand-text,
+body.sb-closed .sidebar-user-info{
+    opacity:0;width:0;pointer-events:none;
+}
 
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
+body.sb-closed .sidebar-user{
+    justify-content:center;
+    padding:9px 0;
 }
 
 /* =========================================================
    NAV
 ========================================================= */
 .sidebar-nav{
-    flex:1;
-
-    min-height:0;
-
-    overflow-y:auto;
-
-    padding:10px;
+    flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:10px 6px;
 }
 
-/* SCROLLBAR */
-.sidebar-nav::-webkit-scrollbar{
-    width:5px;
-}
-
-.sidebar-nav::-webkit-scrollbar-track{
-    background:transparent;
-}
-
-.sidebar-nav::-webkit-scrollbar-thumb{
-    background:rgba(255,255,255,0.18);
-    border-radius:10px;
-}
-
-.sidebar-nav::-webkit-scrollbar-thumb:hover{
-    background:rgba(255,255,255,0.28);
-}
+.sidebar-nav::-webkit-scrollbar{width:4px;}
+.sidebar-nav::-webkit-scrollbar-track{background:transparent;}
+.sidebar-nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.18);border-radius:10px;}
+.sidebar-nav::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.28);}
 
 /* =========================================================
-   MENU
+   MENU SECTION LABEL
 ========================================================= */
 .menu-section{
-    font-size:10px;
-    font-weight:700;
-
-    text-transform:uppercase;
-
+    font-size:9.5px;font-weight:700;text-transform:uppercase;
     color:rgba(255,255,255,0.35);
-
-    padding:14px 10px 6px;
-
-    letter-spacing:1px;
+    padding:14px 8px 5px;letter-spacing:1px;
+    white-space:nowrap;overflow:hidden;
+    transition:opacity var(--transition);
 }
 
+body.sb-closed .menu-section{opacity:0;height:0;padding:0;pointer-events:none;}
+
+/* =========================================================
+   MENU ITEM
+========================================================= */
 .sidebar-nav a{
-    display:flex;
-    align-items:center;
-    gap:12px;
-
-    padding:11px 12px;
-
+    display:flex;align-items:center;gap:12px;
+    padding:10px 10px;
     border-radius:10px;
-
     color:rgba(255,255,255,0.78);
-
     text-decoration:none;
-
-    margin-bottom:3px;
-
+    margin-bottom:2px;
     transition:all .18s ease;
-
-    font-size:13px;
-    font-weight:500;
+    font-size:13px;font-weight:500;
+    white-space:nowrap;overflow:hidden;
+    position:relative;
 }
 
 .sidebar-nav a:hover{
-    background:rgba(255,255,255,0.09);
-
-    color:white;
-
-    transform:translateX(2px);
+    background:rgba(255,255,255,0.09);color:white;transform:translateX(2px);
 }
 
 .sidebar-nav a.active{
-    background:white;
-
-    color:#1a3a6b;
-
-    font-weight:600;
-
+    background:white;color:#1a3a6b;font-weight:600;
     box-shadow:0 4px 12px rgba(0,0,0,0.08);
 }
 
-.sidebar-nav a.active .nav-icon{
-    color:#1a3a6b;
-}
+.sidebar-nav a.active .nav-icon{color:#1a3a6b;}
 
 .nav-icon{
-    width:20px;
-
-    font-size:16px;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
+    width:20px;font-size:16px;
+    display:flex;align-items:center;justify-content:center;
     flex-shrink:0;
+}
+
+.nav-label{
+    transition:opacity var(--transition);
+    overflow:hidden;white-space:nowrap;
+}
+
+body.sb-closed .nav-label{opacity:0;width:0;pointer-events:none;}
+
+/* TOOLTIP saat collapsed */
+body.sb-closed .sidebar-nav a{
+    justify-content:center;padding:10px 0;
+}
+
+body.sb-closed .sidebar-nav a:hover::after{
+    content:attr(data-label);
+    position:absolute;
+    left:calc(var(--sb-collapsed) + 8px);
+    top:50%;transform:translateY(-50%);
+    background:#1a2a4a;color:white;
+    font-size:12px;padding:5px 10px;
+    border-radius:7px;white-space:nowrap;
+    pointer-events:none;z-index:300;
+    box-shadow:0 4px 12px rgba(0,0,0,0.2);
 }
 
 /* =========================================================
    FOOTER
 ========================================================= */
 .sidebar-footer{
-    padding:10px;
-
+    padding:8px 6px;
     border-top:1px solid rgba(255,255,255,0.08);
-
     flex-shrink:0;
 }
 
 .sidebar-footer a{
-    display:flex;
-    align-items:center;
-    gap:12px;
-
-    padding:11px 12px;
-
+    display:flex;align-items:center;gap:12px;
+    padding:10px 10px;
     border-radius:10px;
-
     color:rgba(255,255,255,0.6);
-
-    text-decoration:none;
-
-    transition:.2s;
-
-    font-size:13px;
-    font-weight:500;
+    text-decoration:none;transition:.2s;
+    font-size:13px;font-weight:500;
+    white-space:nowrap;overflow:hidden;
 }
 
-.sidebar-footer a:hover{
-    background:rgba(255,0,0,0.12);
-    color:#ffbaba;
+.sidebar-footer a:hover{background:rgba(255,0,0,0.12);color:#ffbaba;}
+
+body.sb-closed .sidebar-footer a{justify-content:center;padding:10px 0;}
+body.sb-closed .sidebar-footer .nav-label{opacity:0;width:0;pointer-events:none;}
+
+body.sb-closed .sidebar-footer a:hover::after{
+    content:attr(data-label);
+    position:absolute;
+    left:calc(var(--sb-collapsed) + 8px);
+    background:#1a2a4a;color:white;
+    font-size:12px;padding:5px 10px;
+    border-radius:7px;white-space:nowrap;
+    pointer-events:none;z-index:300;
+    box-shadow:0 4px 12px rgba(0,0,0,0.2);
+    transform:translateY(-50%);top:50%;
+}
+
+.sidebar-footer a{position:relative;}
+
+/* =========================================================
+   TOPBAR
+========================================================= */
+.topbar{
+    position:fixed;
+    top:0;
+    left:var(--sb-width);
+    right:0;
+    height:52px;
+    background:white;
+    border-bottom:1px solid #e2e8f0;
+    display:flex;align-items:center;
+    padding:0 20px;
+    z-index:150;
+    gap:12px;
+    transition:left var(--transition);
+    box-shadow:0 1px 6px rgba(0,0,0,0.04);
+}
+
+body.sb-closed .topbar{left:var(--sb-collapsed);}
+
+.topbar-toggle{
+    width:34px;height:34px;
+    border:1.5px solid #dfe7f4;
+    border-radius:9px;
+    background:white;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    color:#1a2a4a;font-size:17px;
+    transition:.18s;
+    flex-shrink:0;
+}
+
+.topbar-toggle:hover{background:#f0f4f9;border-color:#c5d0e8;}
+
+.topbar-title{
+    font-size:14px;font-weight:600;color:#1a2a4a;
+    flex:1;
 }
 
 /* =========================================================
    CONTENT
 ========================================================= */
 .content{
-    margin-left:240px;
+    margin-left:var(--sb-width);
+    margin-top:52px;
     flex:1;
-    min-height:100vh;
+    min-height:calc(100vh - 52px);
     min-width:0;
     overflow-x:auto;
     padding:24px;
     background:#f0f4f9;
+    transition:margin-left var(--transition);
 }
+
+body.sb-closed .content{margin-left:var(--sb-collapsed);}
 
 /* =========================================================
    MODAL LOGOUT
 ========================================================= */
 .modal-overlay{
-    position:fixed;
-    inset:0;
+    position:fixed;inset:0;
     background:rgba(0,0,0,0.45);
     z-index:999;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    opacity:0;
-    visibility:hidden;
-    transition:opacity .22s ease, visibility .22s ease;
+    display:flex;align-items:center;justify-content:center;
+    opacity:0;visibility:hidden;
+    transition:opacity .22s ease,visibility .22s ease;
 }
 
-.modal-overlay.show{
-    opacity:1;
-    visibility:visible;
-}
+.modal-overlay.show{opacity:1;visibility:visible;}
 
 .modal-box{
-    background:white;
-    border-radius:16px;
+    background:white;border-radius:16px;
     padding:32px 28px 24px;
-    width:100%;
-    max-width:360px;
+    width:100%;max-width:360px;
     box-shadow:0 20px 60px rgba(0,0,0,0.18);
     text-align:center;
     transform:scale(.92) translateY(10px);
     transition:transform .22s ease;
 }
 
-.modal-overlay.show .modal-box{
-    transform:scale(1) translateY(0);
-}
+.modal-overlay.show .modal-box{transform:scale(1) translateY(0);}
 
 .modal-icon{
-    width:60px;
-    height:60px;
-    border-radius:50%;
+    width:60px;height:60px;border-radius:50%;
     background:#fff3f3;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    margin:0 auto 16px;
-    font-size:26px;
-    color:#e03e3e;
+    display:flex;align-items:center;justify-content:center;
+    margin:0 auto 16px;font-size:26px;color:#e03e3e;
 }
 
-.modal-title{
-    font-size:16px;
-    font-weight:700;
-    color:#1a2a4a;
-    margin-bottom:8px;
-}
-
-.modal-desc{
-    font-size:13px;
-    color:#6b7a99;
-    line-height:1.6;
-    margin-bottom:24px;
-}
-
-.modal-actions{
-    display:flex;
-    gap:10px;
-}
+.modal-title{font-size:16px;font-weight:700;color:#1a2a4a;margin-bottom:8px;}
+.modal-desc{font-size:13px;color:#6b7a99;line-height:1.6;margin-bottom:24px;}
+.modal-actions{display:flex;gap:10px;}
 
 .btn-cancel{
-    flex:1;
-    padding:10px;
-    border-radius:10px;
-    border:1.5px solid #dfe7f4;
-    background:white;
-    color:#1a2a4a;
-    font-size:13px;
-    font-weight:600;
-    cursor:pointer;
-    transition:.18s;
+    flex:1;padding:10px;border-radius:10px;
+    border:1.5px solid #dfe7f4;background:white;
+    color:#1a2a4a;font-size:13px;font-weight:600;
+    cursor:pointer;transition:.18s;
 }
-
-.btn-cancel:hover{
-    background:#f0f4f9;
-}
+.btn-cancel:hover{background:#f0f4f9;}
 
 .btn-logout{
-    flex:1;
-    padding:10px;
-    border-radius:10px;
-    border:none;
+    flex:1;padding:10px;border-radius:10px;border:none;
     background:linear-gradient(135deg,#e03e3e,#c0392b);
-    color:white;
-    font-size:13px;
-    font-weight:600;
-    cursor:pointer;
-    transition:.18s;
+    color:white;font-size:13px;font-weight:600;
+    cursor:pointer;transition:.18s;
     box-shadow:0 4px 12px rgba(224,62,62,0.3);
 }
-
 .btn-logout:hover{
     background:linear-gradient(135deg,#c0392b,#a93226);
     box-shadow:0 6px 16px rgba(224,62,62,0.4);
@@ -428,14 +397,36 @@ body{
 ========================================================= */
 @media(max-width:768px){
 
+    :root{--sb-width:240px;}
+
+    /* di mobile, sidebar default hidden (geser ke luar layar) */
     .sidebar{
-        width:220px;
+        left:calc(-1 * var(--sb-width));
+        width:var(--sb-width) !important;  /* paksa lebar penuh saat mobile */
+        transition:left var(--transition);
     }
 
-    .content{
-        margin-left:220px;
-        padding:18px;
+    /* saat dibuka */
+    body.sb-open-mobile .sidebar{left:0;}
+
+    /* overlay mobile */
+    body.sb-open-mobile .sb-overlay{display:block;opacity:1;}
+
+    .topbar{left:0 !important;}
+    .content{margin-left:0 !important;}
+
+    /* reset collapsed state di mobile */
+    body.sb-closed .sidebar-brand-text,
+    body.sb-closed .sidebar-user-info,
+    body.sb-closed .nav-label,
+    body.sb-closed .sidebar-footer .nav-label{
+        opacity:1;width:auto;pointer-events:auto;
     }
+
+    body.sb-closed .sidebar-user{justify-content:flex-start;padding:9px;}
+    body.sb-closed .sidebar-nav a{justify-content:flex-start;padding:10px 10px;}
+    body.sb-closed .sidebar-footer a{justify-content:flex-start;padding:10px 10px;}
+    body.sb-closed .menu-section{opacity:1;height:auto;padding:14px 8px 5px;pointer-events:auto;}
 }
 
 </style>
@@ -443,73 +434,57 @@ body{
 
 <body>
 
+<!-- OVERLAY MOBILE -->
+<div class="sb-overlay" id="sbOverlay" onclick="closeMobileSidebar()"></div>
+
 <!-- =========================================================
      SIDEBAR
 ========================================================= -->
 <div class="sidebar">
 
-    <!-- HEADER -->
     <div class="sidebar-header">
 
         <a href="/" class="sidebar-brand">
-
             <div class="sidebar-brand-icon">
                 <i class="bi bi-mortarboard-fill"></i>
             </div>
-
-            <div>
-
-                <div class="sidebar-brand-name">
-                    SIMAG-S
-                </div>
-
-                <div class="sidebar-brand-sub">
-                    Sistem Manajemen Administrasi Guru SDN Singkul
-                </div>
-
+            <div class="sidebar-brand-text">
+                <div class="sidebar-brand-name">SIMAG-S</div>
+                <div class="sidebar-brand-sub">Sistem Manajemen Administrasi Guru SDN Singkul</div>
             </div>
-
         </a>
 
         <div class="sidebar-user">
-
-            <div class="sidebar-user-av" id="user-av">
-                ??
+            <div class="sidebar-user-av" id="user-av">??</div>
+            <div class="sidebar-user-info">
+                <div class="sidebar-user-name" id="user-nama">-</div>
+                <div class="sidebar-user-role" id="user-role">-</div>
             </div>
-
-            <div style="min-width:0">
-
-                <div class="sidebar-user-name" id="user-nama">
-                    -
-                </div>
-
-                <div class="sidebar-user-role" id="user-role">
-                    -
-                </div>
-
-            </div>
-
         </div>
 
     </div>
 
-    <!-- MENU -->
     <div class="sidebar-nav" id="menu"></div>
 
-    <!-- FOOTER -->
     <div class="sidebar-footer">
-
-        <a href="#" onclick="showLogoutModal()">
-
-            <span class="nav-icon">
-                <i class="bi bi-box-arrow-right"></i>
-            </span>
-
-            Logout
-
+        <a href="#" onclick="showLogoutModal()" data-label="Logout">
+            <span class="nav-icon"><i class="bi bi-box-arrow-right"></i></span>
+            <span class="nav-label">Logout</span>
         </a>
-
     </div>
+
+</div>
+
+<!-- =========================================================
+     TOPBAR
+========================================================= -->
+<div class="topbar">
+
+    <button class="topbar-toggle" id="sidebarToggle" onclick="toggleSidebar()" title="Toggle Sidebar" aria-label="Toggle Sidebar">
+        <i class="bi bi-list" id="toggleIcon"></i>
+    </button>
+
+    <div class="topbar-title" id="topbar-title">Dashboard</div>
 
 </div>
 
@@ -524,35 +499,19 @@ body{
      MODAL LOGOUT
 ========================================================= -->
 <div class="modal-overlay" id="logoutModal" onclick="handleOverlayClick(event)">
-
     <div class="modal-box">
-
-        <div class="modal-icon">
-            <i class="bi bi-box-arrow-right"></i>
-        </div>
-
+        <div class="modal-icon"><i class="bi bi-box-arrow-right"></i></div>
         <div class="modal-title">Konfirmasi Logout</div>
-
         <div class="modal-desc">
-            Apakah Anda yakin ingin keluar?<br>
-            Sesi Anda akan diakhiri.
+            Apakah Anda yakin ingin keluar?<br>Sesi Anda akan diakhiri.
         </div>
-
         <div class="modal-actions">
-
-            <button class="btn-cancel" onclick="hideLogoutModal()">
-                Batal
-            </button>
-
+            <button class="btn-cancel" onclick="hideLogoutModal()">Batal</button>
             <button class="btn-logout" onclick="doLogout()">
-                <i class="bi bi-box-arrow-right"></i>
-                Ya, Logout
+                <i class="bi bi-box-arrow-right"></i> Ya, Logout
             </button>
-
         </div>
-
     </div>
-
 </div>
 
 <!-- =========================================================
@@ -560,90 +519,141 @@ body{
 ========================================================= -->
 <script>
 
-// ================= AUTH =================
+// ============================================================
+// AUTH
+// ============================================================
 let user = JSON.parse(localStorage.getItem('user'));
 
 if (!user) {
-
     alert('Harus login dulu');
-
     window.location.href = '/login';
 }
 
-// ================= ROLE =================
-let roles = (user.roles || []).map(r =>
-    r.trim().toLowerCase()
-);
+// ============================================================
+// ROLE
+// ============================================================
+let roles = (user.roles || []).map(r => r.trim().toLowerCase());
 
-function hasRole(role) {
-    return roles.includes(role.toLowerCase());
-}
+function hasRole(role){ return roles.includes(role.toLowerCase()); }
+function hasAnyRole(list){ return list.some(r => hasRole(r)); }
 
-function hasAnyRole(list) {
-    return list.some(r => hasRole(r));
-}
-
-// ================= AUTO REDIRECT DASHBOARD =================
+// ============================================================
+// AUTO REDIRECT
+// ============================================================
 const currentPath = window.location.pathname;
-
-if(
-    currentPath === '/' ||
-    currentPath === '/dashboard'
-){
-
+if(currentPath === '/' || currentPath === '/dashboard'){
     let target = '/lihat_pengumuman';
+    if(currentPath !== target) window.location.replace(target);
+}
 
-    if(currentPath !== target){
+// ============================================================
+// USER INFO
+// ============================================================
+document.getElementById('user-nama').innerText = user.nama || '-';
+document.getElementById('user-role').innerText =
+    (user.roles || []).map(role => 'Guru ' + role).join(', ') || '-';
 
-        window.location.replace(target);
+const words = (user.nama || 'U').trim().split(' ');
+document.getElementById('user-av').innerText =
+    words.length >= 2 ? words[0][0] + words[1][0] : words[0].slice(0,2);
+
+// ============================================================
+// SIDEBAR TOGGLE STATE (persist ke localStorage)
+// ============================================================
+const isMobile = () => window.innerWidth <= 768;
+
+function initSidebarState(){
+    if(isMobile()){
+        document.body.classList.remove('sb-closed');
+    } else {
+        const saved = localStorage.getItem('sb_state');
+        if(saved === 'closed') document.body.classList.add('sb-closed');
     }
 }
 
-// ================= USER =================
-document.getElementById('user-nama').innerText =
-    user.nama || '-';
+function toggleSidebar(){
+    if(isMobile()){
+        // mobile: toggle panel geser
+        if(document.body.classList.contains('sb-open-mobile')){
+            closeMobileSidebar();
+        } else {
+            openMobileSidebar();
+        }
+    } else {
+        // desktop: toggle collapse
+        document.body.classList.toggle('sb-closed');
+        const isNowClosed = document.body.classList.contains('sb-closed');
+        localStorage.setItem('sb_state', isNowClosed ? 'closed' : 'open');
+    }
+}
 
-document.getElementById('user-role').innerText =
-    (user.roles || [])
-        .map(role => 'Guru ' + role)
-        .join(', ') || '-';
+function openMobileSidebar(){
+    document.body.classList.add('sb-open-mobile');
+}
 
-const words =
-    (user.nama || 'U').trim().split(' ');
+function closeMobileSidebar(){
+    document.body.classList.remove('sb-open-mobile');
+}
 
-document.getElementById('user-av').innerText =
-    words.length >= 2
-        ? words[0][0] + words[1][0]
-        : words[0].slice(0,2);
+// tutup mobile sidebar saat resize ke desktop
+window.addEventListener('resize', function(){
+    if(!isMobile()){
+        document.body.classList.remove('sb-open-mobile');
+        initSidebarState();
+    }
+});
 
-// ================= MENU =================
+// ============================================================
+// TOPBAR TITLE — sesuai halaman aktif
+// ============================================================
+function setTopbarTitle(){
+    const path = location.pathname;
+    const map = {
+        '/pegawai'          : 'Data Pegawai',
+        '/jabatan'          : 'Data Jabatan',
+        '/mapel'            : 'Data Mata Pelajaran',
+        '/tahun_ajaran'     : 'Tahun Ajaran',
+        '/kelas'            : 'Data Kelas',
+        '/dokumen'          : 'Data Dokumen',
+        '/konten_umum'      : 'Landing Page',
+        '/jadwal_mengajar'  : 'Jadwal Mengajar',
+        '/status_presensi'  : 'Status Presensi',
+        '/presensi_guru'    : 'Presensi Guru',
+        '/pengumuman'       : 'Kelola Pengumuman',
+        '/lihat_pengumuman' : 'Pengumuman',
+        '/lihat_presensi_me': 'Presensi Saya',
+        '/siswa'            : 'Data Siswa',
+        '/presensi_siswa'   : 'Presensi Siswa',
+        '/dsnilai'          : 'Data Nilai',
+        '/snilai'           : 'Input Nilai',
+        '/mkomponen'        : 'Komponen Penilaian',
+        '/lihat_jadwal'     : 'Jadwal Mengajar',
+        '/stugas'           : 'Tugas',
+        '/sp_guru'          : 'Monitoring Presensi Guru',
+        '/sdokumen'         : 'Dokumen',
+        '/sguru'            : 'Data Pegawai',
+    };
+    const title = map[path] || 'Dashboard';
+    document.getElementById('topbar-title').innerText = title;
+    document.title = title + ' — SiAkad';
+}
+
+// ============================================================
+// MENU
+// ============================================================
 function loadMenu(){
-
     let html = '';
 
     function section(title){
-
-        html += `
-            <div class="menu-section">
-                ${title}
-            </div>
-        `;
+        html += `<div class="menu-section">${title}</div>`;
     }
 
     function add(label, url, icon){
-
-        const active =
-            location.pathname === url
-                ? 'active'
-                : '';
-
+        const active = location.pathname === url ? 'active' : '';
         html += `
-            <a href="${url}" class="${active}">
-                <span class="nav-icon">
-                    <i class="${icon}"></i>
-                </span>
-
-                ${label}
+            <a href="${url}" class="${active}" data-label="${label}">
+                <span class="nav-icon"><i class="${icon}"></i></span>
+                <span class="nav-label">${label}</span>
             </a>
         `;
     }
@@ -654,68 +664,29 @@ function loadMenu(){
     if(hasRole('operator')){
 
         section('Data Master');
-
-        add('Data Pegawai',
-            '/pegawai',
-            'bi bi-people-fill');
-
-        add('Data Jabatan',
-            '/jabatan',
-            'bi bi-person-badge-fill');
-
-        add('Data Mapel',
-            '/mapel',
-            'bi bi-book-fill');
-
-        add('Tahun Ajaran',
-            '/tahun_ajaran',
-            'bi bi-calendar-event-fill');
-
-        add('Data Kelas',
-            '/kelas',
-            'bi bi-building');
-
-        add('Data Dokumen',
-            '/dokumen',
-            'bi bi-folder-fill');
-
-        add('Landing Page',
-            '/konten_umum',
-            'bi bi-window');
+        add('Data Pegawai',   '/pegawai',         'bi bi-people-fill');
+        add('Data Jabatan',   '/jabatan',          'bi bi-person-badge-fill');
+        add('Data Mapel',     '/mapel',            'bi bi-book-fill');
+        add('Tahun Ajaran',   '/tahun_ajaran',     'bi bi-calendar-event-fill');
+        add('Data Kelas',     '/kelas',            'bi bi-building');
+        add('Data Dokumen',   '/dokumen',          'bi bi-folder-fill');
+        add('Landing Page',   '/konten_umum',      'bi bi-window');
 
         section('Akademik');
-
-        add('Jadwal Mengajar',
-            '/jadwal_mengajar',
-            'bi bi-calendar-week-fill');
-
-        add('Status Presensi',
-            '/status_presensi',
-            'bi bi-clipboard-data');
-
-        add('Presensi Guru',
-            '/presensi_guru',
-            'bi bi-check2-square');
-
-        add('Kelola Pengumuman',
-            '/pengumuman',
-            'bi bi-megaphone-fill');
+        add('Jadwal Mengajar','/jadwal_mengajar',  'bi bi-calendar-week-fill');
+        add('Status Presensi','/status_presensi',  'bi bi-clipboard-data');
+        add('Presensi Guru',  '/presensi_guru',    'bi bi-check2-square');
+        add('Kelola Pengumuman','/pengumuman',      'bi bi-megaphone-fill');
     }
 
     // =====================================================
-    // GURU
+    // GURU (semua peran)
     // =====================================================
-    if(hasAnyRole(['kelas','mapel', 'operator', 'kepala'])){
+    if(hasAnyRole(['kelas','mapel','operator','kepala'])){
 
         section('Saya');
-
-        add('Pengumuman',
-            '/lihat_pengumuman',
-            'bi bi-megaphone-fill');
-
-        add('Presensi Saya',
-            '/lihat_presensi_me',
-            'bi bi-receipt');
+        add('Pengumuman',     '/lihat_pengumuman',   'bi bi-megaphone-fill');
+        add('Presensi Saya',  '/lihat_presensi_me',  'bi bi-receipt');
     }
 
     // =====================================================
@@ -724,18 +695,9 @@ function loadMenu(){
     if(hasRole('kelas')){
 
         section('Wali Kelas');
-
-        add('Data Siswa',
-            '/siswa',
-            'bi bi-mortarboard-fill');
-
-        add('Presensi Siswa',
-            '/presensi_siswa',
-            'bi bi-clipboard-check-fill');
-
-        add('Data Nilai',
-            '/dsnilai',
-            'bi bi-bar-chart-fill');
+        add('Data Siswa',     '/siswa',              'bi bi-mortarboard-fill');
+        add('Presensi Siswa', '/presensi_siswa',     'bi bi-clipboard-check-fill');
+        add('Data Nilai',     '/dsnilai',            'bi bi-bar-chart-fill');
     }
 
     // =====================================================
@@ -744,61 +706,31 @@ function loadMenu(){
     if(hasRole('mapel')){
 
         section('Mengajar');
-
-        add('Input Nilai',
-            '/snilai',
-            'bi bi-pencil-square');
-
-        add('Komponen Penilaian',
-            '/mkomponen',
-            'bi bi-gear-fill');
-
-        add('Jadwal Mengajar',
-            '/lihat_jadwal',
-            'bi bi-calendar2-week-fill');
-
-        add('Tugas',
-            '/stugas',
-            'bi bi-file-earmark-text-fill');
+        add('Input Nilai',        '/snilai',         'bi bi-pencil-square');
+        add('Komponen Penilaian', '/mkomponen',      'bi bi-gear-fill');
+        add('Jadwal Mengajar',    '/lihat_jadwal',   'bi bi-calendar2-week-fill');
+        add('Tugas',              '/stugas',         'bi bi-file-earmark-text-fill');
     }
 
     // =====================================================
     // KEPSEK
     // =====================================================
-    if(hasAnyRole([
-        'kepala',
-        'kepsek',
-        'kepala sekolah'
-    ])){
+    if(hasAnyRole(['kepala','kepsek','kepala sekolah'])){
 
         section('Kepala Sekolah');
-
-        add('Kelola Presensi Guru',
-            '/presensi_guru',
-            'bi bi-bar-chart-fill');
-
-        add('Monitoring Presensi Guru',
-            '/sp_guru',
-            'bi bi-graph-up-arrow');
-
-        add('Dokumen',
-            '/sdokumen',
-            'bi bi-folder-fill');
-
-        add('Data Pegawai',
-            '/sguru',
-            'bi bi-people-fill');
-
-        add('Kelola Pengumuman',
-            '/pengumuman',
-            'bi bi-megaphone-fill');
+        add('Kelola Presensi Guru', '/presensi_guru','bi bi-bar-chart-fill');
+        add('Monitoring Presensi',  '/sp_guru',      'bi bi-graph-up-arrow');
+        add('Dokumen',              '/sdokumen',     'bi bi-folder-fill');
+        add('Data Pegawai',         '/sguru',        'bi bi-people-fill');
+        add('Kelola Pengumuman',    '/pengumuman',   'bi bi-megaphone-fill');
     }
 
-    document.getElementById('menu').innerHTML =
-        html;
+    document.getElementById('menu').innerHTML = html;
 }
 
-// ================= MODAL LOGOUT =================
+// ============================================================
+// MODAL LOGOUT
+// ============================================================
 function showLogoutModal(){
     document.getElementById('logoutModal').classList.add('show');
 }
@@ -808,15 +740,13 @@ function hideLogoutModal(){
 }
 
 function handleOverlayClick(e){
-    if(e.target === document.getElementById('logoutModal')){
-        hideLogoutModal();
-    }
+    if(e.target === document.getElementById('logoutModal')) hideLogoutModal();
 }
 
-// tutup modal dengan tombol Escape
 document.addEventListener('keydown', function(e){
     if(e.key === 'Escape'){
         hideLogoutModal();
+        closeMobileSidebar();
     }
 });
 
@@ -825,12 +755,12 @@ function doLogout(){
     window.location.href = '/login';
 }
 
-// ================= LOGOUT (lama — tidak dipakai) =================
-function logout(){
-    showLogoutModal();
-}
-
+// ============================================================
+// INIT
+// ============================================================
+initSidebarState();
 loadMenu();
+setTopbarTitle();
 
 </script>
 
