@@ -40,7 +40,7 @@
 </div>
 
 <!-- Modal Konfirmasi Hapus -->
-<div id="modal-hapus" class="modal-overlay" style="display:none;">
+<div id="modal-hapus" class="modal-overlay">
     <div class="modal-box">
         <div class="modal-icon"></div>
         <h4 class="modal-title">Hapus Semua Presensi?</h4>
@@ -301,16 +301,7 @@ thead .aksi-col { background: #1565c0; }
     font-style: italic;
 }
 
-/* ── MODAL HAPUS ── */
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,.45);
-    z-index: 99999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+
 
 .modal-box {
     background: #fff;
@@ -678,12 +669,12 @@ function bukaBukaModal(gid, namaGuru) {
     btnKonfirmasi.textContent = 'Ya, Hapus';
     btnKonfirmasi.onclick     = () => hapusSemuaPresensi(gid);
 
-    document.getElementById('modal-hapus').style.display = 'flex';
+    document.getElementById('modal-hapus').classList.add('show');
 }
 
 function tutupModal() {
     pendingHapusGid = null;
-    document.getElementById('modal-hapus').style.display = 'none';
+    document.getElementById('modal-hapus').classList.remove('show');
 }
 
 
