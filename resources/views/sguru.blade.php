@@ -20,6 +20,29 @@
 
 .toolbar{
     margin-bottom:20px;
+    display:flex;
+    gap:12px;
+    align-items:center;
+}
+
+.btn-pdf{
+    background:white;
+    color:black;
+    border:none;
+    border-radius:10px;
+    padding:10px 18px;
+    font-size:13px;
+    font-weight:600;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    white-space:nowrap;
+    transition:0.2s;
+}
+
+.btn-pdf:hover{
+    background:#333;
 }
 
 .toolbar input{
@@ -35,82 +58,79 @@
     border-color:var(--primary);
 }
 
-/* GRID */
-.card-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-    gap:18px;
-}
-
-/* CARD */
-.pegawai-card{
+/* TABLE STYLE */
+.table-responsive{
+    width:100%;
+    overflow-x:auto;
+    border-radius:12px;
+    border:1px solid var(--border);
     background:white;
-    border-radius:18px;
-    padding:20px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.05);
-    border:1px solid #f1f5f9;
-    transition:0.2s;
 }
 
-.pegawai-card:hover{
-    transform:translateY(-4px);
+.pegawai-table{
+    width:100%;
+    border-collapse:collapse;
+    text-align:left;
+    font-size:14px;
 }
 
-.card-top{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-    margin-bottom:15px;
+.pegawai-table th{
+    background:var(--bg);
+    color:#475569;
+    font-weight:600;
+    padding:14px 16px;
+    border-bottom:2px solid var(--border);
+    white-space:nowrap;
 }
 
-.nama{
-    font-size:18px;
-    font-weight:700;
-    color:#111827;
+.pegawai-table td{
+    padding:14px 16px;
+    border-bottom:1px solid var(--border);
+    color:#334155;
+    vertical-align:middle;
 }
 
-.nip{
-    color:#64748b;
-    font-size:13px;
-    margin-top:4px;
+.pegawai-table tbody tr:hover{
+    background-color:#f8fafc;
+    transition:background-color 0.2s;
+}
+
+.td-nama{
+    font-weight:600;
+    color:#0f172a;
 }
 
 .badge-jk{
-    background:#dbeafe;
-    color:#1d4ed8;
-    padding:6px 10px;
+    display:inline-block;
+    padding:4px 10px;
     border-radius:999px;
     font-size:12px;
     font-weight:600;
+}
+
+.badge-jk.jk-l{
+    background:#e0f2fe;
+    color:#0369a1;
+}
+
+.badge-jk.jk-p{
+    background:#fce7f3;
+    color:#be185d;
 }
 
 .role-wrap{
     display:flex;
     flex-wrap:wrap;
     gap:6px;
-    margin-top:10px;
 }
 
 .role{
     background:#e0f2fe;
     color:#0369a1;
-    padding:5px 10px;
+    padding:4px 8px;
     border-radius:999px;
     font-size:12px;
     font-weight:600;
-}
-
-.card-info{
-    margin-top:12px;
-    color:#475569;
-    font-size:14px;
-    line-height:1.6;
-}
-
-.action{
-    display:flex;
-    gap:10px;
-    margin-top:18px;
 }
 
 button{
@@ -123,16 +143,10 @@ button{
 }
 
 .btn-detail{
-    flex:1;
     background:var(--primary);
-}
-
-.btn-edit{
-    background:#2563eb;
-}
-
-.btn-delete{
-    background:var(--danger);
+    padding:8px 12px;
+    font-size:13px;
+    transition:0.2s;
 }
 
 button:hover{
@@ -193,35 +207,10 @@ button:hover{
     word-break:break-word;
 }
 
-.form-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:12px;
-}
-
-.form-grid input,
-.form-grid select{
-    padding:10px 12px;
-    border:1px solid var(--border);
-    border-radius:10px;
-    outline:none;
-}
-
-.jabatan-box{
-    margin-top:15px;
-    border:1px solid var(--border);
-    border-radius:12px;
-    padding:15px;
-}
-
 .modal-action{
     margin-top:20px;
     display:flex;
     gap:10px;
-}
-
-.btn-primary{
-    background:var(--primary);
 }
 
 .btn-close{
@@ -243,10 +232,30 @@ button:hover{
 <div class="toolbar">
     <input type="text"
            id="search"
-           placeholder="Cari nama / NIP / email / jabatan...">
+           placeholder="Cari nama / NIP / email / jabatan..."
+           style="flex:1;">
+
+    <button class="btn-pdf" onclick="downloadPDF()">
+        <i class="bi bi-file-earmark-pdf"></i> Download PDF
+    </button>
 </div>
 
-<div id="data" class="card-grid"></div>
+<div class="table-responsive">
+    <table class="pegawai-table">
+        <thead>
+            <tr>
+                <th style="width: 60px; text-align: center;">No</th>
+                <th>Nama</th>
+                <th>NIP</th>
+                <th>Jenis Kelamin</th>
+                <th>Jabatan</th>
+                <th>Status Kepgawaian</th>
+                <th style="width: 100px; text-align: center;">Aksi</th>
+            </tr>
+        </thead>
+        <tbody id="data"></tbody>
+    </table>
+</div>
 
 </div>
 
@@ -276,71 +285,19 @@ button:hover{
 </div>
 
 
-<!-- MODAL EDIT -->
-<div id="modal" class="modal">
 
-<div class="modal-content">
-
-<h3 class="modal-title">Edit Pegawai</h3>
-
-<div class="form-grid">
-
-    <input id="edit_nama" placeholder="Nama">
-
-    <input id="edit_nip" placeholder="NIP">
-
-    <select id="edit_jk">
-        <option value="L">Laki-laki</option>
-        <option value="P">Perempuan</option>
-    </select>
-
-    <input id="edit_tempat" placeholder="Tempat Lahir">
-
-    <input id="edit_tanggal" type="date">
-
-    <input id="edit_alamat" placeholder="Alamat">
-
-    <input id="edit_telp" placeholder="No Telepon">
-
-    <input id="edit_email" placeholder="Email">
-
-    <input id="edit_golongan" placeholder="Golongan">
-
-    <input id="edit_pendidikan" placeholder="Pendidikan Tertinggi">
-
-    <input id="edit_status" placeholder="Status Kepegawaian">
-
-    <input id="edit_masuk" type="date">
-
-</div>
-
-<div class="jabatan-box" id="edit_jabatan"></div>
-
-<div class="modal-action">
-
-    <button id="btnUpdate" class="btn-primary">
-        Update
-    </button>
-
-    <button id="btnTutup" class="btn-delete">
-        Batal
-    </button>
-
-</div>
-
-</div>
-
-</div>
 
 @endsection
 
 
 @section('script')
 
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
+
 <script>
 
 let allData = [];
-let editId = null;
 let jabatanList = [];
 
 document.addEventListener('DOMContentLoaded', init);
@@ -351,10 +308,6 @@ async function init(){
     await loadData();
 
     search.oninput = filterData;
-
-    btnUpdate.onclick = update;
-
-    btnTutup.onclick = tutup;
 }
 
 
@@ -424,16 +377,18 @@ function render(data){
     if(data.length === 0){
 
         dataEl.innerHTML = `
-        <div class="empty">
-            Tidak ada data pegawai
-        </div>`;
+        <tr>
+            <td colspan="7" class="empty">
+                Tidak ada data pegawai
+            </td>
+        </tr>`;
 
         return;
     }
 
     let html = '';
 
-    data.forEach(p => {
+    data.forEach((p, index) => {
 
         let roles = (p.jabatan || []).map(j => `
             <span class="role">
@@ -441,76 +396,34 @@ function render(data){
             </span>
         `).join('');
 
+        let jkBadge = '';
+        if(p.jenis_kelamin === 'Laki-laki'){
+            jkBadge = '<span class="badge-jk jk-l">Laki-laki</span>';
+        } else if(p.jenis_kelamin === 'Perempuan'){
+            jkBadge = '<span class="badge-jk jk-p">Perempuan</span>';
+        } else {
+            jkBadge = p.jenis_kelamin ?? '-';
+        }
+
         html += `
-
-        <div class="pegawai-card">
-
-            <div class="card-top">
-
-                <div>
-
-                    <div class="nama">
-                        ${p.nama_guru ?? '-'}
-                    </div>
-
-                    <div class="nip">
-                        NIP : ${p.nip ?? '-'}
-                    </div>
-
+        <tr>
+            <td style="text-align: center;">${index + 1}</td>
+            <td class="td-nama">${p.nama_guru ?? '-'}</td>
+            <td>${p.nip ?? '-'}</td>
+            <td>${jkBadge}</td>
+            <td>
+                <div class="role-wrap">
+                    ${roles || '-'}
                 </div>
-
-                <div class="badge-jk">
-                    ${p.jenis_kelamin ?? '-'}
-                </div>
-
-            </div>
-
-            <div class="card-info">
-
-                <div>
-                   Email : ${p.email ?? '-'}
-                </div>
-
-                <div>
-                   Telepon : ${p.no_telepon ?? '-'}
-                </div>
-
-                <div>
-                   Pendidikan : ${p.pendidikan_tertinggi ?? '-'}
-                </div>
-
-            </div>
-
-            <div class="role-wrap">
-                ${roles}
-            </div>
-
-            <div class="action">
-
+            </td>
+            <td class="td-status">${p.status_kepegawaian ?? '-'}</td>
+            <td style="text-align: center;">
                 <button class="btn-detail"
                         onclick="showDetail(${p.id_guru})">
-
                     Detail
-
                 </button>
-
-                <button class="btn-edit"
-                        onclick="edit(${p.id_guru})">
-
-                    Edit
-
-                </button>
-
-                <button class="btn-delete"
-                        onclick="hapus(${p.id_guru})">
-
-                    Hapus
-
-                </button>
-
-            </div>
-
-        </div>
+            </td>
+        </tr>
         `;
     });
 
@@ -613,116 +526,153 @@ function tutupDetail(){
 }
 
 
-// ================= EDIT =================
-function edit(id){
 
-    editId = id;
 
-    const p = allData.find(x => x.id_guru == id);
+// ================= DOWNLOAD PDF =================
+function downloadPDF(){
 
-    edit_nama.value = p.nama_guru ?? '';
-    edit_nip.value = p.nip ?? '';
-    edit_jk.value = p.jenis_kelamin ?? '';
-    edit_tempat.value = p.tempat_lahir ?? '';
-    edit_tanggal.value = p.tanggal_lahir?.split('T')[0] ?? '';
-    edit_alamat.value = p.alamat ?? '';
-    edit_telp.value = p.no_telepon ?? '';
-    edit_email.value = p.email ?? '';
-    edit_golongan.value = p.golongan ?? '';
-    edit_pendidikan.value = p.pendidikan_tertinggi ?? '';
-    edit_status.value = p.status_kepegawaian ?? '';
-    edit_masuk.value = p.tanggal_masuk?.split('T')[0] ?? '';
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('landscape','mm','a4');
 
-    let html = '';
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
 
-    jabatanList.forEach(j => {
+    // ======= KOP SURAT =======
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(14);
+    doc.text('PEMERINTAH KABUPATEN MANGGARAI', pageW / 2, 15, { align: 'center' });
 
-        let checked = (p.jabatan || []).some(r =>
-            r.id_jabatan == j.id_jabatan
-        ) ? 'checked' : '';
+    doc.setFontSize(12);
+    doc.text('DINAS PENDIDIKAN DAN KEBUDAYAAN', pageW / 2, 21, { align: 'center' });
 
-        html += `
-        <label>
-            <input type="checkbox"
-                   value="${j.id_jabatan}"
-                   ${checked}>
+    doc.setFontSize(16);
+    doc.text('SDN SINGKUL', pageW / 2, 28, { align: 'center' });
 
-            ${j.nama_jabatan}
-        </label><br>`;
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(9);
+
+    // Garis kop
+    doc.setLineWidth(0.8);
+    doc.line(14, 36, pageW - 14, 36);
+    doc.setLineWidth(0.3);
+    doc.line(14, 37, pageW - 14, 37);
+
+    // Judul laporan
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(13);
+    doc.text('DATA PEGAWAI', pageW / 2, 44, { align: 'center' });
+
+    // Tanggal cetak
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(9);
+    const tglCetak = new Date().toLocaleDateString('id-ID', {
+        day: '2-digit', month: 'long', year: 'numeric'
     });
+    doc.text('Dicetak: ' + tglCetak, pageW - 14, 44, { align: 'right' });
 
-    edit_jabatan.innerHTML = html;
+    // ======= DATA TABEL =======
+    const headers = [
+        'No',
+        'Nama',
+        'NIP',
+        'Jenis Kelamin',
+        'Tempat Lahir',
+        'Tgl. Lahir',
+        'Alamat',
+        'No. Telp',
+        'Email',
+        'Gol.',
+        'Pendidikan',
+        'Status',
+        'Tgl. Masuk',
+        'Jabatan'
+    ];
 
-    modal.style.display = 'flex';
-}
+    const rows = allData.map((p, i) => [
+        i + 1,
+        p.nama_guru ?? '-',
+        p.nip ?? '-',
+        p.jenis_kelamin ?? '-',
+        p.tempat_lahir ?? '-',
+        formatTanggal(p.tanggal_lahir),
+        p.alamat ?? '-',
+        p.no_telepon ?? '-',
+        p.email ?? '-',
+        p.golongan ?? '-',
+        p.pendidikan_tertinggi ?? '-',
+        p.status_kepegawaian ?? '-',
+        formatTanggal(p.tanggal_masuk),
+        (p.jabatan || []).map(j => j.nama_jabatan).join(', ') || '-'
+    ]);
 
-
-// ================= UPDATE =================
-async function update(){
-
-    const selected =
-        [...document.querySelectorAll('#edit_jabatan input:checked')]
-        .map(el => el.value);
-
-    const res = await fetch('/api/pegawai/' + editId, {
-
-        method:'PUT',
-
-        headers:{
-            'Content-Type':'application/json'
+    doc.autoTable({
+        head: [headers],
+        body: rows,
+        startY: 48,
+        theme: 'grid',
+        styles: {
+            font: 'helvetica',
+            fontSize: 7,
+            textColor: [0, 0, 0],
+            lineColor: [0, 0, 0],
+            lineWidth: 0.2,
+            cellPadding: 2,
+            valign: 'middle'
         },
-
-        body: JSON.stringify({
-
-            nama_guru: edit_nama.value,
-            nip: edit_nip.value,
-            jenis_kelamin: edit_jk.value,
-            tempat_lahir: edit_tempat.value,
-            tanggal_lahir: edit_tanggal.value,
-            alamat: edit_alamat.value,
-            no_telepon: edit_telp.value,
-            email: edit_email.value,
-            golongan: edit_golongan.value,
-            pendidikan_tertinggi: edit_pendidikan.value,
-            status_kepegawaian: edit_status.value,
-            tanggal_masuk: edit_masuk.value,
-            jabatan: selected
-        })
+        headStyles: {
+            fillColor: [220, 220, 220],
+            textColor: [0, 0, 0],
+            fontStyle: 'bold',
+            halign: 'center',
+            lineColor: [0, 0, 0],
+            lineWidth: 0.3
+        },
+        bodyStyles: {
+            fillColor: [255, 255, 255]
+        },
+        alternateRowStyles: {
+            fillColor: [245, 245, 245]
+        },
+        columnStyles: {
+            0: { halign: 'center', cellWidth: 8 },
+            3: { halign: 'center', cellWidth: 18 }
+        },
+        margin: { left: 14, right: 14 },
+        didDrawPage: function(data){
+            // Footer nomor halaman
+            doc.setFontSize(8);
+            doc.setFont('helvetica','normal');
+            doc.text(
+                'Halaman ' + doc.internal.getNumberOfPages(),
+                pageW / 2,
+                pageH - 8,
+                { align: 'center' }
+            );
+        }
     });
 
-    const data = await res.json();
+    // ======= TANDA TANGAN =======
+    const finalY = doc.lastAutoTable.finalY + 15;
+    const ttdX = pageW - 80;
 
-    if(data.success){
+    // Cari pegawai dengan jabatan Kepala
+    const kepsek = allData.find(p =>
+        (p.jabatan || []).some(j => j.nama_jabatan.trim().toLowerCase().includes('kepala'))
+    );
+    const namaKepsek = kepsek ? (kepsek.nama_guru || '_________________________') : '_________________________';
+    const nipKepsek = kepsek ? (kepsek.nip || '............................') : '............................';
 
-        alert('Berhasil update');
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(9);
+    doc.text('Singkul, ' + tglCetak, ttdX, finalY);
+    doc.text('Kepala Sekolah,', ttdX, finalY + 6);
 
-        tutup();
+    doc.setFont('helvetica','bold');
+    doc.text(namaKepsek, ttdX, finalY + 28);
+    doc.setFont('helvetica','normal');
+    doc.text('NIP. ' + nipKepsek, ttdX, finalY + 33);
 
-        loadData();
-
-    }else{
-
-        alert(data.message);
-    }
-}
-
-
-// ================= HAPUS =================
-function hapus(id){
-
-    if(confirm('Yakin hapus data?')){
-
-        fetch('/api/pegawai/' + id,{
-            method:'DELETE'
-        }).then(()=>loadData());
-    }
-}
-
-
-// ================= TUTUP =================
-function tutup(){
-
-    modal.style.display = 'none';
+    doc.save('Data_Pegawai_SDN_Singkul.pdf');
 }
 
 const dataEl = document.getElementById('data');

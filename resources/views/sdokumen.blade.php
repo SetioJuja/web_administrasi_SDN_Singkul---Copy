@@ -493,14 +493,11 @@
     }
 }
 </style>
-
-{{-- AREA PRINT (tersembunyi saat web, muncul saat print) --}}
 <div id="printArea" style="display:none">
     <div class="print-kop" style="display:none">
         <img class="print-kop-logo" src="/images/logo-sekolah.png" onerror="this.style.display='none'" alt="Logo">
         <div class="print-kop-text">
             <h1>SDN SINGKUL</h1>
-        </div>
     </div>
 
     <div class="print-judul" id="printJudul">LAPORAN DOKUMEN ADMINISTRASI</div>
