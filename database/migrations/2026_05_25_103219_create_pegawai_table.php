@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('pegawai', function (Blueprint $table) {
             $table->integer('id_guru', true);
             $table->string('nama_guru');
-            $table->string('nip');
+            $table->string('nip')->nullable();
             $table->string('jenis_kelamin');
             $table->string('tempat_lahir');
             $table->date('tanggal_lahir');

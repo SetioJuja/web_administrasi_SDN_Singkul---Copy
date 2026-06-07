@@ -29,7 +29,7 @@ class PegawaiController extends Controller
     {
         $validated = $request->validate([
             'nama_guru' => 'required|string',
-            'nip' => 'required|unique:pegawai,nip',
+            'nip' => 'nullable|unique:pegawai,nip',
             'jenis_kelamin' => 'required',
             'tempat_lahir' => 'required',
             'tanggal_lahir' => 'required|date',
@@ -102,7 +102,7 @@ class PegawaiController extends Controller
 
         $validated = $request->validate([
             'nama_guru' => 'required|string',
-            'nip' => 'required|unique:pegawai,nip,' . $id . ',id_guru',
+            'nip' => 'nullable|unique:pegawai,nip,' . $id . ',id_guru',
             'jenis_kelamin' => 'required',
             'tempat_lahir' => 'required',
             'tanggal_lahir' => 'required|date',
