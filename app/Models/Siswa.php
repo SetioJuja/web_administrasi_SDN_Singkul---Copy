@@ -24,7 +24,6 @@ class Siswa extends Model
         'penghasilan'
     ];
 
-    // RELASI KE KELAS
     public function kelas()
     {
         return $this->belongsTo(Kelas::class, 'id_kelas', 'id_kelas');

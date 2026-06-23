@@ -9,9 +9,7 @@ use Illuminate\Support\Facades\Log;
 
 class StatusPresensiController extends Controller
 {
-    // ======================
-    // GET ALL
-    // ======================
+
     public function index()
     {
         Log::info('AMBIL DATA STATUS PRESENSI');
@@ -22,9 +20,7 @@ class StatusPresensiController extends Controller
         ]);
     }
 
-    // ======================
-    // INSERT
-    // ======================
+
     public function store(Request $request)
     {
         try {
@@ -71,9 +67,6 @@ class StatusPresensiController extends Controller
         }
     }
 
-    // ======================
-    // DETAIL
-    // ======================
     public function show($id)
     {
         $data = StatusPresensi::find($id);
@@ -91,9 +84,7 @@ class StatusPresensiController extends Controller
         ]);
     }
 
-    // ======================
-    // UPDATE
-    // ======================
+
     public function update(Request $request, $id)
     {
         $data = StatusPresensi::find($id);
@@ -134,9 +125,6 @@ class StatusPresensiController extends Controller
         }
     }
 
-    // ======================
-    // DELETE
-    // ======================
     public function destroy($id)
     {
         $data = StatusPresensi::find($id);
@@ -148,7 +136,6 @@ class StatusPresensiController extends Controller
             ], 404);
         }
 
-        //  CEK DIGUNAKAN DI PRESENSI
         if ($data->presensiGuru()->count() > 0) {
             return response()->json([
                 'success' => false,

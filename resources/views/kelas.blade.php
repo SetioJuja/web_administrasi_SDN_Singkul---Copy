@@ -10,9 +10,9 @@
     --border:#e5e7eb;
     --success:#16a34a;
     --danger:#dc2626;
+    --warning:#f59e0b;
 }
 
-/* ===== CARD ===== */
 .card{
     background:white;
     border-radius:16px;
@@ -20,18 +20,32 @@
     box-shadow:0 10px 25px rgba(0,0,0,0.05);
 }
 
-/* ===== TITLE ===== */
 h3{
     margin-bottom:20px;
     color:var(--primary);
 }
 
-/* ===== FORM ===== */
 .form-grid{
     display:grid;
-    grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
     gap:10px;
     margin-bottom:15px;
+}
+
+.filter-box{
+    background:#f8fafc;
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:15px;
+    margin:15px 0 20px;
+}
+
+.filter-box label{
+    display:block;
+    font-size:14px;
+    font-weight:600;
+    margin-bottom:8px;
+    color:#374151;
 }
 
 input,
@@ -41,6 +55,7 @@ select{
     border-radius:8px;
     outline:none;
     width:100%;
+    background:white;
 }
 
 input:focus,
@@ -48,7 +63,6 @@ select:focus{
     border-color:var(--primary);
 }
 
-/* ===== BUTTON ===== */
 button{
     padding:10px 14px;
     border:none;
@@ -74,17 +88,23 @@ button{
     background:#6b7280;
 }
 
+.btn-success{
+    background:var(--success);
+}
+
+.btn-warning{
+    background:var(--warning);
+}
+
 button:hover{
     opacity:0.9;
     transform:translateY(-1px);
 }
 
-/* ===== BUTTON TAMBAH ===== */
 #btnTambah{
-    margin-bottom:20px;
+    margin-bottom:10px;
 }
 
-/* ===== TABLE ===== */
 .table-wrapper{
     overflow-x:auto;
 }
@@ -93,7 +113,6 @@ table{
     width:100%;
     border-collapse:collapse;
     font-size:14px;
-    background:white;
 }
 
 thead{
@@ -111,7 +130,20 @@ tbody tr:hover{
     background:#f9fafb;
 }
 
-/* ===== MODAL ===== */
+.badge-total{
+    display:inline-block;
+    background:#0a3d62;
+    color:white;
+    padding:3px 10px;
+    border-radius:20px;
+    font-size:13px;
+    cursor:pointer;
+}
+
+.badge-total:hover{
+    background:#1a5276;
+}
+
 .modal{
     display:none;
     position:fixed;
@@ -145,7 +177,17 @@ tbody tr:hover{
     margin-top:5px;
 }
 
-/* ===== NOTIF ===== */
+#modalSiswa .modal-content{
+    width:600px;
+    max-width:95vw;
+    max-height:80vh;
+    overflow-y:auto;
+}
+
+#modalSiswa table{
+    font-size:13px;
+}
+
 .notif-icon{
     width:70px;
     height:70px;
@@ -159,7 +201,6 @@ tbody tr:hover{
     color:white;
 }
 
-/* ===== ANIMATION ===== */
 @keyframes fade{
     from{
         opacity:0;
@@ -176,570 +217,570 @@ tbody tr:hover{
 
     <h3>Manajemen Kelas</h3>
 
-    <!-- FORM -->
     <div class="form-grid">
+        <input id="nama_kelas" type="number" placeholder="Nama Kelas">
 
-        <input
-            id="nama_kelas"
-            type="number"
-            placeholder="Nama Kelas"
-        >
+        <select id="id_guru">
+            <option value="">Memuat guru...</option>
+        </select>
 
-        <input
-            id="total_siswa"
-            type="number"
-            placeholder="Total Siswa"
-        >
-
-        <select id="id_guru"></select>
-
-        <select id="id_tahun_ajaran"></select>
-
+        <select id="id_tahun_ajaran">
+            <option value="">Memuat tahun ajaran...</option>
+        </select>
     </div>
 
-    <!-- BUTTON -->
-    <button
-        id="btnTambah"
-        class="btn-primary">
-        Tambah
-    </button>
+    <button id="btnTambah" class="btn-primary">Tambah</button>
 
-    <!-- TABLE -->
+    <div class="filter-box">
+        <label for="filter_tahun_ajaran">Tampilkan Data Berdasarkan Tahun Ajaran / Semester</label>
+        <select id="filter_tahun_ajaran">
+            <option value="">Semua Tahun Ajaran</option>
+        </select>
+    </div>
+
     <div class="table-wrapper">
-
         <table>
-
             <thead>
-
                 <tr>
-
                     <th>Kelas</th>
-
-                    <th>Wali</th>
-
-                    <th>Tahun</th>
-
-                    <th>Total</th>
-
+                    <th>Wali Kelas</th>
+                    <th>Tahun Ajaran</th>
+                    <th>Total Siswa</th>
                     <th>Aksi</th>
-
                 </tr>
-
             </thead>
-
-            <tbody id="data"></tbody>
-
+            <tbody id="data">
+                <tr>
+                    <td colspan="5">Memuat data...</td>
+                </tr>
+            </tbody>
         </table>
-
     </div>
 
 </div>
 
 
-
-<!-- ================= MODAL EDIT ================= -->
+<!-- Modal Edit -->
 <div id="modal" class="modal">
-
     <div class="modal-content">
-
         <h3>Edit Kelas</h3>
 
-        <input
-            id="edit_nama"
-            type="number"
-        >
+        <input id="edit_nama" type="number" placeholder="Nama Kelas">
 
-        <input
-            id="edit_total"
-            type="number"
-        >
+        <select id="edit_guru">
+            <option value="">Memuat guru...</option>
+        </select>
 
-        <select id="edit_guru"></select>
+        <select id="edit_tahun">
+            <option value="">Memuat tahun ajaran...</option>
+        </select>
 
-        <select id="edit_tahun"></select>
-
-        <button
-            id="btnUpdate"
-            class="btn-primary">
-            Update
-        </button>
-
-        <button
-            id="btnTutup"
-            class="btn-secondary">
-            Batal
-        </button>
-
+        <button id="btnUpdate" class="btn-primary">Update</button>
+        <button id="btnTutup" class="btn-secondary">Batal</button>
     </div>
-
 </div>
 
 
+<!-- Modal Siswa -->
+<div id="modalSiswa" class="modal">
+    <div class="modal-content">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h3 style="margin:0;" id="judulSiswa">Daftar Siswa</h3>
 
-<!-- ================= MODAL NOTIFIKASI ================= -->
+            <button class="btn-success" onclick="downloadExcel()" style="width:auto; padding:8px 14px;">
+                ⬇ Excel
+            </button>
+        </div>
+
+        <div class="table-wrapper">
+            <table id="tblSiswa">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>NIS</th>
+                        <th>Nama</th>
+                        <th>JK</th>
+                        <th>Tempat Lahir</th>
+                        <th>Tgl Lahir</th>
+                    </tr>
+                </thead>
+                <tbody id="dataSiswa">
+                    <tr>
+                        <td colspan="6">Belum ada data</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <button onclick="tutupSiswa()" class="btn-secondary" style="margin-top:15px;">Tutup</button>
+    </div>
+</div>
+
+
+<!-- Modal Notif -->
 <div id="modalNotif" class="modal">
+    <div class="modal-content" style="text-align:center;">
+        <div id="notifIcon" class="notif-icon">✓</div>
 
-<div class="modal-content"
-     style="
-        text-align:center;
-     ">
+        <h3 id="notifTitle">Berhasil</h3>
 
-    <div id="notifIcon"
-         class="notif-icon">
-        ✓
+        <p id="notifText" style="margin-bottom:20px; color:#6b7280; font-size:14px; line-height:1.5;">
+            Data berhasil disimpan
+        </p>
+
+        <button onclick="tutupNotif()" class="btn-primary">OK</button>
     </div>
-
-    <h3 id="notifTitle">
-        Berhasil
-    </h3>
-
-    <p id="notifText"
-       style="
-        margin-bottom:20px;
-        color:#6b7280;
-        font-size:14px;
-        line-height:1.5;
-       ">
-       Data berhasil disimpan
-    </p>
-
-    <button
-        onclick="tutupNotif()"
-        class="btn-primary">
-        OK
-    </button>
-
-</div>
 </div>
 
 @endsection
 
 
 @section('script')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
 <script>
-
 let editId = null;
+let namaKelasAktif = '';
 
-
-// ================= INIT =================
 document.addEventListener('DOMContentLoaded', () => {
-
     loadGuru();
     loadTahun();
     loadData();
 
-    document.getElementById('btnTambah')
-        .addEventListener('click', tambah);
+    document.getElementById('btnTambah').addEventListener('click', tambah);
+    document.getElementById('btnUpdate').addEventListener('click', update);
+    document.getElementById('btnTutup').addEventListener('click', tutup);
 
-    document.getElementById('btnUpdate')
-        .addEventListener('click', update);
-
-    document.getElementById('btnTutup')
-        .addEventListener('click', tutup);
+    document.getElementById('filter_tahun_ajaran').addEventListener('change', () => {
+        loadData();
+    });
 });
 
 
-// ================= LOAD GURU =================
 function loadGuru(){
-
     fetch('/api/pegawai/guru-kelas')
-
-    .then(res => res.json())
-
+    .then(r => r.json())
     .then(res => {
+        let html = '<option value="">-- Tanpa Wali Kelas --</option>';
 
-        let html =
-            '<option value="">-- Tanpa Wali Kelas --</option>';
+        if(res.success && res.data.length){
+            res.data.forEach(g => {
+                html += `<option value="${g.id_guru}">${g.nama_guru}</option>`;
+            });
+        }
 
-        res.data.forEach(g => {
-
-            html += `
-                <option value="${g.id_guru}">
-                    ${g.nama_guru}
-                </option>
-            `;
-        });
-
-        id_guru.innerHTML   = html;
-        edit_guru.innerHTML = html;
+        document.getElementById('id_guru').innerHTML = html;
+        document.getElementById('edit_guru').innerHTML = html;
+    })
+    .catch(() => {
+        showNotif('danger', 'Gagal memuat data guru');
     });
 }
 
 
-// ================= LOAD TAHUN =================
 function loadTahun(){
-
     fetch('/api/tahun-ajaran')
-
-    .then(res => res.json())
-
+    .then(r => r.json())
     .then(res => {
+        let htmlForm = '<option value="">Pilih Tahun Ajaran</option>';
+        let htmlFilter = '<option value="">Semua Tahun Ajaran</option>';
 
-        let html =
-            '<option value="">Pilih Tahun</option>';
+        if(res.success && res.data.length){
+            res.data.forEach(t => {
+                htmlForm += `<option value="${t.id_tahun_ajaran}">${t.periode} - ${t.semester}</option>`;
+                htmlFilter += `<option value="${t.id_tahun_ajaran}">${t.periode} - ${t.semester}</option>`;
+            });
+        }
 
-        res.data.forEach(t => {
-
-            html += `
-                <option value="${t.id_tahun_ajaran}">
-                    ${t.periode} - ${t.semester}
-                </option>
-            `;
-        });
-
-        id_tahun_ajaran.innerHTML = html;
-        edit_tahun.innerHTML = html;
+        document.getElementById('id_tahun_ajaran').innerHTML = htmlForm;
+        document.getElementById('edit_tahun').innerHTML = htmlForm;
+        document.getElementById('filter_tahun_ajaran').innerHTML = htmlFilter;
+    })
+    .catch(() => {
+        showNotif('danger', 'Gagal memuat data tahun ajaran');
     });
 }
 
 
-// ================= LOAD DATA =================
 function loadData(){
+    const filterTahun = document.getElementById('filter_tahun_ajaran').value;
+    let url = '/api/kelas';
 
-    fetch('/api/kelas')
+    if(filterTahun){
+        url += '?id_tahun_ajaran=' + filterTahun;
+    }
 
-    .then(res => res.json())
+    document.getElementById('data').innerHTML = `
+        <tr>
+            <td colspan="5">Memuat data...</td>
+        </tr>
+    `;
 
-    .then(res => {
+    fetch(url)
+    .then(r => r.json())
+    .then(async res => {
+        if(!res.success){
+            document.getElementById('data').innerHTML = `
+                <tr>
+                    <td colspan="5">${res.message || 'Gagal memuat data'}</td>
+                </tr>
+            `;
+            return;
+        }
+
+        if(!res.data.length){
+            document.getElementById('data').innerHTML = `
+                <tr>
+                    <td colspan="5">Belum ada data</td>
+                </tr>
+            `;
+            return;
+        }
+
+        const counts = await Promise.all(
+            res.data.map(k =>
+                fetch('/api/siswa-by-kelas/' + k.id_kelas)
+                .then(r => r.json())
+                .then(r => ({
+                    id: k.id_kelas,
+                    total: (r.data ?? []).length
+                }))
+                .catch(() => ({
+                    id: k.id_kelas,
+                    total: 0
+                }))
+            )
+        );
+
+        const countMap = {};
+        counts.forEach(c => {
+            countMap[c.id] = c.total;
+        });
 
         let html = '';
 
-        if(!res.data.length){
-
-            html = `
-                <tr>
-                    <td colspan="5">
-                        Belum ada data
-                    </td>
-                </tr>
-            `;
-        }
-
         res.data.forEach(k => {
+            const total = countMap[k.id_kelas] ?? 0;
+
+            const tahun = k.tahun_ajaran
+                ? `${k.tahun_ajaran.periode} - ${k.tahun_ajaran.semester}`
+                : '-';
 
             html += `
                 <tr>
-
+                    <td>${k.nama_kelas}</td>
+                    <td>${k.pegawai?.nama_guru ?? '-'}</td>
+                    <td>${tahun}</td>
                     <td>
-                        ${k.nama_kelas}
+                        <span class="badge-total" data-id="${k.id_kelas}" data-nama="${k.nama_kelas}">
+                            ${total} siswa
+                        </span>
                     </td>
-
                     <td>
-                        ${k.pegawai?.nama_guru ?? '-'}
+                        <button class="btn-edit" data-id="${k.id_kelas}">Edit</button>
+                        <button class="btn-danger" data-id="${k.id_kelas}">Hapus</button>
                     </td>
-
-                    <td>
-                        ${k.tahun_ajaran?.periode ?? '-'}
-                    </td>
-
-                    <td>
-                        <b>${k.total_siswa}</b>
-                    </td>
-
-                    <td>
-
-                        <button 
-                            class="btn-edit" 
-                            data-id="${k.id_kelas}">
-                            Edit
-                        </button>
-
-                        <button 
-                            class="btn-danger" 
-                            data-id="${k.id_kelas}">
-                            Hapus
-                        </button>
-
-                    </td>
-
                 </tr>
             `;
         });
 
-        data.innerHTML = html;
+        document.getElementById('data').innerHTML = html;
 
-        document.querySelectorAll('.btn-edit')
-        .forEach(btn => {
-
-            btn.onclick = () =>
-                edit(btn.dataset.id);
+        document.querySelectorAll('.btn-edit').forEach(btn => {
+            btn.onclick = () => edit(btn.dataset.id);
         });
 
-        document.querySelectorAll('.btn-danger')
-        .forEach(btn => {
-
-            btn.onclick = () =>
-                hapus(btn.dataset.id);
+        document.querySelectorAll('.btn-danger').forEach(btn => {
+            btn.onclick = () => hapus(btn.dataset.id);
         });
 
+        document.querySelectorAll('.badge-total').forEach(badge => {
+            badge.onclick = () => lihatSiswa(badge.dataset.id, badge.dataset.nama);
+        });
+    })
+    .catch(() => {
+        document.getElementById('data').innerHTML = `
+            <tr>
+                <td colspan="5">Gagal memuat data</td>
+            </tr>
+        `;
     });
 }
 
 
-// ================= TAMBAH =================
 function tambah(){
+    const namaKelas = document.getElementById('nama_kelas').value;
+    const idGuru = document.getElementById('id_guru').value;
+    const idTahunAjaran = document.getElementById('id_tahun_ajaran').value;
 
-    if(
-        !nama_kelas.value ||
-        !total_siswa.value
-    ){
-
-        showNotif(
-            'warning',
-            'Isi semua data!'
-        );
-
+    if(!namaKelas){
+        showNotif('warning', 'Isi nama kelas!');
         return;
     }
 
-    fetch('/api/kelas',{
+    if(!idTahunAjaran){
+        showNotif('warning', 'Pilih tahun ajaran!');
+        return;
+    }
 
+    fetch('/api/kelas', {
         method:'POST',
-
         headers:{
             'Content-Type':'application/json'
         },
-
         body: JSON.stringify({
-
-            nama_kelas:
-                nama_kelas.value,
-
-            total_siswa:
-                total_siswa.value,
-
-            id_guru:
-                id_guru.value || null,
-
-            id_tahun_ajaran:
-                id_tahun_ajaran.value
+            nama_kelas: namaKelas,
+            id_guru: idGuru || null,
+            id_tahun_ajaran: idTahunAjaran
         })
     })
-
-    .then(res => res.json())
-
+    .then(r => r.json())
     .then(res => {
+        if(res.success){
+            document.getElementById('nama_kelas').value = '';
+            document.getElementById('id_guru').value = '';
+            document.getElementById('id_tahun_ajaran').value = '';
 
-        nama_kelas.value = '';
-        total_siswa.value = '';
-
-        showNotif(
-            'success',
-            'Berhasil tambah data kelas'
-        );
-
-        loadData();
+            showNotif('success', res.message || 'Berhasil tambah data kelas');
+            loadData();
+        } else {
+            showNotif('danger', res.message || 'Gagal tambah data kelas');
+        }
     })
-
-    .catch(err => {
-
-        console.error(err);
-
-        showNotif(
-            'danger',
-            'Gagal tambah data'
-        );
+    .catch(() => {
+        showNotif('danger', 'Gagal tambah data kelas');
     });
 }
 
 
-// ================= EDIT =================
 function edit(id){
-
     editId = id;
 
     fetch('/api/kelas/' + id)
-
-    .then(res => res.json())
-
+    .then(r => r.json())
     .then(res => {
+        if(!res.success){
+            showNotif('danger', res.message || 'Data kelas tidak ditemukan');
+            return;
+        }
 
         let d = res.data;
 
-        edit_nama.value =
-            d.nama_kelas;
+        document.getElementById('edit_nama').value = d.nama_kelas;
+        document.getElementById('edit_guru').value = d.id_guru ?? '';
+        document.getElementById('edit_tahun').value = d.id_tahun_ajaran;
 
-        edit_total.value =
-            d.total_siswa;
-
-        edit_guru.value =
-            d.id_guru ?? '';
-
-        edit_tahun.value =
-            d.id_tahun_ajaran;
-
-        modal.style.display = 'flex';
+        document.getElementById('modal').style.display = 'flex';
+    })
+    .catch(() => {
+        showNotif('danger', 'Gagal mengambil data kelas');
     });
 }
 
 
-// ================= UPDATE =================
 function update(){
+    const editNama = document.getElementById('edit_nama').value;
+    const editGuru = document.getElementById('edit_guru').value;
+    const editTahun = document.getElementById('edit_tahun').value;
 
-    fetch('/api/kelas/' + editId,{
+    if(!editNama){
+        showNotif('warning', 'Isi nama kelas!');
+        return;
+    }
 
+    if(!editTahun){
+        showNotif('warning', 'Pilih tahun ajaran!');
+        return;
+    }
+
+    fetch('/api/kelas/' + editId, {
         method:'PUT',
-
         headers:{
             'Content-Type':'application/json'
         },
-
         body: JSON.stringify({
-
-            nama_kelas:
-                edit_nama.value,
-
-            total_siswa:
-                edit_total.value,
-
-            id_guru:
-                edit_guru.value || null,
-
-            id_tahun_ajaran:
-                edit_tahun.value
+            nama_kelas: editNama,
+            id_guru: editGuru || null,
+            id_tahun_ajaran: editTahun
         })
     })
-
-    .then(res => res.json())
-
+    .then(r => r.json())
     .then(res => {
-
         if(res.success){
-
             tutup();
-
-            showNotif(
-                'edit',
-                'Data kelas berhasil diperbarui'
-            );
-
+            showNotif('edit', res.message || 'Data kelas berhasil diperbarui');
             loadData();
-
-        }else{
-
-            showNotif(
-                'danger',
-                res.message
-            );
+        } else {
+            showNotif('danger', res.message || 'Gagal update data kelas');
         }
     })
-
-    .catch(err => {
-
-        console.error(err);
-
-        showNotif(
-            'danger',
-            'Gagal update data'
-        );
+    .catch(() => {
+        showNotif('danger', 'Gagal update data kelas');
     });
 }
 
 
-// ================= HAPUS =================
 function hapus(id){
-
     if(confirm('Yakin hapus data?')){
-
-        fetch('/api/kelas/' + id,{
-
+        fetch('/api/kelas/' + id, {
             method:'DELETE'
-
         })
-
-        .then(res => res.json())
-
+        .then(r => r.json())
         .then(res => {
-
-            showNotif(
-                'delete',
-                'Berhasil hapus data'
-            );
-
-            loadData();
+            if(res.success){
+                showNotif('delete', res.message || 'Berhasil hapus data kelas');
+                loadData();
+            } else {
+                showNotif('danger', res.message || 'Gagal hapus data kelas');
+            }
         })
-
-        .catch(err => {
-
-            console.error(err);
-
-            showNotif(
-                'danger',
-                'Gagal hapus data'
-            );
+        .catch(() => {
+            showNotif('danger', 'Gagal hapus data kelas');
         });
     }
 }
 
 
-// ================= MODAL NOTIF =================
-function showNotif(type, message){
+function lihatSiswa(id_kelas, nama){
+    namaKelasAktif = nama;
 
-    let icon =
-        document.getElementById('notifIcon');
+    document.getElementById('judulSiswa').textContent = `Siswa Kelas ${nama}`;
+    document.getElementById('dataSiswa').innerHTML = `
+        <tr>
+            <td colspan="6">Memuat...</td>
+        </tr>
+    `;
+    document.getElementById('modalSiswa').style.display = 'flex';
 
-    let title =
-        document.getElementById('notifTitle');
+    fetch('/api/siswa-by-kelas/' + id_kelas)
+    .then(r => r.json())
+    .then(res => {
+        let html = '';
 
-    let text =
-        document.getElementById('notifText');
+        if(!res.success || !res.data.length){
+            html = `
+                <tr>
+                    <td colspan="6">Belum ada siswa</td>
+                </tr>
+            `;
+        } else {
+            res.data.forEach((s, i) => {
+                html += `
+                    <tr>
+                        <td>${i + 1}</td>
+                        <td>${s.nis ?? '-'}</td>
+                        <td style="text-align:left">${s.nama_siswa ?? '-'}</td>
+                        <td>${s.jenis_kelamin ?? '-'}</td>
+                        <td>${s.tempat_lahir ?? '-'}</td>
+                        <td>${s.tanggal_lahir ?? '-'}</td>
+                    </tr>
+                `;
+            });
+        }
 
-    if(type === 'success'){
+        document.getElementById('dataSiswa').innerHTML = html;
+    })
+    .catch(() => {
+        document.getElementById('dataSiswa').innerHTML = `
+            <tr>
+                <td colspan="6">Gagal memuat data siswa</td>
+            </tr>
+        `;
+    });
+}
 
-        icon.innerHTML = '✓';
-        icon.style.background = '#16a34a';
 
-        title.innerText = 'Berhasil';
+function tutupSiswa(){
+    document.getElementById('modalSiswa').style.display = 'none';
+}
 
-    }else if(type === 'delete'){
 
-        icon.innerHTML = '🗑';
-        icon.style.background = '#dc2626';
+function downloadExcel(){
+    const rows = [
+        ['No', 'NIS', 'Nama Siswa', 'Jenis Kelamin', 'Tempat Lahir', 'Tanggal Lahir']
+    ];
 
-        title.innerText = 'Data Dihapus';
+    document.querySelectorAll('#dataSiswa tr').forEach(tr => {
+        const cols = tr.querySelectorAll('td');
 
-    }else if(type === 'edit'){
+        if(cols.length > 1){
+            rows.push(Array.from(cols).map(td => td.textContent.trim()));
+        }
+    });
 
-        icon.innerHTML = '✎';
-        icon.style.background = '#2563eb';
-
-        title.innerText = 'Data Diperbarui';
-
-    }else if(type === 'warning'){
-
-        icon.innerHTML = '!';
-        icon.style.background = '#f59e0b';
-
-        title.innerText = 'Peringatan';
-
-    }else if(type === 'danger'){
-
-        icon.innerHTML = '✕';
-        icon.style.background = '#dc2626';
-
-        title.innerText = 'Gagal';
+    if(rows.length === 1){
+        showNotif('warning', 'Tidak ada data siswa untuk diunduh');
+        return;
     }
 
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+
+    ws['!cols'] = [
+        {wch:5},
+        {wch:12},
+        {wch:28},
+        {wch:15},
+        {wch:18},
+        {wch:15}
+    ];
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, `Kelas ${namaKelasAktif}`);
+    XLSX.writeFile(wb, `Siswa_Kelas_${namaKelasAktif}.xlsx`);
+}
+
+
+function showNotif(type, message){
+    const icon = document.getElementById('notifIcon');
+    const title = document.getElementById('notifTitle');
+    const text = document.getElementById('notifText');
+
+    const map = {
+        success:{
+            i:'✓',
+            bg:'#16a34a',
+            t:'Berhasil'
+        },
+        delete:{
+            i:'🗑',
+            bg:'#dc2626',
+            t:'Data Dihapus'
+        },
+        edit:{
+            i:'✎',
+            bg:'#2563eb',
+            t:'Data Diperbarui'
+        },
+        warning:{
+            i:'!',
+            bg:'#f59e0b',
+            t:'Peringatan'
+        },
+        danger:{
+            i:'✕',
+            bg:'#dc2626',
+            t:'Gagal'
+        }
+    };
+
+    const m = map[type] ?? map.danger;
+
+    icon.innerHTML = m.i;
+    icon.style.background = m.bg;
+    title.innerText = m.t;
     text.innerText = message;
 
-    document.getElementById('modalNotif')
-        .style.display = 'flex';
+    document.getElementById('modalNotif').style.display = 'flex';
 }
 
 
-// ================= TUTUP NOTIF =================
 function tutupNotif(){
-
-    document.getElementById('modalNotif')
-        .style.display = 'none';
+    document.getElementById('modalNotif').style.display = 'none';
 }
 
 
-// ================= TUTUP =================
 function tutup(){
-
-    modal.style.display = 'none';
+    document.getElementById('modal').style.display = 'none';
 }
-
 </script>
 @endsection

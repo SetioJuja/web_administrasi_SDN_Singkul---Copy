@@ -9,7 +9,6 @@ use App\Models\KomponenPenilaian;
 
 class TugasController extends Controller
 {
-    // ================= GET SEMUA =================
     public function index(Request $request)
     {
         //  ambil dari request (sementara)
@@ -27,7 +26,6 @@ class TugasController extends Controller
         ]);
     }
 
-    // ================= POST =================
 public function store(Request $request)
 {
     $validated = $request->validate([
@@ -66,7 +64,6 @@ public function store(Request $request)
     ]);
 }
 
-    // ================= GET DETAIL =================
     public function show($id)
     {
         $data = Tugas::with('komponen.mapel')->find($id);
@@ -84,7 +81,6 @@ public function store(Request $request)
         ]);
     }
 
-    // ================= UPDATE =================
     public function update(Request $request, $id)
     {
         $data = Tugas::find($id);
@@ -109,7 +105,6 @@ public function store(Request $request)
         ]);
     }
 
-    // ================= DELETE =================
     public function destroy($id)
     {
         $data = Tugas::find($id);

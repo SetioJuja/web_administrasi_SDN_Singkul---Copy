@@ -36,9 +36,7 @@ class Pegawai extends Authenticatable
         'tanggal_masuk' => 'date'
     ];
 
-    /**
-     * Relasi MANY TO MANY ke jabatan
-     */
+
     public function jabatan()
     {
         return $this->belongsToMany(
@@ -49,9 +47,7 @@ class Pegawai extends Authenticatable
         );
     }
 
-    /**
-     * Helper cek role
-     */
+
     public function hasRole($role)
     {
         return $this->jabatan()->where('nama_jabatan', $role)->exists();

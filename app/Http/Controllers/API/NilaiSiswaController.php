@@ -9,7 +9,6 @@ use App\Models\NilaiSiswa;
 
 class NilaiSiswaController extends Controller
 {
-    // ================= SIMPAN NILAI =================
     public function store(Request $request)
     {
         $request->validate([
@@ -18,7 +17,6 @@ class NilaiSiswaController extends Controller
             'id_kelas' => 'required'
         ]);
 
-        // ================= AVG TUGAS =================
         $avg = DB::table('nilai_tugas')
             ->join('tugas','tugas.id_tugas','=','nilai_tugas.id_tugas')
             ->join('komponen_penilaian','komponen_penilaian.id_komponen','=','tugas.id_komponen')
@@ -26,10 +24,8 @@ class NilaiSiswaController extends Controller
             ->where('komponen_penilaian.id_mapel',$request->id_mapel)
             ->avg('nilai_tugas.nilai');
 
-        //  jika tidak ada tugas
         $avg = $avg ?? 0;
 
-        // ================= BOBOT =================
         $komponen = DB::table('komponen_penilaian')
             ->where('id_mapel',$request->id_mapel)
             ->get();
@@ -46,7 +42,6 @@ class NilaiSiswaController extends Controller
             ->firstWhere(fn($k) => strtoupper($k->nama_komponen) == 'UAS')
             ->bobot ?? 0;
 
-        // ================= NILAI =================
         $uts = $request->nilai_uts ?? 0;
         $uas = $request->nilai_uas ?? 0;
 
@@ -54,20 +49,16 @@ class NilaiSiswaController extends Controller
         $uts = is_numeric($uts) ? $uts : 0;
         $uas = is_numeric($uas) ? $uas : 0;
 
-        // ================= TOTAL =================
-        //  tetap dihitung walaupun tugas kosong
         $total =
             ($avg * ($bobot_tugas / 100)) +
             ($uts * ($bobot_uts / 100)) +
             ($uas * ($bobot_uas / 100));
 
-        // ================= INPUT MANUAL =================
-        //  TIDAK IKUT HITUNGAN TOTAL
+
         $nilai_keterampilan     = $request->nilai_keterampilan;
         $deskripsi_pengetahuan  = $request->deskripsi_pengetahuan;
         $deskripsi_keterampilan = $request->deskripsi_keterampilan;
 
-        // ================= SIMPAN =================
         NilaiSiswa::updateOrCreate(
 
             [
@@ -82,7 +73,6 @@ class NilaiSiswaController extends Controller
                 'nilai_uts'   => $uts,
                 'nilai_uas'   => $uas,
 
-                //  hasil akhir
                 'total'       => round($total,2),
 
                 //  manual
@@ -99,7 +89,6 @@ class NilaiSiswaController extends Controller
     }
 
 
-    // ================= LIST =================
     public function index($kelas,$mapel)
     {
         $data = NilaiSiswa::with('siswa')
@@ -114,7 +103,6 @@ class NilaiSiswaController extends Controller
     }
 
 
-    // ================= BY KELAS MAPEL =================
     public function byKelasMapel($kelas,$mapel)
     {
         $data = NilaiSiswa::where('id_kelas',$kelas)
@@ -127,7 +115,6 @@ class NilaiSiswaController extends Controller
         ]);
     }
 
-    // ================= SEMUA NILAI KELAS =================
 public function semuaNilaiKelas($kelas)
 {
     $data = DB::table('siswa')

@@ -440,7 +440,6 @@
 
     let kontenId = null;
 
-    /* ---- helpers ---- */
     function showAlert(type, msg) {
         if (type === 'success') {
             successText.textContent = msg;
@@ -464,7 +463,6 @@
         emptyEl.style.display = 'none';
     }
 
-    /* ---- preview handlers ---- */
     $('gambar_login').addEventListener('change', function () {
         if (this.files[0]) setPreview(previewImage, emptyLogin, URL.createObjectURL(this.files[0]));
     });
@@ -473,7 +471,6 @@
         if (this.files[0]) setPreview(previewBeranda, emptyBeranda, URL.createObjectURL(this.files[0]));
     });
 
-    /* ---- safe fetch (fix SyntaxError: Unexpected token '<') ---- */
     async function apiFetch(url, options = {}) {
         const headers = Object.assign({ 'Accept': 'application/json' }, options.headers || {});
         const res = await fetch(url, Object.assign({}, options, { headers }));
@@ -487,7 +484,6 @@
         return { res, data };
     }
 
-    /* ---- load data ---- */
     async function loadData() {
         try {
             const { res, data } = await apiFetch('/api/konten-umum');
@@ -517,7 +513,6 @@
         }
     }
 
-    /* ---- submit ---- */
     form.addEventListener('submit', async function (e) {
         e.preventDefault();
         setLoading(true);

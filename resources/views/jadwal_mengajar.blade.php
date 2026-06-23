@@ -84,7 +84,6 @@ tbody tr:hover{
     background:#f9fafb;
 }
 
-/* ===== MODAL ===== */
 .modal{
     position:fixed;
     top:0;
@@ -111,7 +110,6 @@ tbody tr:hover{
     display:flex;
 }
 
-/* ===== NOTIF ===== */
 .notif-icon{
     width:70px;
     height:70px;
@@ -125,7 +123,6 @@ tbody tr:hover{
     color:white;
 }
 
-/* ===== ANIMATION ===== */
 @keyframes fade{
     from{
         opacity:0;
@@ -231,9 +228,6 @@ tbody tr:hover{
 
 </div>
 
-
-
-<!-- ================= MODAL EDIT ================= -->
 <div class="modal" id="modalEdit">
 
 <div class="modal-content">
@@ -298,9 +292,6 @@ tbody tr:hover{
 </div>
 </div>
 
-
-
-<!-- ================= MODAL NOTIFIKASI ================= -->
 <div id="modalNotif" class="modal">
 
 <div class="modal-content"
@@ -353,7 +344,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-// ================= LOAD MASTER =================
 function loadGuru(){
 
     fetch('/api/pegawai/guru-mapel')
@@ -458,7 +448,6 @@ function loadTahunAktif(){
 }
 
 
-// ================= LOAD DATA =================
 function loadData(){
 
     fetch('/api/jadwal')
@@ -564,7 +553,6 @@ function loadData(){
 }
 
 
-// ================= TAMBAH =================
 function tambah(){
 
     fetch('/api/jadwal',{
@@ -624,7 +612,6 @@ function tambah(){
 }
 
 
-// ================= EDIT =================
 function openModal(id){
 
     let j =
@@ -666,7 +653,6 @@ function closeModal(){
 }
 
 
-// ================= UPDATE =================
 function updateData(){
 
     fetch('/api/jadwal/' + edit_id.value,{
@@ -730,7 +716,6 @@ function updateData(){
 }
 
 
-// ================= HAPUS =================
 function hapus(id){
 
     fetch('/api/jadwal/' + id,{
@@ -762,7 +747,6 @@ function hapus(id){
 }
 
 
-// ================= MODAL NOTIF =================
 function showNotif(type, message){
 
     let icon =
@@ -810,7 +794,6 @@ function showNotif(type, message){
 }
 
 
-// ================= TUTUP NOTIF =================
 function tutupNotif(){
 
     document.getElementById('modalNotif')

@@ -9,9 +9,7 @@ use Illuminate\Support\Facades\Hash;
 
 class PegawaiController extends Controller
 {
-    /**
-     * GET /api/pegawai
-     */
+
     public function index()
     {
         $data = Pegawai::with('jabatan')->get();
@@ -22,9 +20,6 @@ class PegawaiController extends Controller
         ]);
     }
 
-    /**
-     * POST /api/pegawai
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -37,7 +32,6 @@ class PegawaiController extends Controller
             'no_telepon' => 'nullable',
             'email' => 'nullable|email',
 
-            // SESUAI MODEL
             'golongan' => 'nullable|string',
             'pendidikan_tertinggi' => 'required|string',
             'status_kepegawaian' => 'required|string',
@@ -46,17 +40,14 @@ class PegawaiController extends Controller
             'password' => 'required|min:6',
             'username' => 'required|min:6',
 
-            // MULTI ROLE
             'jabatan' => 'required|array',
             'jabatan.*' => 'exists:jabatan,id_jabatan'
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
 
-        // simpan pegawai
         $pegawai = Pegawai::create($validated);
 
-        // SIMPAN ROLE
         $pegawai->jabatan()->sync($request->jabatan);
 
         return response()->json([
@@ -66,9 +57,6 @@ class PegawaiController extends Controller
         ], 201);
     }
 
-    /**
-     * GET /api/pegawai/{id}
-     */
     public function show($id)
     {
         $data = Pegawai::with('jabatan')->find($id);
@@ -86,9 +74,6 @@ class PegawaiController extends Controller
         ]);
     }
 
-    /**
-     * PUT /api/pegawai/{id}
-     */
     public function update(Request $request, $id)
     {
         $pegawai = Pegawai::find($id);
@@ -124,7 +109,6 @@ class PegawaiController extends Controller
             'jabatan.*' => 'exists:jabatan,id_jabatan'
         ]);
 
-        // update password jika diisi
         if ($request->password) {
             $validated['password'] = Hash::make($request->password);
         } else {
@@ -133,7 +117,6 @@ class PegawaiController extends Controller
 
         $pegawai->update($validated);
 
-        // UPDATE ROLE
         $pegawai->jabatan()->sync($request->jabatan);
 
         return response()->json([
@@ -143,9 +126,6 @@ class PegawaiController extends Controller
         ]);
     }
 
-    /**
-     * DELETE /api/pegawai/{id}
-     */
 public function destroy($id)
 {
     $pegawai = Pegawai::find($id);
@@ -158,7 +138,6 @@ public function destroy($id)
         ], 404);
     }
 
-    // cek presensi guru
     if ($pegawai->presensiGuru()->exists()) {
 
         return response()->json([
@@ -167,7 +146,6 @@ public function destroy($id)
         ], 400);
     }
 
-    // cek jadwal mengajar
     if ($pegawai->jadwalMengajar()->exists()) {
 
         return response()->json([
@@ -176,10 +154,8 @@ public function destroy($id)
         ], 400);
     }
 
-    // hapus relasi pivot jabatan
     $pegawai->jabatan()->detach();
 
-    // hapus pegawai
     $pegawai->delete();
 
     return response()->json([
@@ -188,9 +164,6 @@ public function destroy($id)
     ]);
 }
 
-    /**
-     * LOGIN (MULTI ROLE)
-     */
     public function login(Request $request)
     {
         $request->validate([
@@ -217,15 +190,11 @@ public function destroy($id)
                 'nama' => $pegawai->nama_guru,
                 'username' => $pegawai->username,
 
-                // KUNCI DASHBOARD
                 'roles' => $pegawai->jabatan->pluck('nama_jabatan'),
             ]
         ]);
     }
 
-    /**
-     * GET guru kelas
-     */
     public function guruKelas()
     {
         $data = Pegawai::whereHas('jabatan', function ($q) {

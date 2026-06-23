@@ -8,9 +8,6 @@
 
 <style>
 
-/* =========================================================
-   RESET
-========================================================= */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;}
 body{
@@ -22,18 +19,12 @@ body{
     overflow-x:hidden;
 }
 
-/* =========================================================
-   CSS VARIABLE — lebar sidebar
-========================================================= */
 :root{
     --sb-width:240px;
     --sb-collapsed:60px;
     --transition:.22s ease;
 }
 
-/* =========================================================
-   SIDEBAR
-========================================================= */
 .sidebar{
     width:var(--sb-width);
     height:100vh;
@@ -53,9 +44,6 @@ body.sb-closed .sidebar{
     width:var(--sb-collapsed);
 }
 
-/* =========================================================
-   OVERLAY (mobile)
-========================================================= */
 .sb-overlay{
     display:none;
     position:fixed;
@@ -66,9 +54,6 @@ body.sb-closed .sidebar{
     transition:opacity var(--transition);
 }
 
-/* =========================================================
-   HEADER
-========================================================= */
 .sidebar-header{
     padding:14px 10px 12px;
     border-bottom:1px solid rgba(255,255,255,0.08);
@@ -110,9 +95,6 @@ body.sb-closed .sidebar{
     white-space:normal;line-height:1.3;
 }
 
-/* =========================================================
-   USER
-========================================================= */
 .sidebar-user{
     display:flex;align-items:center;gap:10px;
     background:rgba(255,255,255,0.06);
@@ -145,9 +127,6 @@ body.sb-closed .sidebar{
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 
-/* =========================================================
-   COLLAPSED STATE: hide text
-========================================================= */
 body.sb-closed .sidebar-brand-text,
 body.sb-closed .sidebar-user-info{
     opacity:0;width:0;pointer-events:none;
@@ -158,9 +137,6 @@ body.sb-closed .sidebar-user{
     padding:9px 0;
 }
 
-/* =========================================================
-   NAV
-========================================================= */
 .sidebar-nav{
     flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:10px 6px;
 }
@@ -170,9 +146,6 @@ body.sb-closed .sidebar-user{
 .sidebar-nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.18);border-radius:10px;}
 .sidebar-nav::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.28);}
 
-/* =========================================================
-   MENU SECTION LABEL
-========================================================= */
 .menu-section{
     font-size:9.5px;font-weight:700;text-transform:uppercase;
     color:rgba(255,255,255,0.35);
@@ -183,9 +156,6 @@ body.sb-closed .sidebar-user{
 
 body.sb-closed .menu-section{opacity:0;height:0;padding:0;pointer-events:none;}
 
-/* =========================================================
-   MENU ITEM
-========================================================= */
 .sidebar-nav a{
     display:flex;align-items:center;gap:12px;
     padding:10px 10px;
@@ -240,9 +210,7 @@ body.sb-closed .sidebar-nav a:hover::after{
     box-shadow:0 4px 12px rgba(0,0,0,0.2);
 }
 
-/* =========================================================
-   FOOTER
-========================================================= */
+
 .sidebar-footer{
     padding:8px 6px;
     border-top:1px solid rgba(255,255,255,0.08);
@@ -278,9 +246,7 @@ body.sb-closed .sidebar-footer a:hover::after{
 
 .sidebar-footer a{position:relative;}
 
-/* =========================================================
-   TOPBAR
-========================================================= */
+
 .topbar{
     position:fixed;
     top:0;
@@ -318,9 +284,7 @@ body.sb-closed .topbar{left:var(--sb-collapsed);}
     flex:1;
 }
 
-/* =========================================================
-   CONTENT
-========================================================= */
+
 .content{
     margin-left:var(--sb-width);
     margin-top:52px;
@@ -335,9 +299,7 @@ body.sb-closed .topbar{left:var(--sb-collapsed);}
 
 body.sb-closed .content{margin-left:var(--sb-collapsed);}
 
-/* =========================================================
-   MODAL LOGOUT
-========================================================= */
+
 .modal-overlay{
     position:fixed;inset:0;
     background:rgba(0,0,0,0.45);
@@ -392,17 +354,14 @@ body.sb-closed .content{margin-left:var(--sb-collapsed);}
     box-shadow:0 6px 16px rgba(224,62,62,0.4);
 }
 
-/* =========================================================
-   RESPONSIVE
-========================================================= */
+
 @media(max-width:768px){
 
     :root{--sb-width:240px;}
 
-    /* di mobile, sidebar default hidden (geser ke luar layar) */
     .sidebar{
         left:calc(-1 * var(--sb-width));
-        width:var(--sb-width) !important;  /* paksa lebar penuh saat mobile */
+        width:var(--sb-width) !important;  
         transition:left var(--transition);
     }
 
@@ -437,9 +396,7 @@ body.sb-closed .content{margin-left:var(--sb-collapsed);}
 <!-- OVERLAY MOBILE -->
 <div class="sb-overlay" id="sbOverlay" onclick="closeMobileSidebar()"></div>
 
-<!-- =========================================================
-     SIDEBAR
-========================================================= -->
+
 <div class="sidebar">
 
     <div class="sidebar-header">
@@ -475,9 +432,7 @@ body.sb-closed .content{margin-left:var(--sb-collapsed);}
 
 </div>
 
-<!-- =========================================================
-     TOPBAR
-========================================================= -->
+
 <div class="topbar">
 
     <button class="topbar-toggle" id="sidebarToggle" onclick="toggleSidebar()" title="Toggle Sidebar" aria-label="Toggle Sidebar">
@@ -488,16 +443,12 @@ body.sb-closed .content{margin-left:var(--sb-collapsed);}
 
 </div>
 
-<!-- =========================================================
-     CONTENT
-========================================================= -->
+
 <div class="content">
     @yield('content')
 </div>
 
-<!-- =========================================================
-     MODAL LOGOUT
-========================================================= -->
+
 <div class="modal-overlay" id="logoutModal" onclick="handleOverlayClick(event)">
     <div class="modal-box">
         <div class="modal-icon"><i class="bi bi-box-arrow-right"></i></div>
@@ -514,14 +465,10 @@ body.sb-closed .content{margin-left:var(--sb-collapsed);}
     </div>
 </div>
 
-<!-- =========================================================
-     SCRIPT
-========================================================= -->
+
 <script>
 
-// ============================================================
-// AUTH
-// ============================================================
+
 let user = JSON.parse(localStorage.getItem('user'));
 
 if (!user) {
@@ -529,26 +476,20 @@ if (!user) {
     window.location.href = '/login';
 }
 
-// ============================================================
-// ROLE
-// ============================================================
+
 let roles = (user.roles || []).map(r => r.trim().toLowerCase());
 
 function hasRole(role){ return roles.includes(role.toLowerCase()); }
 function hasAnyRole(list){ return list.some(r => hasRole(r)); }
 
-// ============================================================
-// AUTO REDIRECT
-// ============================================================
+
 const currentPath = window.location.pathname;
 if(currentPath === '/' || currentPath === '/dashboard'){
     let target = '/lihat_pengumuman';
     if(currentPath !== target) window.location.replace(target);
 }
 
-// ============================================================
-// USER INFO
-// ============================================================
+
 document.getElementById('user-nama').innerText = user.nama || '-';
 document.getElementById('user-role').innerText =
     (user.roles || []).map(role => 'Guru ' + role).join(', ') || '-';
@@ -557,9 +498,7 @@ const words = (user.nama || 'U').trim().split(' ');
 document.getElementById('user-av').innerText =
     words.length >= 2 ? words[0][0] + words[1][0] : words[0].slice(0,2);
 
-// ============================================================
-// SIDEBAR TOGGLE STATE (persist ke localStorage)
-// ============================================================
+
 const isMobile = () => window.innerWidth <= 768;
 
 function initSidebarState(){
@@ -573,7 +512,6 @@ function initSidebarState(){
 
 function toggleSidebar(){
     if(isMobile()){
-        // mobile: toggle panel geser
         if(document.body.classList.contains('sb-open-mobile')){
             closeMobileSidebar();
         } else {
@@ -595,7 +533,6 @@ function closeMobileSidebar(){
     document.body.classList.remove('sb-open-mobile');
 }
 
-// tutup mobile sidebar saat resize ke desktop
 window.addEventListener('resize', function(){
     if(!isMobile()){
         document.body.classList.remove('sb-open-mobile');
@@ -603,9 +540,6 @@ window.addEventListener('resize', function(){
     }
 });
 
-// ============================================================
-// TOPBAR TITLE — sesuai halaman aktif
-// ============================================================
 function setTopbarTitle(){
     const path = location.pathname;
     const map = {
@@ -638,9 +572,6 @@ function setTopbarTitle(){
     document.title = title + ' — SiAkad';
 }
 
-// ============================================================
-// MENU
-// ============================================================
 function loadMenu(){
     let html = '';
 
@@ -658,9 +589,6 @@ function loadMenu(){
         `;
     }
 
-    // =====================================================
-    // OPERATOR
-    // =====================================================
     if(hasRole('operator')){
 
         section('Data Master');
@@ -679,9 +607,6 @@ function loadMenu(){
         add('Kelola Pengumuman','/pengumuman',      'bi bi-megaphone-fill');
     }
 
-    // =====================================================
-    // GURU (semua peran)
-    // =====================================================
     if(hasAnyRole(['kelas','mapel','operator','kepala'])){
 
         section('Saya');
@@ -689,9 +614,6 @@ function loadMenu(){
         add('Presensi Saya',  '/lihat_presensi_me',  'bi bi-receipt');
     }
 
-    // =====================================================
-    // WALI KELAS
-    // =====================================================
     if(hasRole('kelas')){
 
         section('Wali Kelas');
@@ -700,9 +622,6 @@ function loadMenu(){
         add('Data Nilai',     '/dsnilai',            'bi bi-bar-chart-fill');
     }
 
-    // =====================================================
-    // MAPEL
-    // =====================================================
     if(hasRole('mapel')){
 
         section('Mengajar');
@@ -712,9 +631,7 @@ function loadMenu(){
         add('Tugas',              '/stugas',         'bi bi-file-earmark-text-fill');
     }
 
-    // =====================================================
-    // KEPSEK
-    // =====================================================
+
     if(hasAnyRole(['kepala','kepsek','kepala sekolah'])){
 
         section('Kepala Sekolah');
@@ -728,9 +645,7 @@ function loadMenu(){
     document.getElementById('menu').innerHTML = html;
 }
 
-// ============================================================
-// MODAL LOGOUT
-// ============================================================
+
 function showLogoutModal(){
     document.getElementById('logoutModal').classList.add('show');
 }
@@ -755,9 +670,6 @@ function doLogout(){
     window.location.href = '/login';
 }
 
-// ============================================================
-// INIT
-// ============================================================
 initSidebarState();
 loadMenu();
 setTopbarTitle();

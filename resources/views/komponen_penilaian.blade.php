@@ -716,9 +716,6 @@ function render(data){
     document.getElementById('data').innerHTML = html;
 }
 
-
-// ================= TAMBAH =================
-
 async function tambah(){
 
     const id_mapel_val    = document.getElementById('id_mapel').value;
@@ -752,9 +749,6 @@ async function tambah(){
     }
 }
 
-
-// ================= BUKA MODAL EDIT =================
-
 function bukaEdit(id){
 
     const item = allData.find(d => d.id_komponen == id);
@@ -768,9 +762,6 @@ function bukaEdit(id){
 
     document.getElementById('modalEdit').classList.add('show');
 }
-
-
-// ================= SIMPAN EDIT =================
 
 async function simpanEdit(){
 
@@ -803,9 +794,6 @@ async function simpanEdit(){
     }
 }
 
-
-// ================= HAPUS =================
-
 function hapus(id){
 
     if(!confirm('Yakin ingin menghapus komponen ini?')) return;
@@ -814,16 +802,10 @@ function hapus(id){
         .then(() => loadData());
 }
 
-
-// ================= CLOSE MODAL =================
-
 function closeModal(){
     document.getElementById('modalEdit').classList.remove('show');
     editId = null;
 }
-
-
-// ================= HELPERS =================
 
 function showLoading(){
     document.getElementById('data').innerHTML = `

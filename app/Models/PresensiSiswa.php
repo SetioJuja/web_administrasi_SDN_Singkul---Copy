@@ -18,13 +18,11 @@ class PresensiSiswa extends Model
 
     public $timestamps = false;
 
-    // Relasi ke siswa
     public function siswa()
     {
         return $this->belongsTo(Siswa::class, 'id_siswa');
     }
 
-    // Relasi ke status (hadir, izin, sakit)
     public function status()
     {
         return $this->belongsTo(StatusPresensi::class, 'id_status');

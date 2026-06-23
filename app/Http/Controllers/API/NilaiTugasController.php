@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\DB;
 
 class NilaiTugasController extends Controller
 {
-    // ================= GET ALL =================
     public function index()
     {
         return response()->json([
@@ -18,7 +17,6 @@ class NilaiTugasController extends Controller
         ]);
     }
 
-    // ================= GET DETAIL =================
     public function show($id)
     {
         $data = NilaiTugas::with(['tugas','siswa'])->find($id);
@@ -36,7 +34,6 @@ class NilaiTugasController extends Controller
         ]);
     }
 
-    // ================= POST =================
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -45,7 +42,6 @@ class NilaiTugasController extends Controller
             'nilai' => 'required|numeric|min:0|max:100'
         ]);
 
-        //  update kalau sudah ada (tidak duplicate)
         $data = NilaiTugas::updateOrCreate(
             [
                 'id_tugas' => $validated['id_tugas'],
@@ -62,7 +58,6 @@ class NilaiTugasController extends Controller
         ]);
     }
 
-    // ================= PUT =================
     public function update(Request $request, $id)
     {
         $data = NilaiTugas::find($id);
@@ -86,7 +81,6 @@ class NilaiTugasController extends Controller
         ]);
     }
 
-    // ================= DELETE =================
     public function destroy($id)
     {
         $data = NilaiTugas::find($id);
@@ -106,7 +100,6 @@ class NilaiTugasController extends Controller
         ]);
     }
 
-    // ================= NILAI PER SISWA =================
     public function bySiswa($id_siswa)
     {
         $data = NilaiTugas::with('tugas')
@@ -119,7 +112,6 @@ class NilaiTugasController extends Controller
         ]);
     }
 
-    // ================= RATA-RATA =================
     public function rataRata($id_siswa, $id_komponen)
     {
         $rata = DB::table('nilai_tugas')

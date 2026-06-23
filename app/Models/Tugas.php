@@ -17,7 +17,6 @@ class Tugas extends Model
         'id_kelas'
     ];
 
-    // relasi
     public function komponen(){
         return $this->belongsTo(KomponenPenilaian::class,'id_komponen','id_komponen');
     }

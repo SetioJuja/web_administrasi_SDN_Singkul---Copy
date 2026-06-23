@@ -9,13 +9,9 @@ use Illuminate\Support\Facades\Log;
 
 class PresensiGuruController extends Controller
 {
-    // ======================
-    // GET ALL
-    // ======================
+
     public function index()
     {
-        Log::info('AMBIL DATA PRESENSI');
-
         return response()->json([
             'success' => true,
             'data' => PresensiGuru::with(['guru','status','tahunAjaran'])
@@ -24,9 +20,6 @@ class PresensiGuruController extends Controller
         ]);
     }
 
-    // ======================
-    // INSERT
-    // ======================
     public function store(Request $request)
     {
         try {
@@ -40,7 +33,6 @@ class PresensiGuruController extends Controller
                 'id_tahun_ajaran' => 'required|exists:tahun_ajaran,id_tahun_ajaran'
             ]);
 
-            //  VALIDASI TIDAK BOLEH DOBEL
             $cek = PresensiGuru::where('id_guru', $validated['id_guru'])
                 ->where('tanggal', $validated['tanggal'])
                 ->exists();
@@ -89,9 +81,6 @@ class PresensiGuruController extends Controller
         }
     }
 
-    // ======================
-    // DETAIL
-    // ======================
     public function show($id)
     {
         $data = PresensiGuru::with(['guru','status','tahunAjaran'])->find($id);
@@ -109,9 +98,6 @@ class PresensiGuruController extends Controller
         ]);
     }
 
-    // ======================
-    // UPDATE
-    // ======================
     public function update(Request $request, $id)
     {
         $data = PresensiGuru::find($id);
@@ -155,9 +141,6 @@ class PresensiGuruController extends Controller
         }
     }
 
-    // ======================
-    // DELETE
-    // ======================
     public function destroy($id)
     {
         $data = PresensiGuru::find($id);

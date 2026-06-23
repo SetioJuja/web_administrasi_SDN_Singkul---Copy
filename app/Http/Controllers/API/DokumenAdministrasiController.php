@@ -36,7 +36,6 @@ class DokumenAdministrasiController extends Controller
 
     public function store(Request $request)
     {
-        Log::info('STORE DOKUMEN', $request->all());
 
         $validated = $request->validate([
             'judul_dokumen' => 'required|string',

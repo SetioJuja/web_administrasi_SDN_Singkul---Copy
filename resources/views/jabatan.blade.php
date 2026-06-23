@@ -12,7 +12,6 @@
     --danger:#dc2626;
 }
 
-/* ===== CARD ===== */
 .card{
     background:white;
     border-radius:16px;
@@ -20,13 +19,11 @@
     box-shadow:0 10px 25px rgba(0,0,0,0.05);
 }
 
-/* ===== TITLE ===== */
 h3{
     margin-bottom:20px;
     color:var(--primary);
 }
 
-/* ===== FORM ===== */
 .form-inline{
     display:flex;
     gap:10px;
@@ -45,7 +42,6 @@ input:focus{
     border-color:var(--primary);
 }
 
-/* ===== BUTTON ===== */
 button{
     padding:10px 14px;
     border:none;
@@ -64,7 +60,6 @@ button:hover{
     opacity:0.9;
 }
 
-/* ===== TABLE ===== */
 table{
     width:100%;
     border-collapse:collapse;
@@ -85,7 +80,6 @@ tbody tr:hover{
     background:#f9fafb;
 }
 
-/* ===== MODAL ===== */
 .modal{
     display:none;
     position:fixed;
@@ -123,7 +117,6 @@ tbody tr:hover{
     margin-top:5px;
 }
 
-/* ===== LIST ===== */
 #detailList{
     text-align:left;
     margin-bottom:10px;
@@ -134,7 +127,6 @@ tbody tr:hover{
     border-bottom:1px solid var(--border);
 }
 
-/* ===== ICON ===== */
 .notif-icon{
     width:70px;
     height:70px;
@@ -177,7 +169,6 @@ tbody tr:hover{
 
 </div>
 
-<!-- TABLE -->
 <table>
 
 <thead>
@@ -194,7 +185,6 @@ tbody tr:hover{
 
 </div>
 
-<!-- ================= MODAL EDIT ================= -->
 <div id="modalEdit" class="modal">
 
 <div class="modal-content">
@@ -216,7 +206,6 @@ tbody tr:hover{
 </div>
 </div>
 
-<!-- ================= MODAL DETAIL ================= -->
 <div id="modalDetail" class="modal">
 
 <div class="modal-content">
@@ -233,7 +222,6 @@ tbody tr:hover{
 </div>
 </div>
 
-<!-- ================= MODAL NOTIFIKASI ================= -->
 <div id="modalNotif" class="modal">
 
 <div class="modal-content">
@@ -273,7 +261,6 @@ tbody tr:hover{
 
 let editId = null;
 
-// ================= INIT =================
 document.addEventListener('DOMContentLoaded', () => {
 
     loadData();
@@ -291,8 +278,6 @@ document.addEventListener('DOMContentLoaded', () => {
         .addEventListener('click', tutupDetail);
 });
 
-
-// ================= LOAD DATA =================
 function loadData(){
 
     fetch('/api/jabatan')
@@ -374,8 +359,6 @@ function loadData(){
     });
 }
 
-
-// ================= TAMBAH =================
 function tambah(){
 
     let nama =
@@ -420,8 +403,6 @@ function tambah(){
     });
 }
 
-
-// ================= EDIT =================
 function edit(id, nama){
 
     editId = id;
@@ -433,8 +414,6 @@ function edit(id, nama){
         .style.display = 'flex';
 }
 
-
-// ================= UPDATE =================
 function update(){
 
     fetch('/api/jabatan/' + editId,{
@@ -466,8 +445,6 @@ function update(){
     });
 }
 
-
-// ================= HAPUS =================
 function hapus(id){
 
         fetch('/api/jabatan/' + id,{
@@ -489,8 +466,6 @@ function hapus(id){
     
 }
 
-
-// ================= DETAIL =================
 function detail(id){
 
     fetch('/api/jabatan/' + id)
@@ -529,8 +504,6 @@ function detail(id){
     });
 }
 
-
-// ================= MODAL NOTIF =================
 function showNotif(type, message){
 
     let icon =
@@ -583,8 +556,6 @@ function tutupNotif(){
         .style.display = 'none';
 }
 
-
-// ================= TUTUP =================
 function tutup(){
 
     document.getElementById('modalEdit')

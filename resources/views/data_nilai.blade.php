@@ -128,7 +128,6 @@ td{
     vertical-align:middle;
 }
 
-/* garis tebal batas antar siswa */
 tr.row-first td{
     border-top:2px solid #0a3d62 !important;
 }
@@ -168,7 +167,6 @@ td.nilai{
     color:#64748b;
 }
 
-/* tombol lihat deskripsi */
 .btn-lihat{
     background:#2563eb;
     border:none;
@@ -185,7 +183,6 @@ td.nilai{
     background:#1d4ed8;
 }
 
-/* ===== MODAL CUSTOM (sama persis gaya input-nilai) ===== */
 .modal-overlay{
     position:fixed;
     inset:0;
@@ -280,8 +277,6 @@ td.nilai{
 }
 </style>
 
-
-{{-- ===== MODAL DESKRIPSI (custom, bukan Bootstrap modal) ===== --}}
 <div class="modal-overlay" id="modalDeskripsi">
     <div class="modal-box">
 
@@ -315,7 +310,7 @@ td.nilai{
             <div class="subtitle" id="subtitle">Pilih kelas untuk menampilkan data</div>
         </div>
         <button class="btn btn-success" onclick="location.href='/rapor'">
-            Halaman Rapor
+            Kelola Rapor
         </button>
     </div>
 
@@ -364,8 +359,6 @@ let id_guru;
 
 const deskripsiStore = {};
 
-
-// ================= INIT =================
 document.addEventListener('DOMContentLoaded', init);
 
 async function init(){
@@ -384,8 +377,6 @@ async function init(){
         });
 }
 
-
-// ================= LOAD KELAS =================
 async function loadKelasSaya(){
     const res  = await fetch('/api/kelas-saya/' + id_guru);
     const json = await res.json();
@@ -400,8 +391,6 @@ async function loadKelasSaya(){
     loadData();
 }
 
-
-// ================= LOAD DATA =================
 async function loadData(){
     if(!id_kelas) return;
 
@@ -417,8 +406,6 @@ async function loadData(){
     showLoading(false);
 }
 
-
-// ================= FILTER + RENDER =================
 function filterRender(){
     const keyword = document.getElementById('search').value.toLowerCase().trim();
 
@@ -443,8 +430,6 @@ function filterRender(){
     render(filtered);
 }
 
-
-// ================= RENDER =================
 function render(data){
 
     if(data.length === 0){
@@ -486,7 +471,6 @@ function render(data){
             const total        = m.total              ?? '-';
             const keterampilan = m.nilai_keterampilan ?? '-';
 
-            // simpan ke store — gunakan id numerik agar aman di onclick
             const key = deskKey;
             deskripsiStore[key] = {
                 subjudul    : siswa.nama + ' — ' + m.nama_mapel,
@@ -521,8 +505,6 @@ function render(data){
     document.getElementById('info').innerText = `Menampilkan ${data.length} siswa`;
 }
 
-
-// ================= MODAL =================
 function bukaDeskripsi(key){
     const d = deskripsiStore[key];
     if(!d) return;
@@ -547,13 +529,10 @@ function tutupModal(){
     document.body.style.overflow = '';
 }
 
-// tutup dengan Escape
 document.addEventListener('keydown', e => {
     if(e.key === 'Escape') tutupModal();
 });
 
-
-// ================= HELPERS =================
 function fmt(val){
     if(val === null || val === undefined || val === '') return '-';
     const n = Number(val);

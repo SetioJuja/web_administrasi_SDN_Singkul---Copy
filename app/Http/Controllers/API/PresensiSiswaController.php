@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Log;
 
 class PresensiSiswaController extends Controller
 {
-    // ================= GET SEMUA =================
     public function index()
 {
     $data = PresensiSiswa::with(['siswa', 'status', 'tahunAjaran'])
@@ -19,15 +18,12 @@ class PresensiSiswaController extends Controller
             return [
                 'id_presensi_siswa' => $item->id_presensi_siswa,
 
-                //  INI YANG PALING PENTING
                 'id_siswa' => $item->id_siswa,
 
                 'tanggal' => $item->tanggal,
 
-                //  ubah jadi ID 
                 'id_status' => $item->id_status,
 
-                // optional (boleh tetap ada)
                 'nama_siswa' => $item->siswa->nama_siswa ?? null,
                 'status' => $item->status->nama_status ?? null,
                 'periode' => $item->tahunAjaran->periode ?? null,
@@ -42,7 +38,6 @@ class PresensiSiswaController extends Controller
     ]);
 }
 
-    // ================= STORE =================
     public function store(Request $request)
     {
         $request->validate([
@@ -51,7 +46,6 @@ class PresensiSiswaController extends Controller
             'id_status' => 'required'
         ]);
 
-        //  ambil tahun ajaran aktif
         $tahun = TahunAjaran::where('status', 'aktif')->first();
 
         if(!$tahun){
@@ -67,7 +61,6 @@ class PresensiSiswaController extends Controller
             'tahun' => $tahun->id_tahun_ajaran
         ]);
 
-        //  cek duplikat (lebih ketat)
         $cek = PresensiSiswa::where('id_siswa', $request->id_siswa)
             ->where('tanggal', $request->tanggal)
             ->where('id_tahun_ajaran', $tahun->id_tahun_ajaran)
@@ -94,7 +87,6 @@ class PresensiSiswaController extends Controller
         ], 201);
     }
 
-    // ================= SHOW =================
     public function show($id)
     {
         $data = PresensiSiswa::with(['siswa', 'status', 'tahunAjaran'])
@@ -120,7 +112,6 @@ class PresensiSiswaController extends Controller
         ]);
     }
 
-    // ================= UPDATE =================
     public function update(Request $request, $id)
     {
         $data = PresensiSiswa::find($id);
@@ -138,7 +129,6 @@ class PresensiSiswaController extends Controller
             'id_status' => 'required'
         ]);
 
-        //  ambil tahun ajaran aktif
         $tahun = TahunAjaran::where('status', 'aktif')->first();
 
         if(!$tahun){
@@ -148,7 +138,6 @@ class PresensiSiswaController extends Controller
             ],400);
         }
 
-        //  cek duplikat (kecuali dirinya sendiri)
         $cek = PresensiSiswa::where('id_siswa', $request->id_siswa)
             ->where('tanggal', $request->tanggal)
             ->where('id_tahun_ajaran', $tahun->id_tahun_ajaran)
@@ -176,7 +165,6 @@ class PresensiSiswaController extends Controller
         ]);
     }
 
-    // ================= DELETE =================
     public function destroy($id)
     {
         $data = PresensiSiswa::find($id);

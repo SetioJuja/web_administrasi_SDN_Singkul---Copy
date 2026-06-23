@@ -12,12 +12,10 @@ class Kelas extends Model
 
     protected $fillable = [
         'nama_kelas',
-        'total_siswa',
         'id_guru',            
         'id_tahun_ajaran'     
     ];
 
-    // ================= RELASI =================
 
     public function pegawai()
     {

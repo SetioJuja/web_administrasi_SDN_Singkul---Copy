@@ -16,7 +16,6 @@ class NilaiTugas extends Model
         'nilai'
     ];
 
-    // relasi
     public function tugas(){
         return $this->belongsTo(Tugas::class,'id_tugas','id_tugas');
     }

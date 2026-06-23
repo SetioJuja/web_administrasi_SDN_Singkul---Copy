@@ -15,13 +15,11 @@ class PegawaiJabatan extends Model
         'id_jabatan'
     ];
 
-    // Relasi ke Pegawai
     public function pegawai()
     {
         return $this->belongsTo(Pegawai::class, 'id_guru', 'id_guru');
     }
 
-    // Relasi ke Jabatan
     public function jabatan()
     {
         return $this->belongsTo(Jabatan::class, 'id_jabatan', 'id_jabatan');

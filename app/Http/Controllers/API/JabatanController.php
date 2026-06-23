@@ -8,10 +8,6 @@ use App\Models\Jabatan;
 
 class JabatanController extends Controller
 {
-    /**
-     * GET /api/jabatan
-     * Ambil semua jabatan + jumlah pegawai
-     */
     public function index()
     {
         $data = Jabatan::withCount('pegawai')->get();
@@ -22,10 +18,6 @@ class JabatanController extends Controller
         ]);
     }
 
-    /**
-     * POST /api/jabatan
-     * Tambah jabatan baru
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -40,11 +32,6 @@ class JabatanController extends Controller
             'data' => $data
         ], 201);
     }
-
-    /**
-     * GET /api/jabatan/{id}
-     * Detail jabatan + daftar pegawai
-     */
     public function show($id)
     {
         $data = Jabatan::with(['pegawai' => function($q){
@@ -63,11 +50,6 @@ class JabatanController extends Controller
             'data' => $data
         ]);
     }
-
-    /**
-     * PUT /api/jabatan/{id}
-     * Update nama jabatan
-     */
     public function update(Request $request, $id)
     {
         $data = Jabatan::find($id);
@@ -91,11 +73,6 @@ class JabatanController extends Controller
             'data' => $data
         ]);
     }
-
-    /**
-     * DELETE /api/jabatan/{id}
-     * Hapus jabatan (jika tidak dipakai)
-     */
     public function destroy($id)
     {
         $data = Jabatan::find($id);

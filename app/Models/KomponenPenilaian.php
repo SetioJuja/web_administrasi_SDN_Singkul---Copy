@@ -18,7 +18,6 @@ class KomponenPenilaian extends Model
 
     public $timestamps = false;
 
-    // relasi
     public function mapel(){
         return $this->belongsTo(Mapel::class, 'id_mapel');
     }

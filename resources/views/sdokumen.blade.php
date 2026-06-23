@@ -74,7 +74,7 @@
         </div>
     </div>
 
-    {{-- TABLE --}}
+    {{-- TABLE TERBARU --}}
     <div class="table-card">
         <div class="table-wrap">
             <table class="da-table">
@@ -92,6 +92,14 @@
                 <tbody id="data"></tbody>
             </table>
         </div>
+    </div>
+
+    {{-- LEMARI DOKUMEN LAINNYA --}}
+    <div class="lemari-section" id="lemariSection" style="display:none;">
+        <div class="lemari-header">
+            <i class="bi bi-archive"></i> Lemari Dokumen Lainnya
+        </div>
+        <div id="lemariList"></div>
     </div>
 
 </div>
@@ -344,6 +352,35 @@
     max-width: 200px; line-height: 1.5;
 }
 
+/* ── LEMARI ── */
+.lemari-section { margin-top: 20px; }
+.lemari-header {
+    font-size: 14px; font-weight: 700; color: var(--navy);
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 12px;
+}
+.lemari-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); margin-bottom: 10px; overflow: hidden;
+    box-shadow: var(--shadow);
+}
+.lemari-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 13px 16px; cursor: pointer; background: #f7fafd;
+}
+.lemari-head:hover { background: #eef3f9; }
+.lemari-head-left {
+    display: flex; align-items: center; gap: 8px;
+    font-weight: 600; font-size: 13px; color: var(--navy);
+}
+.lemari-count {
+    background: var(--navy); color: #fff;
+    font-size: 11.5px; font-weight: 600;
+    padding: 3px 10px; border-radius: 999px;
+}
+.lemari-body { display: none; border-top: 1px solid var(--border); }
+.lemari-body.open { display: block; }
+
 /* ── STATES ── */
 .da-empty { text-align: center; padding: 50px 20px; color: var(--muted); font-size: 14px; }
 .da-empty-icon { font-size: 36px; margin-bottom: 10px; }
@@ -360,7 +397,7 @@
 
 /* ── MODAL OVERRIDES (Integrasi dengan layout.app) ── */
 #modalImg, #modalFile {
-    background: rgba(15, 23, 42, 0.85); /* slate overlay */
+    background: rgba(15, 23, 42, 0.85);
     padding: 20px;
 }
 
@@ -523,6 +560,7 @@ let allData = [];
 let filteredData = [];
 
 const IMG_EXT = ['jpg','jpeg','png','gif','webp'];
+const BATAS_UTAMA = 7;
 
 document.addEventListener('DOMContentLoaded', init);
 
@@ -585,12 +623,14 @@ function filterData() {
     render(data);
 }
 
-/* ── RENDER ── */
+/* ── RENDER UTAMA ── */
 function render(data) {
-    filteredData = data;
+    // urutkan terbaru dulu berdasarkan tanggal_upload
+    filteredData = [...data].sort((a, b) => new Date(b.tanggal_upload) - new Date(a.tanggal_upload));
+
     document.getElementById('totalBadge').textContent = `${data.length} dokumen`;
 
-    /* summary totals */
+    /* summary totals (dari seluruh data hasil filter) */
     let totGambar = 0, totFile = 0;
     const tahunSet = new Set();
     data.forEach(d => {
@@ -600,69 +640,138 @@ function render(data) {
         }
         if (d.tahun_ajaran?.periode) tahunSet.add(d.tahun_ajaran.periode);
     });
-
     document.getElementById('numTotal').textContent  = data.length;
     document.getElementById('numGambar').textContent = totGambar;
     document.getElementById('numFile').textContent   = totFile;
     document.getElementById('numTahun').textContent  = tahunSet.size;
 
-    if (!data.length) {
+    if (!filteredData.length) {
         document.getElementById('data').innerHTML = `
             <tr><td colspan="7">
                 <div class="da-empty"><div class="da-empty-icon">📭</div>Tidak ada dokumen yang cocok.</div>
             </td></tr>`;
+        document.getElementById('lemariSection').style.display = 'none';
         return;
     }
 
-    let html = '';
-    data.forEach((d, i) => {
-        const ext   = (d.gambar || '').split('.').pop().toLowerCase();
-        const isImg = d.gambar && IMG_EXT.includes(ext);
+    const utama = filteredData.slice(0, BATAS_UTAMA);
+    const sisa  = filteredData.slice(BATAS_UTAMA);
 
-        let fileHtml = `<span class="no-file">—</span>`;
-        if (d.gambar) {
-            fileHtml = isImg
-                ? `<img src="/uploads/${d.gambar}" class="doc-img" onclick="lihatGambarByIndex(${i})" alt="${escHtml(d.judul_dokumen)}">`
-                : `<a href="/uploads/${d.gambar}" target="_blank" class="file-link">
-                       <i class="bi bi-file-earmark-arrow-up" style="font-size: 13px; margin-right: 4px;"></i>
-                       ${ext.toUpperCase()}
-                   </a>`;
-        }
+    document.getElementById('data').innerHTML = utama.map((d, i) => buildRow(d, i)).join('');
 
-        let aksiHtml = '';
-        if (!d.gambar) {
-            aksiHtml = `<span class="btn-aksi btn-aksi-nofile">Tidak ada file</span>`;
-        } else {
-            aksiHtml = `
-                <div class="aksi-wrap">
-                    <button class="btn-aksi btn-aksi-view" onclick="${isImg ? 'lihatGambarByIndex' : 'lihatFileByIndex'}(${i})">
-                        <i class="bi bi-eye" style="margin-right: 4px;"></i> Lihat
-                    </button>
-                    <a href="/uploads/${d.gambar}" download class="btn-aksi btn-aksi-dl">
-                        <i class="bi bi-download" style="margin-right: 4px;"></i> Unduh
-                    </a>
-                </div>`;
-        }
+    renderLemari(sisa);
+}
 
-        const periode  = d.tahun_ajaran?.periode  ?? '—';
-        const semester = d.tahun_ajaran?.semester ?? '—';
-        const tglFmt   = d.tanggal_upload
-            ? new Date(d.tanggal_upload).toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' })
-            : '—';
+/* ── ROW BUILDER (dipakai tabel utama & lemari) ── */
+function buildRow(d, i) {
+    const ext   = (d.gambar || '').split('.').pop().toLowerCase();
+    const isImg = d.gambar && IMG_EXT.includes(ext);
 
-        html += `
-        <tr>
-            <td class="td-no">${i + 1}</td>
-            <td><div class="doc-judul">${escHtml(d.judul_dokumen)}</div></td>
-            <td>${tglFmt}</td>
-            <td><span class="tahun-badge">${periode} <span style="opacity:.5">·</span> ${semester}</span></td>
-            <td class="td-file">${fileHtml}</td>
-            <td><div class="ket-text">${escHtml(d.keterangan)}</div></td>
-            <td class="td-aksi">${aksiHtml}</td>
-        </tr>`;
+    let fileHtml = `<span class="no-file">—</span>`;
+    if (d.gambar) {
+        fileHtml = isImg
+            ? `<img src="/uploads/${d.gambar}" class="doc-img" onclick="lihatGambarByIndex(${i})" alt="${escHtml(d.judul_dokumen)}">`
+            : `<a href="/uploads/${d.gambar}" target="_blank" class="file-link">
+                   <i class="bi bi-file-earmark-arrow-up" style="font-size: 13px; margin-right: 4px;"></i>
+                   ${ext.toUpperCase()}
+               </a>`;
+    }
+
+    let aksiHtml = '';
+    if (!d.gambar) {
+        aksiHtml = `<span class="btn-aksi btn-aksi-nofile">Tidak ada file</span>`;
+    } else {
+        aksiHtml = `
+            <div class="aksi-wrap">
+                <button class="btn-aksi btn-aksi-view" onclick="${isImg ? 'lihatGambarByIndex' : 'lihatFileByIndex'}(${i})">
+                    <i class="bi bi-eye" style="margin-right: 4px;"></i> Lihat
+                </button>
+                <a href="/uploads/${d.gambar}" download class="btn-aksi btn-aksi-dl">
+                    <i class="bi bi-download" style="margin-right: 4px;"></i> Unduh
+                </a>
+            </div>`;
+    }
+
+    const periode  = d.tahun_ajaran?.periode  ?? '—';
+    const semester = d.tahun_ajaran?.semester ?? '—';
+    const tglFmt   = d.tanggal_upload
+        ? new Date(d.tanggal_upload).toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' })
+        : '—';
+
+    return `
+    <tr>
+        <td class="td-no">${i + 1}</td>
+        <td><div class="doc-judul">${escHtml(d.judul_dokumen)}</div></td>
+        <td>${tglFmt}</td>
+        <td><span class="tahun-badge">${periode} <span style="opacity:.5">·</span> ${semester}</span></td>
+        <td class="td-file">${fileHtml}</td>
+        <td><div class="ket-text">${escHtml(d.keterangan)}</div></td>
+        <td class="td-aksi">${aksiHtml}</td>
+    </tr>`;
+}
+
+/* ── LEMARI (sisa dokumen, dikelompokkan per tahun ajaran) ── */
+function renderLemari(sisa) {
+    const section = document.getElementById('lemariSection');
+    const list    = document.getElementById('lemariList');
+
+    if (!sisa.length) {
+        section.style.display = 'none';
+        list.innerHTML = '';
+        return;
+    }
+    section.style.display = 'block';
+
+    const grup = {};
+    sisa.forEach((d, idx) => {
+        const realIndex = idx + BATAS_UTAMA; // index asli di filteredData
+        const periode  = d.tahun_ajaran?.periode  ?? 'Tanpa Tahun';
+        const semester = d.tahun_ajaran?.semester ?? '-';
+        const key = `${periode} – ${semester}`;
+        (grup[key] ??= []).push({ d, realIndex });
     });
 
-    document.getElementById('data').innerHTML = html;
+    list.innerHTML = Object.keys(grup).map(key => `
+        <div class="lemari-card">
+            <div class="lemari-head" onclick="toggleLemari(this)">
+                <div class="lemari-head-left">
+                    <i class="bi bi-folder2"></i> ${key}
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <span class="lemari-count">${grup[key].length} dokumen</span>
+                    <i class="bi bi-chevron-down lemari-chevron"></i>
+                </div>
+            </div>
+            <div class="lemari-body">
+                <div class="table-wrap">
+                    <table class="da-table">
+                        <thead>
+                            <tr>
+                                <th class="th-no">No</th>
+                                <th class="th-judul">Judul Dokumen</th>
+                                <th class="th-tgl">Tanggal Upload</th>
+                                <th class="th-tahun">Tahun Ajaran</th>
+                                <th class="th-file">File</th>
+                                <th class="th-ket">Keterangan</th>
+                                <th class="th-aksi">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${grup[key].map(item => buildRow(item.d, item.realIndex)).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function toggleLemari(head) {
+    const body  = head.nextElementSibling;
+    const arrow = head.querySelector('.lemari-chevron');
+    body.classList.toggle('open');
+    arrow.classList.toggle('bi-chevron-down');
+    arrow.classList.toggle('bi-chevron-up');
 }
 
 /* ── INDEX-BASED HANDLERS ── */
@@ -705,12 +814,10 @@ function tutupFile() {
 function cetakLaporan() {
     const tahunEl  = document.getElementById('filter_tahun');
     const bulanEl  = document.getElementById('filter_bulan');
-    const keyword  = document.getElementById('searchInput').value.trim();
 
     const tahunTxt  = tahunEl.options[tahunEl.selectedIndex]?.text  || 'Semua';
     const bulanTxt  = bulanEl.options[bulanEl.selectedIndex]?.text  || 'Semua';
 
-    /* info filter */
     document.getElementById('printSubjudul').textContent =
         `Tahun Ajaran: ${tahunTxt}  |  Bulan: ${bulanTxt}`;
 
@@ -730,7 +837,6 @@ function cetakLaporan() {
             </tr>
         </table>`;
 
-    /* Summary */
     let totGambar = 0, totFile = 0;
     const tahunSet = new Set();
     filteredData.forEach(d => {
@@ -747,7 +853,6 @@ function cetakLaporan() {
         <div class="print-sum-item"><div class="print-sum-num">${totFile}</div><div class="print-sum-lbl">File Lainnya</div></div>
         <div class="print-sum-item"><div class="print-sum-num">${tahunSet.size}</div><div class="print-sum-lbl">Tahun Ajaran</div></div>`;
 
-    /* Table */
     document.getElementById('printThead').innerHTML = `
         <tr>
             <th class="c" style="width:34px">No</th>
@@ -780,12 +885,10 @@ function cetakLaporan() {
     });
     document.getElementById('printTbody').innerHTML = tbody;
 
-    /* TTD */
     document.getElementById('printTtd').style.display = 'flex';
     document.getElementById('printTtdLokasi').textContent =
         `Depok, ${now.toLocaleDateString('id-ID', { day:'2-digit', month:'long', year:'numeric' })}`;
 
-    /* print dialog */
     const printArea = document.getElementById('printArea');
     printArea.style.display = 'block';
     setTimeout(() => {

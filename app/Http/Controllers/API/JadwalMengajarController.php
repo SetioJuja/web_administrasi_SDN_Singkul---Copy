@@ -23,10 +23,8 @@ class JadwalMengajarController extends Controller
     {
         try {
 
-            // LOG REQUEST MASUK
             Log::info('REQUEST TAMBAH JADWAL', $request->all());
 
-            // VALIDASI
             $validated = $request->validate([
                 'hari' => 'required',
                 'jam_mulai' => 'required',
@@ -37,13 +35,10 @@ class JadwalMengajarController extends Controller
                 'id_tahun_ajaran' => 'required|exists:tahun_ajaran,id_tahun_ajaran'
             ]);
 
-            //  LOG VALIDASI BERHASIL
             Log::info('VALIDASI BERHASIL', $validated);
 
-            //  SIMPAN
             $data = JadwalMengajar::create($validated);
 
-            //  LOG SUCCESS
             Log::info('JADWAL BERHASIL DISIMPAN', $data->toArray());
 
             return response()->json([
@@ -54,7 +49,6 @@ class JadwalMengajarController extends Controller
 
         } catch (\Illuminate\Validation\ValidationException $e) {
 
-            //  LOG VALIDASI GAGAL
             Log::error('VALIDASI GAGAL', [
                 'errors' => $e->errors(),
                 'request' => $request->all()
@@ -68,7 +62,6 @@ class JadwalMengajarController extends Controller
 
         } catch (\Exception $e) {
 
-            //  LOG ERROR
             Log::error('ERROR SIMPAN JADWAL', [
                 'message' => $e->getMessage(),
                 'line' => $e->getLine(),
@@ -102,7 +95,6 @@ class JadwalMengajarController extends Controller
             ], 404);
         }
 
-        // ================= VALIDASI =================
         $validated = $request->validate([
 
             'hari' => 'required',
@@ -123,7 +115,6 @@ class JadwalMengajarController extends Controller
 
         Log::info('VALIDASI UPDATE BERHASIL', $validated);
 
-        // ================= UPDATE =================
         $data->update($validated);
 
         Log::info('JADWAL BERHASIL DIUPDATE', [
@@ -237,21 +228,6 @@ class JadwalMengajarController extends Controller
                 'data' => $data
             ]);
         }
-
-// public function byGuruMapel($id_guru)
-// {
-//     $data = \App\Models\JadwalMengajar::with('mapel')
-//         ->where('id_guru', $id_guru)
-//         ->get()
-//         ->pluck('mapel')        
-//         ->unique('id_mapel')    
-//         ->values();
-
-//     return response()->json([
-//         'success' => true,
-//         'data' => $data
-//     ]);
-// }
 
 public function byGuruMapel($id_guru)
 {

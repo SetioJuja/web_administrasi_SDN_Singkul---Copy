@@ -8,9 +8,7 @@ use App\Models\Mapel;
 
 class MapelController extends Controller
 {
-    /**
-     * GET /api/mapel
-     */
+
     public function index()
     {
         return response()->json([
@@ -19,9 +17,6 @@ class MapelController extends Controller
         ]);
     }
 
-    /**
-     * POST /api/mapel
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -38,9 +33,6 @@ class MapelController extends Controller
         ], 201);
     }
 
-    /**
-     * GET /api/mapel/{id}
-     */
     public function show($id)
     {
         $data = Mapel::find($id);
@@ -58,9 +50,6 @@ class MapelController extends Controller
         ]);
     }
 
-    /**
-     * PUT /api/mapel/{id}
-     */
     public function update(Request $request, $id)
     {
         $data = Mapel::find($id);
@@ -86,9 +75,6 @@ class MapelController extends Controller
         ]);
     }
 
-    /**
-     * DELETE /api/mapel/{id}
-     */
     public function destroy($id)
     {
         $data = Mapel::find($id);

@@ -9,9 +9,7 @@ use Illuminate\Support\Facades\File;
 
 class KontenUmumController extends Controller
 {
-    // =====================================================
-    // INDEX
-    // =====================================================
+
     public function index()
     {
         $data = KontenUmum::first();
@@ -26,10 +24,6 @@ class KontenUmumController extends Controller
         ]);
     }
 
-
-    // =====================================================
-    // STORE
-    // =====================================================
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -59,10 +53,6 @@ class KontenUmumController extends Controller
                 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048'
         ]);
 
-
-        // =====================================================
-        // UPLOAD GAMBAR LOGIN
-        // =====================================================
         if ($request->hasFile('gambar_login')) {
 
             $file = $request->file('gambar_login');
@@ -82,10 +72,6 @@ class KontenUmumController extends Controller
                 'upload/' . $filename;
         }
 
-
-        // =====================================================
-        // UPLOAD GAMBAR BERANDA
-        // =====================================================
         if ($request->hasFile('gambar_beranda')) {
 
             $file = $request->file('gambar_beranda');
@@ -108,13 +94,7 @@ class KontenUmumController extends Controller
 
         $data = KontenUmum::first();
 
-
-        // =====================================================
-        // UPDATE JIKA SUDAH ADA
-        // =====================================================
         if ($data) {
-
-            // ================= HAPUS GAMBAR LOGIN LAMA
             if (
                 isset($validated['gambar_login']) &&
                 $data->gambar_login
@@ -129,7 +109,6 @@ class KontenUmumController extends Controller
                 }
             }
 
-            // ================= HAPUS GAMBAR BERANDA LAMA
             if (
                 isset($validated['gambar_beranda']) &&
                 $data->gambar_beranda
@@ -169,10 +148,6 @@ class KontenUmumController extends Controller
         ]);
     }
 
-
-    // =====================================================
-    // SHOW
-    // =====================================================
     public function show($id)
     {
         $data = KontenUmum::find($id);
@@ -196,10 +171,6 @@ class KontenUmumController extends Controller
         ]);
     }
 
-
-    // =====================================================
-    // UPDATE
-    // =====================================================
     public function update(Request $request, $id)
     {
         $data = KontenUmum::find($id);
@@ -244,12 +215,8 @@ class KontenUmumController extends Controller
         ]);
 
 
-        // =====================================================
-        // UPDATE GAMBAR LOGIN
-        // =====================================================
         if ($request->hasFile('gambar_login')) {
 
-            // HAPUS LAMA
             if ($data->gambar_login) {
 
                 $oldPath =
@@ -274,15 +241,10 @@ class KontenUmumController extends Controller
                 $filename
             );
 
-            // SIMPAN PATH
             $validated['gambar_login'] =
                 'upload/' . $filename;
         }
 
-
-        // =====================================================
-        // UPDATE GAMBAR BERANDA
-        // =====================================================
         if ($request->hasFile('gambar_beranda')) {
 
             // HAPUS LAMA
@@ -310,7 +272,6 @@ class KontenUmumController extends Controller
                 $filename
             );
 
-            // SIMPAN PATH
             $validated['gambar_beranda'] =
                 'upload/' . $filename;
         }
@@ -329,10 +290,6 @@ class KontenUmumController extends Controller
         ]);
     }
 
-
-    // =====================================================
-    // DELETE
-    // =====================================================
     public function destroy($id)
     {
         $data = KontenUmum::find($id);
@@ -348,10 +305,6 @@ class KontenUmumController extends Controller
             ], 404);
         }
 
-
-        // =====================================================
-        // HAPUS GAMBAR LOGIN
-        // =====================================================
         if ($data->gambar_login) {
 
             $oldPath =
@@ -363,10 +316,6 @@ class KontenUmumController extends Controller
             }
         }
 
-
-        // =====================================================
-        // HAPUS GAMBAR BERANDA
-        // =====================================================
         if ($data->gambar_beranda) {
 
             $oldPath =

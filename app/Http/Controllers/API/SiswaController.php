@@ -9,9 +9,7 @@ use Illuminate\Support\Facades\Log;
 
 class SiswaController extends Controller
 {
-    /**
-     * GET /api/siswa
-     */
+
     public function index()
     {
         return response()->json([
@@ -20,9 +18,7 @@ class SiswaController extends Controller
         ]);
     }
 
-    /**
-     * POST /api/siswa
-     */
+
     public function store(Request $request)
     {
         try {
@@ -62,9 +58,6 @@ class SiswaController extends Controller
         }
     }
 
-    /**
-     * GET /api/siswa/{id}
-     */
     public function show($id)
     {
         $data = Siswa::with('kelas')->find($id);
@@ -82,9 +75,6 @@ class SiswaController extends Controller
         ]);
     }
 
-    /**
-     * PUT /api/siswa/{id}
-     */
     public function update(Request $request, $id)
     {
         $data = Siswa::find($id);
@@ -137,9 +127,6 @@ class SiswaController extends Controller
         }
     }
 
-    /**
-     * DELETE /api/siswa/{id}
-     */
     public function destroy($id)
     {
         $data = Siswa::find($id);
@@ -161,10 +148,8 @@ class SiswaController extends Controller
 
     public function siswaKelasSaya($id)
 {
-    // ambil id_kelas dari guru
     $kelas = \App\Models\Kelas::where('id_guru', $id)->pluck('id_kelas');
 
-    // ambil siswa dari kelas tersebut
     $siswa = \App\Models\Siswa::with('kelas')
                 ->whereIn('id_kelas', $kelas)
                 ->get();

@@ -9,9 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class TahunAjaranController extends Controller
 {
-    /**
-     * GET /api/tahun-ajaran
-     */
+
     public function index()
     {
         return response()->json([
@@ -20,9 +18,7 @@ class TahunAjaranController extends Controller
         ]);
     }
 
-    /**
-     * POST /api/tahun-ajaran
-     */
+
     public function store(Request $request)
 {
     try {
@@ -82,9 +78,7 @@ class TahunAjaranController extends Controller
         ]);
     }
 
-    /**
-     * PUT /api/tahun-ajaran/{id}
-     */
+
     public function update(Request $request, $id)
     {
         $data = TahunAjaran::find($id);
@@ -115,9 +109,7 @@ class TahunAjaranController extends Controller
         ]);
     }
 
-    /**
-     * DELETE /api/tahun-ajaran/{id}
-     */
+
     public function destroy($id)
     {
         $data = TahunAjaran::find($id);

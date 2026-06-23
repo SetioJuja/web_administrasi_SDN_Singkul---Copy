@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Log;
 
 class PengumumanController extends Controller
 {
-    // ================= GET =================
     public function index()
     {
         return response()->json([
@@ -18,7 +17,6 @@ class PengumumanController extends Controller
         ]);
     }
 
-    // ================= INSERT =================
     public function store(Request $request)
     {
         try {
@@ -61,7 +59,6 @@ class PengumumanController extends Controller
         }
     }
 
-    // ================= DETAIL =================
     public function show($id)
     {
         $data = Pengumuman::find($id);
@@ -79,7 +76,6 @@ class PengumumanController extends Controller
         ]);
     }
 
-    // ================= UPDATE =================
     public function update(Request $request, $id)
     {
         $data = Pengumuman::find($id);
@@ -129,7 +125,6 @@ class PengumumanController extends Controller
         }
     }
 
-    // ================= DELETE =================
     public function destroy($id)
     {
         $data = Pengumuman::find($id);
@@ -141,7 +136,6 @@ class PengumumanController extends Controller
             ],404);
         }
 
-        // hapus file gambar jika ada
         if($data->gambar && file_exists(public_path('upload/'.$data->gambar))){
             unlink(public_path('upload/'.$data->gambar));
         }
